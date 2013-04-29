@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>create</methodName>
+	<params>
+		<param>
+			<value>
+				<struct>
+					<member>
+						<name>memSize</name>
+						<value>
+							<i4>512</i4>
+						</value>
+					</member>
+					<member>
+						<name>kvmEnable</name>
+						<value>true</value>
+					</member>
+					<member>
+						<name>smp</name>
+						<value>1</value>
+					</member>
+					<member>
+						<name>emulatedMachine</name>
+						<value>pc-0.14</value>
+					</member>
+					<member>
+						<name>vmType</name>
+						<value>kvm</value>
+					</member>
+					<member>
+						<name>keyboardLayout</name>
+						<value>en-us</value>
+					</member>
+					<member>
+						<name>pitReinjection</name>
+						<value>false</value>
+					</member>
+					<member>
+						<name>nice</name>
+						<value>0</value>
+					</member>
+					<member>
+						<name>display</name>
+						<value>qxl</value>
+					</member>
+					<member>
+						<name>smartcardEnable</name>
+						<value>false</value>
+					</member>
+					<member>
+						<name>smpCoresPerSocket</name>
+						<value>1</value>
+					</member>
+					<member>
+						<name>timeOffset</name>
+						<value>0</value>
+					</member>
+					<member>
+						<name>transparentHugePages</name>
+						<value>true</value>
+					</member>
+					<member>
+						<name>vmId</name>
+						<value>79567083-9889-4bcc-90e3-291885b0da7f</value>
+					</member>
+					<member>
+						<name>devices</name>
+						<value>
+							<array>
+								<data>
+									<value>
+										<struct>
+											<member>
+												<name>address</name>
+												<value>
+													<struct>
+														<member>
+															<name> domain</name>
+															<value>0x0000</value>
+														</member>
+														<member>
+															<name>bus</name>
+															<value>0x00</value>
+														</member>
+														<member>
+															<name> type</name>
+															<value>pci</value>
+														</member>
+														<member>
+															<name> function</name>
+															<value>0x0</value>
+														</member>
+														<member>
+															<name> slot</name>
+															<value>0x02</value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>specParams</name>
+												<value>
+													<struct>
+														<member>
+															<name>vram</name>
+															<value>65536</value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>device</name>
+												<value>qxl</value>
+											</member>
+											<member>
+												<name>type</name>
+												<value>video</value>
+											</member>
+											<member>
+												<name>deviceId</name>
+												<value>ac2f0e6f-ca73-461f-a8b1-910bf37ce1f5</value>
+											</member>
+										</struct>
+									</value>
+									<value>
+										<struct>
+											<member>
+												<name>shared</name>
+												<value>false</value>
+											</member>
+											<member>
+												<name>iface</name>
+												<value>ide</value>
+											</member>
+											<member>
+												<name>index</name>
+												<value>2</value>
+											</member>
+											<member>
+												<name>address</name>
+												<value>
+													<struct>
+														<member>
+															<name> bus</name>
+															<value>1</value>
+														</member>
+														<member>
+															<name>unit</name>
+															<value>0</value>
+														</member>
+														<member>
+															<name> target</name>
+															<value>0</value>
+														</member>
+														<member>
+															<name> type</name>
+															<value>drive</value>
+														</member>
+														<member>
+															<name> controller</name>
+															<value>0</value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>specParams</name>
+												<value>
+													<struct>
+														<member>
+															<name>path</name>
+															<value></value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>path</name>
+												<value>/rhev/data-center/5849b030-626e-47cb-ad90-3ce782d831b3/4a6a6ed3-13f9-4481-8c03-8d217f6baef6/images/11111111-1111-1111-1111-111111111111/Fedora-17-x86_64-DVD.iso
+												</value>
+											</member>
+											<member>
+												<name>device</name>
+												<value>cdrom</value>
+											</member>
+											<member>
+												<name>type</name>
+												<value>disk</value>
+											</member>
+											<member>
+												<name>readonly</name>
+												<value>true</value>
+											</member>
+											<member>
+												<name>deviceId</name>
+												<value>1863293f-0e64-446a-821e-a0b05259a711</value>
+											</member>
+										</struct>
+									</value>
+									<value>
+										<struct>
+											<member>
+												<name>shared</name>
+												<value>false</value>
+											</member>
+											<member>
+												<name>index</name>
+												<value>
+													<i4>0</i4>
+												</value>
+											</member>
+											<member>
+												<name>volumeID</name>
+												<value>dca4630c-6a9e-430f-b4fa-90cb6ed10e2d</value>
+											</member>
+											<member>
+												<name>propagateErrors</name>
+												<value>off</value>
+											</member>
+											<member>
+												<name>format</name>
+												<value>cow</value>
+											</member>
+											<member>
+												<name>type</name>
+												<value>disk</value>
+											</member>
+											<member>
+												<name>iface</name>
+												<value>virtio</value>
+											</member>
+											<member>
+												<name>address</name>
+												<value>
+													<struct>
+														<member>
+															<name> domain</name>
+															<value>0x0000</value>
+														</member>
+														<member>
+															<name>bus</name>
+															<value>0x00</value>
+														</member>
+														<member>
+															<name> type</name>
+															<value>pci</value>
+														</member>
+														<member>
+															<name> function</name>
+															<value>0x0</value>
+														</member>
+														<member>
+															<name> slot</name>
+															<value>0x05</value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>domainID</name>
+												<value>553c2cb4-54d1-4c30-b2c2-6cb41a03518d</value>
+											</member>
+											<member>
+												<name>imageID</name>
+												<value>3d9f9e74-4607-4b99-881b-d933705140f8</value>
+											</member>
+											<member>
+												<name>specParams</name>
+												<value>
+													<struct />
+												</value>
+											</member>
+											<member>
+												<name>optional</name>
+												<value>false</value>
+											</member>
+											<member>
+												<name>device</name>
+												<value>disk</value>
+											</member>
+											<member>
+												<name>poolID</name>
+												<value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
+											</member>
+											<member>
+												<name>readonly</name>
+												<value>false</value>
+											</member>
+											<member>
+												<name>deviceId</name>
+												<value>3d9f9e74-4607-4b99-881b-d933705140f8</value>
+											</member>
+										</struct>
+									</value>
+									<value>
+										<struct>
+											<member>
+												<name>nicModel</name>
+												<value>pv</value>
+											</member>
+											<member>
+												<name>address</name>
+												<value>
+													<struct>
+														<member>
+															<name> domain</name>
+															<value>0x0000</value>
+														</member>
+														<member>
+															<name>bus</name>
+															<value>0x00</value>
+														</member>
+														<member>
+															<name> type</name>
+															<value>pci</value>
+														</member>
+														<member>
+															<name> function</name>
+															<value>0x0</value>
+														</member>
+														<member>
+															<name> slot</name>
+															<value>0x03</value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>specParams</name>
+												<value>
+													<struct />
+												</value>
+											</member>
+											<member>
+												<name>macAddr</name>
+												<value>00:1a:4a:16:01:b0</value>
+											</member>
+											<member>
+												<name>device</name>
+												<value>bridge</value>
+											</member>
+											<member>
+												<name>linkActive</name>
+												<value>true</value>
+											</member>
+											<member>
+												<name>type</name>
+												<value>interface</value>
+											</member>
+											<member>
+												<name>filter</name>
+												<value>vdsm-no-mac-spoofing</value>
+											</member>
+											<member>
+												<name>deviceId</name>
+												<value>ad197148-7413-4e3c-96ed-990e73f7f433</value>
+											</member>
+											<member>
+												<name>network</name>
+												<value>ovirtmgmt</value>
+											</member>
+										</struct>
+									</value>
+									<value>
+										<struct>
+											<member>
+												<name>specParams</name>
+												<value>
+													<struct>
+														<member>
+															<name>model</name>
+															<value>virtio</value>
+														</member>
+													</struct>
+												</value>
+											</member>
+											<member>
+												<name>device</name>
+												<value>memballoon</value>
+											</member>
+											<member>
+												<name>type</name>
+												<value>balloon</value>
+											</member>
+											<member>
+												<name>deviceId</name>
+												<value>8564326d-ac5f-4330-9e4d-7d707211d399</value>
+											</member>
+										</struct>
+									</value>
+								</data>
+							</array>
+						</value>
+					</member>
+					<member>
+						<name>acpiEnable</name>
+						<value>true</value>
+					</member>
+					<member>
+						<name>vmName</name>
+						<value>Fedora17_test1</value>
+					</member>
+					<member>
+						<name>cpuType</name>
+						<value>Westmere</value>
+					</member>
+					<member>
+						<name>custom</name>
+						<value>
+							<struct>
+								<member>
+									<name>device_4485597c-f173-4c6b-99a3-53a968855df7device_e8b677b9-3010-4935-9298-49611ad8003adevice_ee86a297-8d97-4f91-84e0-eeed93b7b396device_7b6fa92b-803a-4c48-89f2-a393d80d9538
+									</name>
+									<value>VmDevice {vmId=79567083-9889-4bcc-90e3-291885b0da7f,
+										deviceId=7b6fa92b-803a-4c48-89f2-a393d80d9538, device=ide,
+										type=controller, bootOrder=0, specParams={},
+										address={bus=0x00, domain=0x0000, type=pci, slot=0x01,
+										function=0x1}, managed=false, plugged=true, readOnly=false,
+										deviceAlias=ide0}</value>
+								</member>
+								<member>
+									<name>device_4485597c-f173-4c6b-99a3-53a968855df7device_e8b677b9-3010-4935-9298-49611ad8003adevice_ee86a297-8d97-4f91-84e0-eeed93b7b396device_7b6fa92b-803a-4c48-89f2-a393d80d9538device_3a945389-9489-4a38-9f13-a6820f4cf302
+									</name>
+									<value>VmDevice {vmId=79567083-9889-4bcc-90e3-291885b0da7f,
+										deviceId=3a945389-9489-4a38-9f13-a6820f4cf302,
+										device=virtio-serial, type=controller, bootOrder=0,
+										specParams={}, address={bus=0x00, domain=0x0000, type=pci,
+										slot=0x04, function=0x0}, managed=false, plugged=true,
+										readOnly=false, deviceAlias=virtio-serial0}</value>
+								</member>
+								<member>
+									<name>device_4485597c-f173-4c6b-99a3-53a968855df7device_e8b677b9-3010-4935-9298-49611ad8003a
+									</name>
+									<value>VmDevice {vmId=79567083-9889-4bcc-90e3-291885b0da7f,
+										deviceId=e8b677b9-3010-4935-9298-49611ad8003a, device=unix,
+										type=channel, bootOrder=0, specParams={}, address={port=2,
+										bus=0, controller=0, type=virtio-serial}, managed=false,
+										plugged=true, readOnly=false, deviceAlias=channel1}</value>
+								</member>
+								<member>
+									<name>device_4485597c-f173-4c6b-99a3-53a968855df7device_e8b677b9-3010-4935-9298-49611ad8003adevice_ee86a297-8d97-4f91-84e0-eeed93b7b396
+									</name>
+									<value>VmDevice {vmId=79567083-9889-4bcc-90e3-291885b0da7f,
+										deviceId=ee86a297-8d97-4f91-84e0-eeed93b7b396,
+										device=spicevmc, type=channel, bootOrder=0, specParams={},
+										address={port=3, bus=0, controller=0, type=virtio-serial},
+										managed=false, plugged=true, readOnly=false,
+										deviceAlias=channel2}</value>
+								</member>
+								<member>
+									<name>device_4485597c-f173-4c6b-99a3-53a968855df7</name>
+									<value>VmDevice {vmId=79567083-9889-4bcc-90e3-291885b0da7f,
+										deviceId=4485597c-f173-4c6b-99a3-53a968855df7, device=unix,
+										type=channel, bootOrder=0, specParams={}, address={port=1,
+										bus=0, controller=0, type=virtio-serial}, managed=false,
+										plugged=true, readOnly=false, deviceAlias=channel0}</value>
+								</member>
+							</struct>
+						</value>
+					</member>
+				</struct>
+			</value>
+		</param>
+	</params>
+</methodCall>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>getVmStats</methodName>
+	<params>
+		<param>
+			<value>35d110a4-f942-4ec8-823c-1594c294396b</value>
+		</param>
+	</params>
+</methodCall>

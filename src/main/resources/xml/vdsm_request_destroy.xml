@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>destroy</methodName>
+	<params>
+		<param>
+			<value>79567083-9889-4bcc-90e3-291885b0da7f</value>
+		</param>
+	</params>
+</methodCall>

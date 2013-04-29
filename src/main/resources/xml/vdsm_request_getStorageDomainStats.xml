@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>getStorageDomainStats</methodName>
+	<params>
+		<param>
+			<value>a8bb48fd-889c-4827-a9dc-ae268c591853</value>
+		</param>
+	</params>
+</methodCall>

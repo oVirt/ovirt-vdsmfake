@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>migrate</methodName>
+	<params>
+		<param>
+			<value>
+				<struct>
+					<member>
+						<name>method</name>
+						<value>online</value>
+					</member>
+					<member>
+						<name>dst</name>
+						<value>10.34.63.178:54321</value>
+					</member>
+					<member>
+						<name>src</name>
+						<value>10.34.63.177</value>
+					</member>
+					<member>
+						<name>vmId</name>
+						<value>79567083-9889-4bcc-90e3-291885b0da7f</value>
+					</member>
+				</struct>
+			</value>
+		</param>
+	</params>
+</methodCall>

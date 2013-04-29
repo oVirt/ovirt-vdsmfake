@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>setVmTicket</methodName>
+	<params>
+		<param>
+			<value>79567083-9889-4bcc-90e3-291885b0da7f</value>
+		</param>
+		<param>
+			<value>wj2Hp+ndP2RS</value>
+		</param>
+		<param>
+			<value>120</value>
+		</param>
+		<param>
+			<value>disconnect</value>
+		</param>
+		<param>
+			<value>
+				<struct>
+					<member>
+						<name>userId</name>
+						<value>fdfc627c-d875-11e0-90f0-83df133b58cc</value>
+					</member>
+					<member>
+						<name>userName</name>
+						<value>admin@internal</value>
+					</member>
+				</struct>
+			</value>
+		</param>
+	</params>
+</methodCall>

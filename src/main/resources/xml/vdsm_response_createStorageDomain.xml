@@ -1,0 +1,30 @@
+<?xml version='1.0'?>
+<methodResponse>
+	<params>
+		<param>
+			<value>
+				<struct>
+					<member>
+						<name>status</name>
+						<value>
+							<struct>
+								<member>
+									<name>message</name>
+									<value>
+										<string>OK</string>
+									</value>  <!--can be e.g. Storage domain is not empty - requires cleaning: ('10.20.30.202:/mnt/export/nfs/lv1/test/nfs02',) -->
+								</member>
+								<member>
+									<name>code</name>
+									<value>
+										<int>0</int>
+									</value> <!-- can be e.g. 361 -->
+								</member>
+							</struct>
+						</value>
+					</member>
+				</struct>
+			</value>
+		</param>
+	</params>
+</methodResponse>

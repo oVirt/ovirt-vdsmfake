@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>createStorageDomain</methodName>
+	<params>
+		<param>
+			<value>
+				<i4>1</i4>
+			</value>
+		</param>
+		<param>
+			<value>e2181cb4-f29f-4bdc-a5ae-cb4c9b50cb79</value>
+		</param>
+		<param>
+			<value>Storage_DATA2</value>
+		</param>
+		<param>
+			<value>10.34.63.202:/mnt/export/nfs/lv1/test/nfs02</value>
+		</param>
+		<param>
+			<value>
+				<i4>1</i4>
+			</value>
+		</param>
+		<param>
+			<value>3</value>
+		</param>
+	</params>
+</methodCall>

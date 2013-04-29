@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>connectStoragePool</methodName>
+	<params>
+		<param>
+			<value>b1a904f5-c147-49f2-8d2d-bf12f8bd6cc2</value>
+		</param>
+		<param>
+			<value>
+				<i4>1</i4>
+			</value>
+		</param>
+		<param>
+			<value>b1a904f5-c147-49f2-8d2d-bf12f8bd6cc2</value>
+		</param>
+		<param>
+			<value>a8bb48fd-889c-4827-a9dc-ae268c591853</value>
+		</param>
+		<param>
+			<value>
+				<i4>1</i4>
+			</value>
+		</param>
+	</params>
+</methodCall>

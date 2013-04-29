@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+	<methodName>getStoragePoolInfo</methodName>
+	<params>
+		<param>
+			<value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
+		</param>
+	</params>
+</methodCall>

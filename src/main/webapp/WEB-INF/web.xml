@@ -1,0 +1,93 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+	<display-name>VDSM Fake Web Application</display-name>
+
+	<context-param>
+		<param-name>networkBridgeName</param-name>
+		<param-value>ovirtmgmt</param-value> <!-- ovirtmgmt vs. rhevm -->
+	</context-param>
+
+    <!-- constant delay in ms -->
+	<context-param>
+		<param-name>constantDelay</param-name>
+		<param-value>0</param-value>
+	</context-param>
+
+	<!-- random delay in ms -->
+	<context-param>
+		<param-name>randomDelay</param-name>
+		<param-value>0</param-value>
+	</context-param>
+	
+	<!-- store/load object to/from this directory -->
+	<context-param>
+		<param-name>cacheDir</param-name>
+		<param-value>/var/log/vdsmfake/cache</param-value>
+	</context-param>	
+
+	<!-- log request/responses dir -->
+	<context-param>
+		<param-name>logDir</param-name>
+		<param-value>/var/log/vdsmfake/xml</param-value>
+	</context-param>
+	
+    <!-- target server for forwarded requests to VDSM can be overriden here:
+           the proxy is activated if this address is set only     
+    -->
+	<context-param>
+		<param-name>forwardVdsmServer</param-name>
+		<param-value></param-value> <!-- http://server.example.com  -->
+	</context-param>
+
+	<!-- comma-separated list of not logged methods to VDSM, e.g. getVdsCapabilities,
+	    *..ignore all  
+	-->
+	<context-param>
+		<param-name>notLoggedMethods</param-name>
+		<param-value>list,getVdsHardwareInfo,getVdsCapabilities</param-value> <!-- getVdsCapabilities,list,getVdsStats,getAllVmStats,getVmStats -->
+	</context-param>
+
+	<context-param>
+		<param-name>vdsmPort</param-name>
+		<param-value>54321</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>XmlRpcFilter</filter-name>
+		<filter-class>org.ovirt.vdsmfake.servlet.XmlRpcFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>XmlRpcFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>org.ovirt.vdsmfake.AppLifecycleListener</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>XmlRpcServlet</servlet-name>
+		<servlet-class>org.ovirt.vdsmfake.servlet.XmlRpcServlet</servlet-class>
+		<init-param>
+			<param-name>enabledForExtensions</param-name>
+			<param-value>false</param-value>
+			<description>
+				Sets, whether the servlet supports vendor extensions for XML-RPC.
+			</description>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>XmlRpcServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>2</session-timeout>
+	</session-config>
+
+</web-app>
