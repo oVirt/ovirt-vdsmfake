@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.VM;
@@ -269,6 +270,152 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
+    private Collection<VM> getVmListFromIds(List vmIds) {
+
+        final Host host = getActiveHost();
+
+        if( vmIds == null || vmIds.isEmpty() ) {
+            return host.getRunningVMs().values();
+        }
+
+        ArrayList<VM> vmList = new ArrayList<VM>();
+        for( Object id : vmIds ) {
+            if( host.getRunningVMs().containsKey(id) ) {
+                vmList.add( host.getRunningVMs().get(id) );
+            }
+        }
+
+        return vmList;
+    }
+
+    private Map extractKeysFromVmAndHash(VM vm, List keys, Map stats) {
+        if( stats == null ) {
+            stats = fillVmStatsMap(vm);
+        }
+        Map result = map();
+        for( Object key : keys ) {
+            if( stats.containsKey(key) ) {
+                result.put(key, stats.get(key));
+            }
+        }
+        result.put("hashes", getRuntimeStatsHashesForVm(vm, stats));
+        return result;
+    }
+
+    private Map extractKeysFromVm(VM vm, List keys, Map stats) {
+        if( stats == null ) {
+            stats = fillVmStatsMap(vm);
+        }
+        Map result = map();
+        for( Object key : keys ) {
+            if( stats.containsKey(key) ) {
+                result.put(key, stats.get(key));
+            }
+        }
+        return result;
+    }
+
+    private Map getExtractedStatsAndHash(List keys, List vmIds, boolean hashes) {
+        final Host host = getActiveHost();
+        Map result = map();
+        for (VM vm : getVmListFromIds(vmIds)) {
+            Map stats = null;
+            if( hashes ) {
+                stats = extractKeysFromVmAndHash(vm, keys, fillVmStatsMap(vm));
+            }
+            else {
+                stats = extractKeysFromVm(vm, keys, fillVmStatsMap(vm));
+            }
+            result.put(vm.getId(), stats);
+        }
+        return result;
+    }
+
+    private Map getExtractedStats(List keys, List vmIds) {
+        return getExtractedStatsAndHash(keys, vmIds, false);
+    }
+
+    private Map getRuntimeStatsHashesForVm(VM vm, Map stats)
+    {
+        Map hashes = map();
+        Object hash = "0";
+        if( stats.containsKey("hash") ) {
+            hash = stats.get("hash");
+        }
+        hashes.put("config", hash);
+        hashes.put("info", "" + extractKeysFromVm(vm, VmConfInfoKeys, stats).hashCode());
+        hashes.put("status", "" + extractKeysFromVm(vm, VmStatusKeys, stats).hashCode());
+        hashes.put("guestDetails", "" + extractKeysFromVm(vm, VmGuestDetailsKeys, stats).hashCode());
+        return hashes;
+    }
+
+    private final static List VmRuntimeStatsKeys = Arrays.asList("cpuSys cpuUser memUsage elapsedTime status statsAge".split(" "));
+    public Map getAllVmRuntimeStats() {
+        Map resultMap = getDoneStatus();
+        resultMap.put("runtimeStats", getExtractedStatsAndHash(VmRuntimeStatsKeys, null, true));
+        return resultMap;
+    }
+
+    private final static List VmDeviceStatsKeys = Arrays.asList("network disks disksUsage balloonInfo memoryStats".split(" "));
+    public Map getAllVmDeviceStats() {
+        Map resultMap = getDoneStatus();
+        resultMap.put("deviceStats", getExtractedStats(VmDeviceStatsKeys, null));
+        return resultMap;
+    }
+
+    private final static List VmStatusKeys = Arrays.asList("timeOffset monitorResponse clientIp lastLogin username session guestIps".split(" "));
+    public Map getVmStatus(List vmIds) {
+        Map resultMap = getDoneStatus();
+        resultMap.put("vmStatus", getExtractedStats(VmStatusKeys, vmIds));
+        return resultMap;
+    }
+
+    private final static List VmConfInfoKeys = Arrays.asList("timeOffset monitorResponse clientIp lastLogin username session guestIps".split(" "));
+    public Map getVmConfInfo(List vmIds) {
+        Map resultMap = getDoneStatus();
+        resultMap.put("vmConfInfo", getExtractedStats(VmConfInfoKeys, vmIds));
+        return resultMap;
+    }
+
+    private final static List VmGuestDetailsKeys = Arrays.asList("appsList netIfaces".split(" "));
+    public Map getVmGuestDetails(List vmIds) {
+        Map resultMap = getDoneStatus();
+        resultMap.put("guestDetails", getExtractedStats(VmGuestDetailsKeys, vmIds));
+        return resultMap;
+    }
+
+    private Map fillVmStatsMap(VM vm)
+    {
+        Map vmStatMap = map();
+        vmStatMap.put("status", vm.getStatus().toString());
+        vmStatMap.put("memUsage", "0");
+        vmStatMap.put("username", "Unknown");
+        vmStatMap.put("acpiEnable", "true");
+        vmStatMap.put("pid", "29410");
+        vmStatMap.put("displayIp", "0");
+        vmStatMap.put("displayPort", "5900");
+        vmStatMap.put("session", "Unknown");
+        vmStatMap.put("displaySecurePort", "-1");
+        vmStatMap.put("timeOffset", "0");
+        vmStatMap.put("hash", getRandomNum(20)); // 3077163634575265748
+        vmStatMap.put("balloonInfo", getBalloonInfoMap());
+        vmStatMap.put("pauseCode", "NOERR");
+        vmStatMap.put("kvmEnable", "true");
+        vmStatMap.put("network", getNetworkStatsMap(vm));
+        vmStatMap.put("vmId", vm.getId());
+        vmStatMap.put("displayType", "qxl");
+        vmStatMap.put("cpuUser", "0." + getRandomNum(2));
+        vmStatMap.put("disks", getVMDisksMap(vm));
+        vmStatMap.put("monitorResponse", "0");
+        vmStatMap.put("statsAge", "0.15");
+        vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
+        vmStatMap.put("vmType", "kvm");
+        vmStatMap.put("cpuSys", "0." + getRandomNum(2));
+        vmStatMap.put("appsList", lst());
+        vmStatMap.put("guestIPs", ""); // null
+        return vmStatMap;
+    }
+
     public Map getAllVmStats() {
         final Host host = getActiveHost();
 
@@ -279,35 +426,7 @@ public class VMService extends AbstractService {
         List statusList = new ArrayList();
 
         for (VM vm : host.getRunningVMs().values()) {
-            Map vmStatMap = map();
-            vmStatMap.put("status", vm.getStatus().toString());
-            vmStatMap.put("memUsage", "0");
-            vmStatMap.put("username", "Unknown");
-            vmStatMap.put("acpiEnable", "true");
-            vmStatMap.put("pid", "29410");
-            vmStatMap.put("displayIp", "0");
-            vmStatMap.put("displayPort", "5900");
-            vmStatMap.put("session", "Unknown");
-            vmStatMap.put("displaySecurePort", "-1");
-            vmStatMap.put("timeOffset", "0");
-            vmStatMap.put("hash", getRandomNum(20)); // 3077163634575265748
-            vmStatMap.put("balloonInfo", getBalloonInfoMap());
-            vmStatMap.put("pauseCode", "NOERR");
-            vmStatMap.put("kvmEnable", "true");
-            vmStatMap.put("network", getNetworkStatsMap(vm));
-            vmStatMap.put("vmId", vm.getId());
-            vmStatMap.put("displayType", "qxl");
-            vmStatMap.put("cpuUser", "0." + getRandomNum(2));
-            vmStatMap.put("disks", getVMDisksMap(vm));
-            vmStatMap.put("monitorResponse", "0");
-            vmStatMap.put("statsAge", "0.15");
-            vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
-            vmStatMap.put("vmType", "kvm");
-            vmStatMap.put("cpuSys", "0." + getRandomNum(2));
-            vmStatMap.put("appsList", lst());
-            vmStatMap.put("guestIPs", ""); // null
-
-            statusList.add(vmStatMap);
+            statusList.add(fillVmStatsMap(vm));
         }
 
         resultMap.put("statsList", statusList);
@@ -316,9 +435,7 @@ public class VMService extends AbstractService {
     }
 
     public Map setVmTicket(String uuid, String password, String ttl, String existingConnAction, Map params) {
-        Map resultMap = getDoneStatus();
-
-        return resultMap;
+        return getDoneStatus();
     }
 
     public Map destroy(String vmId) {
@@ -332,12 +449,12 @@ public class VMService extends AbstractService {
 
         Map resultMap = map();
 
-        // add asynch task
+        // add async task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
 
         Map statusMap = map();
         statusMap.put("message", "Machine destroyed");
-        statusMap.put("code", Integer.valueOf(0));
+        statusMap.put("code", 0);
 
         resultMap.put("status", statusMap);
 
