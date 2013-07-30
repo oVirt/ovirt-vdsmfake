@@ -31,6 +31,8 @@ import org.ovirt.vdsmfake.domain.Device.DeviceType;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class VM extends BaseObject {
 
+    public static final String NONE_STRING = "?";
+
     long timeCreated;
 
     /**
@@ -137,6 +139,9 @@ public class VM extends BaseObject {
     }
 
     public String getCpuType() {
+        if(cpuType == null) {
+            return VM.NONE_STRING;
+        }
         return cpuType;
     }
 
@@ -286,7 +291,7 @@ public class VM extends BaseObject {
                 return device.getMacAddr();
             }
         }
-        return "?";
+        return VM.NONE_STRING;
     }
 
     public String getImageId() {
@@ -295,7 +300,7 @@ public class VM extends BaseObject {
                 return device.getImageID();
             }
         }
-        return "?";
+        return VM.NONE_STRING;
     }
 
     public long getTimeCreated() {

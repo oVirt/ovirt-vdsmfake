@@ -68,7 +68,7 @@ public class VMService extends AbstractService {
 
         final List statusList = new ArrayList();
         for (VM vm : host.getRunningVMs().values()) {
-            if (!vmList.contains(vm.getId())) {
+            if (!vmList.isEmpty() && !vmList.contains(vm.getId())) {
                 continue;
             }
 
@@ -86,7 +86,10 @@ public class VMService extends AbstractService {
                 vmMap.put("displaySecurePort", "-1");
                 vmMap.put("timeOffset", "0");
                 vmMap.put("cpuType", vm.getCpuType());
-                vmMap.put("custom", vm.getCustomMap());
+                Map customMap = vm.getCustomMap();
+                if( customMap != null ) {
+                    vmMap.put("custom", vm.getCustomMap());
+                }
                 vmMap.put("pauseCode", "NOERR");
                 vmMap.put("nicModel", "rtl8139,pv");
                 vmMap.put("smartcardEnable", "false");
@@ -158,7 +161,7 @@ public class VMService extends AbstractService {
 
         Map statusMap = map();
         statusMap.put("message", success ? "Migration process starting" : "VM not found");
-        statusMap.put("code", Integer.valueOf(success ? 0 : 100));
+        statusMap.put("code", (success ? "0" : "100"));
 
         resultMap.put("status", statusMap);
 
@@ -222,11 +225,14 @@ public class VMService extends AbstractService {
     }
 
     Map getNetworkStatsMap(VM vm) {
+        String macAddress = vm.getMacAddress();
+        if( macAddress.equals(VM.NONE_STRING) ) {
+            return map();
+        }
+
         Map resultMap = map();
 
         Map netStats = map();
-
-        resultMap.put("vnet0", netStats);
 
         netStats.put("txErrors", "0");
         netStats.put("state", "unknown");
@@ -237,6 +243,8 @@ public class VMService extends AbstractService {
         netStats.put("rxErrors", "0");
         netStats.put("rxRate", "0.0");
         netStats.put("rxDropped", "0");
+
+        resultMap.put("vnet0", netStats);
 
         return resultMap;
     }
@@ -370,7 +378,7 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
-    private final static List VmConfInfoKeys = Arrays.asList("timeOffset monitorResponse clientIp lastLogin username session guestIps".split(" "));
+    private final static List VmConfInfoKeys = Arrays.asList("acpiEnable vmType guestName guestOS kvmEnable pauseCode displayIp displayPort displaySecurePort pid".split(" "));
     public Map getVmConfInfo(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("vmConfInfo", getExtractedStats(VmConfInfoKeys, vmIds));
@@ -401,11 +409,17 @@ public class VMService extends AbstractService {
         vmStatMap.put("balloonInfo", getBalloonInfoMap());
         vmStatMap.put("pauseCode", "NOERR");
         vmStatMap.put("kvmEnable", "true");
-        vmStatMap.put("network", getNetworkStatsMap(vm));
+        Map network = getNetworkStatsMap(vm);
+        if( !network.isEmpty() ) {
+            vmStatMap.put("network", network);
+        }
         vmStatMap.put("vmId", vm.getId());
         vmStatMap.put("displayType", "qxl");
         vmStatMap.put("cpuUser", "0." + getRandomNum(2));
-        vmStatMap.put("disks", getVMDisksMap(vm));
+        Map disks = getVMDisksMap(vm);
+        if( !disks.isEmpty() ) {
+            vmStatMap.put("disks", disks);
+        }
         vmStatMap.put("monitorResponse", "0");
         vmStatMap.put("statsAge", "0.15");
         vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
@@ -454,7 +468,7 @@ public class VMService extends AbstractService {
 
         Map statusMap = map();
         statusMap.put("message", "Machine destroyed");
-        statusMap.put("code", 0);
+        statusMap.put("code", "0");
 
         resultMap.put("status", statusMap);
 
@@ -487,11 +501,21 @@ public class VMService extends AbstractService {
             vm.setName((String) vmParams.get("vmName"));
             vm.setCpuType((String) vmParams.get("cpuType"));
             vm.setHost(host);
-            vm.setMemSize((Integer) vmParams.get("memSize"));
+
+            Integer memSize = 0;
+            Object boxedMemSize = vmParams.get("memSize");
+            if(boxedMemSize instanceof String) {
+                memSize = Integer.parseInt((String) boxedMemSize);
+            }
+            else {
+                memSize = (Integer)boxedMemSize;
+            }
+            vm.setMemSize(memSize);
 
             final Object[] devices = (Object[]) vmParams.get("devices");
             vm.setDeviceList(devices == null ? new ArrayList() : Arrays.asList(devices));
-            vm.setCustomMap((Map) vmParams.get("custom"));
+            Map custom = (Map) vmParams.get("custom");
+            vm.setCustomMap(custom != null ? custom : map());
 
             // append address tag when missing by the device
             vm.generateDevicesAddressIfMissing();

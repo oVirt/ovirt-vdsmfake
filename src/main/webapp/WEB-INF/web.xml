@@ -37,17 +37,19 @@
     <!-- target server for forwarded requests to VDSM can be overriden here:
            the proxy is activated if this address is set only     
     -->
-	<context-param>
-		<param-name>forwardVdsmServer</param-name>
-		<param-value></param-value> <!-- http://server.example.com  -->
-	</context-param>
+    <!--
+        <context-param>
+            <param-name>forwardVdsmServer</param-name>
+            <param-value>http://server.example.com</param-value>
+        </context-param>
+    -->
 
 	<!-- comma-separated list of not logged methods to VDSM, e.g. getVdsCapabilities,
 	    *..ignore all  
 	-->
 	<context-param>
 		<param-name>notLoggedMethods</param-name>
-		<param-value>list,getVdsHardwareInfo,getVdsCapabilities</param-value> <!-- getVdsCapabilities,list,getVdsStats,getAllVmStats,getVmStats -->
+		<param-value>getVdsHardwareInfo,getVdsCapabilities</param-value> <!-- getVdsCapabilities,list,getVdsStats,getAllVmStats,getVmStats -->
 	</context-param>
 
 	<context-param>

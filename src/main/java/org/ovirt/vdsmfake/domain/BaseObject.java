@@ -40,6 +40,9 @@ public class BaseObject implements Serializable {
     }
 
     public String getName() {
+        if( name == null ) {
+            return VM.NONE_STRING;
+        }
         return name;
     }
 
