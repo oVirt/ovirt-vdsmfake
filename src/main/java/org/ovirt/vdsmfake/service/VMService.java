@@ -61,7 +61,7 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
-    public Map list(String fullStatus, List vmList) {
+    public Map list(boolean fullStatus, List vmList) {
         final Host host = getActiveHost();
 
         final Map resultMap = getDoneStatus();
@@ -76,7 +76,7 @@ public class VMService extends AbstractService {
             vmMap.put("status", vm.getStatus().toString()); // Up
             vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
 
-            if ("true".equals(fullStatus)) {
+            if (fullStatus) {
                 vmMap.put("acpiEnable", "true");
                 vmMap.put("emulatedMachine", "pc-0.14");
                 vmMap.put("pid", "10294");

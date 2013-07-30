@@ -81,7 +81,7 @@ public class Api extends AbstractService {
         return vmService.list();
     }
 
-    public Map list(String isFull, List<String> vmIds) {
+    public Map list(boolean isFull, List<String> vmIds) {
         return vmService.list(isFull, vmIds);
     }
 
