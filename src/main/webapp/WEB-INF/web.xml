@@ -26,9 +26,44 @@
 	<context-param>
 		<param-name>cacheDir</param-name>
 		<param-value>/var/log/vdsmfake/cache</param-value>
-	</context-param>	
+	</context-param>
 
-	<!-- log request/responses dir -->
+    <context-param>
+        <param-name>vmConfAndStatsConstants</param-name>
+        <param-value><![CDATA[
+acpiEnable=true
+clientIp=
+displayIp=0
+displayPort=5902
+displaySecurePort=-1
+displayType=qxl
+emulatedMachine=pc-0.14
+guestIPs=
+username=
+fqdn=
+keyboardLayout=en-us
+kvmEnable=true
+memUsage=0
+monitorResponse=0
+monitorResponse=0
+nicModel=rtl8139,pv
+nice=0
+pauseCode=NOERR
+pid=10294
+pitReinjection=false
+session=Unknown
+smartcardEnable=false
+smp=1
+smpCoresPerSocket=1
+statsAge=0.15
+timeOffset=0
+transparentHugePages=true
+username=Unknown
+vmType=kvm
+        ]]></param-value>
+    </context-param>
+
+    <!-- log request/responses dir -->
 	<context-param>
 		<param-name>logDir</param-name>
 		<param-value>/var/log/vdsmfake/xml</param-value>

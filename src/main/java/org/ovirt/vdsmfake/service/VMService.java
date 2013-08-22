@@ -60,7 +60,7 @@ public class VMService extends AbstractService {
 
         return resultMap;
     }
-
+    private final static List fullListMapKeys = Arrays.asList("username fqdn acpiEnable emulatedMachine pid transparentHugePages keyboardLayout displayPort displaySecurePort timeOffset cpuType pauseCode nicModel smartcardEnable kvmEnable pitReinjection smp vmType displayIp clientIp smpCoresPerSocket nice".split(" "));
     public Map list(boolean fullStatus, List vmList) {
         final Host host = getActiveHost();
 
@@ -72,40 +72,25 @@ public class VMService extends AbstractService {
                 continue;
             }
 
-            Map vmMap = map();
-            vmMap.put("status", vm.getStatus().toString()); // Up
-            vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
-
+            Map vmMap = null;
             if (fullStatus) {
-                vmMap.put("acpiEnable", "true");
-                vmMap.put("emulatedMachine", "pc-0.14");
-                vmMap.put("pid", "10294");
-                vmMap.put("transparentHugePages", "true");
-                vmMap.put("keyboardLayout", "en-us");
-                vmMap.put("displayPort", "5902");
-                vmMap.put("displaySecurePort", "-1");
-                vmMap.put("timeOffset", "0");
-                vmMap.put("cpuType", vm.getCpuType());
+                vmMap = VMInfoService.getInstance().getFromKeys(fullListMapKeys);
+                vmMap.put("status", vm.getStatus().toString()); // Up
+                vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
                 Map customMap = vm.getCustomMap();
                 if( customMap != null ) {
                     vmMap.put("custom", vm.getCustomMap());
                 }
-                vmMap.put("pauseCode", "NOERR");
-                vmMap.put("nicModel", "rtl8139,pv");
-                vmMap.put("smartcardEnable", "false");
-                vmMap.put("kvmEnable", "true");
-                vmMap.put("pitReinjection", "false");
                 vmMap.put("devices", vm.getDeviceList());
-                vmMap.put("smp", "1");
-                vmMap.put("vmType", "kvm");
                 vmMap.put("memSize", vm.getMemSize());
-                vmMap.put("displayIp", "0");
-                vmMap.put("clientIp", "");
-                vmMap.put("smpCoresPerSocket", "1");
                 vmMap.put("vmName", vm.getName()); // Fedora17_test1
                 vmMap.put("display", vm.getDisplayType());
-                vmMap.put("nice", "0");
-             }
+            }
+            else {
+                vmMap = map();
+                vmMap.put("status", vm.getStatus().toString()); // Up
+                vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
+            }
 
             statusList.add(vmMap);
         }
@@ -169,7 +154,7 @@ public class VMService extends AbstractService {
 
         return resultMap;
     }
-
+    static private final List VmStatsKeys = Arrays.asList("username fqdn memUage balloonInfo username acpiEnable pid displayIp displayPort session displaySecurePort timeOffset hash pauseCode kvmEnable monitorResponse statsAge elapsedTime vmType cpuSys appsList guestIPs".split(" "));
     public Map getVmStats(String uuid) {
         final Host host = getActiveHost();
 
@@ -180,46 +165,17 @@ public class VMService extends AbstractService {
         VM vm = host.getRunningVMs().get(uuid);
 
         if (vm != null) {
-            Map vmStatMap = map();
+            Map vmStatMap = VMInfoService.getInstance().getFromKeys(VmStatsKeys);
             vmStatMap.put("status", vm.getStatus().toString());
-            vmStatMap.put("memUsage", getRandomNum(2));
-            vmStatMap.put("username", "Unknown");
-            vmStatMap.put("acpiEnable", "true");
-            vmStatMap.put("pid", "29410");
-            vmStatMap.put("displayIp", "0");
-            vmStatMap.put("displayPort", "5900");
-            vmStatMap.put("session", "Unknown");
-            vmStatMap.put("displaySecurePort", "-1");
-            vmStatMap.put("timeOffset", "0");
-            vmStatMap.put("hash", getRandomNum(20)); // 3077163634575265748
-            vmStatMap.put("balloonInfo", getBalloonInfoMap());
-            vmStatMap.put("pauseCode", "NOERR");
-            vmStatMap.put("kvmEnable", "true");
             vmStatMap.put("network", getNetworkStatsMap(vm));
             vmStatMap.put("vmId", vm.getId());
             vmStatMap.put("displayType", vm.getDisplayType());
-            vmStatMap.put("cpuUser", "0." + getRandomNum(2));
             vmStatMap.put("disks", getVMDisksMap(vm));
-            vmStatMap.put("monitorResponse", "0");
-            vmStatMap.put("statsAge", "0.15");
             vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
-            vmStatMap.put("vmType", "kvm");
-            vmStatMap.put("cpuSys", "0." + getRandomNum(2));
-            vmStatMap.put("appsList", lst());
-            vmStatMap.put("guestIPs", ""); // null
-
             statusList.add(vmStatMap);
         }
 
         resultMap.put("statsList", statusList);
-
-        return resultMap;
-    }
-
-    Map getBalloonInfoMap() {
-        Map resultMap = map();
-        resultMap.put("balloon_max", Integer.valueOf(524288));
-        resultMap.put("balloon_cur", Integer.valueOf(524288));
 
         return resultMap;
     }
@@ -394,39 +350,18 @@ public class VMService extends AbstractService {
 
     private Map fillVmStatsMap(VM vm)
     {
-        Map vmStatMap = map();
+        Map vmStatMap = VMInfoService.getInstance().getFromKeys(VmStatsKeys);
         vmStatMap.put("status", vm.getStatus().toString());
-        vmStatMap.put("memUsage", "0");
-        vmStatMap.put("username", "Unknown");
-        vmStatMap.put("acpiEnable", "true");
-        vmStatMap.put("pid", "29410");
-        vmStatMap.put("displayIp", "0");
-        vmStatMap.put("displayPort", "5900");
-        vmStatMap.put("session", "Unknown");
-        vmStatMap.put("displaySecurePort", "-1");
-        vmStatMap.put("timeOffset", "0");
-        vmStatMap.put("hash", getRandomNum(20)); // 3077163634575265748
-        vmStatMap.put("balloonInfo", getBalloonInfoMap());
-        vmStatMap.put("pauseCode", "NOERR");
-        vmStatMap.put("kvmEnable", "true");
         Map network = getNetworkStatsMap(vm);
         if( !network.isEmpty() ) {
             vmStatMap.put("network", network);
         }
         vmStatMap.put("vmId", vm.getId());
-        vmStatMap.put("displayType", "qxl");
-        vmStatMap.put("cpuUser", "0." + getRandomNum(2));
         Map disks = getVMDisksMap(vm);
         if( !disks.isEmpty() ) {
             vmStatMap.put("disks", disks);
         }
-        vmStatMap.put("monitorResponse", "0");
-        vmStatMap.put("statsAge", "0.15");
         vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
-        vmStatMap.put("vmType", "kvm");
-        vmStatMap.put("cpuSys", "0." + getRandomNum(2));
-        vmStatMap.put("appsList", lst());
-        vmStatMap.put("guestIPs", ""); // null
         return vmStatMap;
     }
 

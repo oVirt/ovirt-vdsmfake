@@ -37,6 +37,7 @@ public class AppConfig {
     String logDir;
     String forwardVdsmServer;
     String vdsmPort;
+    String vmConfAndStatsConstants;
     String targetServerUrl; // not set in web.xml
 
     final Set<String> notLoggedMethodSet = new HashSet<String>();
@@ -53,6 +54,7 @@ public class AppConfig {
         logDir = paramMap.get("logDir");
         forwardVdsmServer = paramMap.get("forwardVdsmServer");
         vdsmPort = paramMap.get("vdsmPort");
+        vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
 
         final String notLoggedMethods = paramMap.get("notLoggedMethods");
         // ...
@@ -70,6 +72,10 @@ public class AppConfig {
         if (isProxyActive()) {
             targetServerUrl = getForwardVdsmServer() + ":" + getVdsmPort() + "/";
         }
+    }
+
+    public String getVmConfAndStatsConstants() {
+        return vmConfAndStatsConstants;
     }
 
     public long getConstantDelay() {
