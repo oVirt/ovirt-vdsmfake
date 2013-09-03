@@ -28,6 +28,16 @@
 		<param-value>/var/log/vdsmfake/cache</param-value>
 	</context-param>
 
+    <!-- number of seconds to pass before the value should be updated -->
+    <context-param>
+        <param-name>vmConfAndStatsUpdateIntervals</param-name>
+        <param-value><![CDATA[
+cpuSys=10
+cpuUser=10
+hash=300
+]]></param-value>
+    </context-param>
+
     <context-param>
         <param-name>vmConfAndStatsConstants</param-name>
         <param-value><![CDATA[

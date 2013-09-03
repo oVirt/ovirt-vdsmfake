@@ -75,7 +75,7 @@ public class VMService extends AbstractService {
 
             Map vmMap = null;
             if (fullStatus) {
-                vmMap = VMInfoService.getInstance().getFromKeys(fullListMapKeys);
+                vmMap = VMInfoService.getInstance().getFromKeys(vm, fullListMapKeys);
                 vmMap.put("status", vm.getStatus().toString()); // Up
                 vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
                 Map customMap = vm.getCustomMap();
@@ -166,7 +166,7 @@ public class VMService extends AbstractService {
         VM vm = host.getRunningVMs().get(uuid);
 
         if (vm != null) {
-            Map vmStatMap = VMInfoService.getInstance().getFromKeys(VmStatsKeys);
+            Map vmStatMap = VMInfoService.getInstance().getFromKeys(vm, VmStatsKeys);
             vmStatMap.put("status", vm.getStatus().toString());
             vmStatMap.put("network", getNetworkStatsMap(vm));
             vmStatMap.put("vmId", vm.getId());
@@ -354,7 +354,7 @@ public class VMService extends AbstractService {
 
     private Map fillVmStatsMap(VM vm)
     {
-        Map vmStatMap = VMInfoService.getInstance().getFromKeys(VmStatsKeys);
+        Map vmStatMap = VMInfoService.getInstance().getFromKeys(vm, VmStatsKeys);
         vmStatMap.put("status", vm.getStatus().toString());
         Map network = getNetworkStatsMap(vm);
         if( !network.isEmpty() ) {

@@ -15,12 +15,8 @@
 */
 package org.ovirt.vdsmfake.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 
 import org.ovirt.vdsmfake.domain.Device.DeviceType;
 
@@ -32,6 +28,8 @@ import org.ovirt.vdsmfake.domain.Device.DeviceType;
 public class VM extends BaseObject {
 
     public static final String NONE_STRING = "?";
+    private Map<String, String> randomNumberStore;
+    private Map<String, Long> lastRandomNumberUpdate;
 
     long timeCreated;
 
@@ -41,6 +39,21 @@ public class VM extends BaseObject {
     private static final long serialVersionUID = 931258755382405882L;
 
     Host host;
+
+    public VM() {
+        randomNumberStore = new HashMap<String, String>();
+        lastRandomNumberUpdate = new HashMap<String, Long>();
+    }
+
+    public Map<String, String> getRandomNumberStore()
+    {
+        return randomNumberStore;
+    }
+
+    public Map<String, Long> getLastRandomNumberUpdate()
+    {
+        return lastRandomNumberUpdate;
+    }
 
     public enum VMStatus {
         Unassigned(-1),
