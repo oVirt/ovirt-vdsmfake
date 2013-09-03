@@ -3,12 +3,11 @@ package org.ovirt.vdsmfake.service;
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.domain.VM;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.events.Event;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.StringReader;
+import java.util.*;
 
 /**
  * Author: Vinzenz Feenstra
@@ -18,8 +17,8 @@ import java.util.Map;
 public class VMInfoService extends AbstractService {
     final static VMInfoService instance = new VMInfoService();
 
-    final private Map values = map();
-    final private Map<String, Long> randomValueTimeouts = new HashMap<String, Long>();
+    private Map values = map();
+    private Map<String, Long> randomValueTimeouts = new HashMap<String, Long>();
 
     public static VMInfoService getInstance() {
         return instance;
@@ -28,22 +27,16 @@ public class VMInfoService extends AbstractService {
     public VMInfoService() {
         // vmConfAndStatsConstants
         LoggerFactory.getLogger(VMInfoService.class).info("Logging vmConfAndStatsConstants: ", AppConfig.getInstance().getVmConfAndStatsConstants());
-        for(String value : AppConfig.getInstance().getVmConfAndStatsConstants().split("\n")){
-            String[] keyValuePair = value.trim().split("=", 2);
-            if(keyValuePair.length == 2) {
-                values.put(keyValuePair[0], keyValuePair[1]);
-            }
-            else if(keyValuePair.length == 1) {
-                values.put(keyValuePair[0], "");
+        Yaml y = new Yaml();
+        values = (Map)y.load(AppConfig.getInstance().getVmConfAndStatsConstants());
+        for( Object e: values.keySet() ){
+            if(values.get(e) == null) {
+                values.put(e, "");
             }
         }
-        for(String value : AppConfig.getInstance().getVmConfAndStatsUpdateIntervals().split("\n")){
-            String[] keyValuePair = value.trim().split("=", 2);
-            if(keyValuePair.length == 2) {
-                // Convert the time from string to long (representing seconds) and then convert it into milliseconds
-                // and put it to the map
-                randomValueTimeouts.put(keyValuePair[0], Long.parseLong(keyValuePair[1].trim()) * 1000);
-            }
+        LinkedHashMap timing = (LinkedHashMap)y.load(AppConfig.getInstance().getVmConfAndStatsUpdateIntervals());
+        for( Object e: timing.keySet() ){
+            randomValueTimeouts.put((String) e, (long)(((Integer)timing.get(e)) * 1000));
         }
     }
 
@@ -82,16 +75,13 @@ public class VMInfoService extends AbstractService {
 
     private Map getDynamicValues(VM vm) {
         Map values = map();
-        Map balloonMap = map();
-        balloonMap.put("balloon_max",       Integer.valueOf(524288));
-        balloonMap.put("balloon_cur",       Integer.valueOf(524288));
-        values.put("balloonInfo",           balloonMap);
         values.put("appsList",              lst());
         values.put("cpuSys",                "0." + getRandomNumber(vm, "cpuSys", 2));
         values.put("cpuUser",               "0." + getRandomNumber(vm, "cpuUser", 2));
         values.put("hash",                  getRandomNumber(vm, "hash", 20)); // 3077163634575265748
         return values;
     }
+
     public Map getFromKeys(VM vm, List keys) {
         Map result = map();
         final Map dynamic = getDynamicValues(vm);
