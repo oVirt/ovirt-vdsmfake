@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Collection;
 
+import org.ovirt.vdsmfake.domain.Device;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.VM;
 import org.ovirt.vdsmfake.task.TaskProcessor;
@@ -181,55 +182,58 @@ public class VMService extends AbstractService {
     }
 
     Map getNetworkStatsMap(VM vm) {
+        List<Device> nicDevices = vm.getDevicesByType(Device.DeviceType.NIC);
+
         String macAddress = vm.getMacAddress();
         if( macAddress.equals(VM.NONE_STRING) ) {
             return map();
         }
 
         Map resultMap = map();
+        int count = 0;
+        for(Device device : nicDevices)
+        {
+            Map netStats = map();
 
-        Map netStats = map();
+            netStats.put("txErrors", "0");
+            netStats.put("state", "unknown");
+            netStats.put("macAddr", device.getMacAddr()); // 00:1a:4a:16:01:51
+            netStats.put("name", "vnet0");
+            netStats.put("txDropped", "0");
+            netStats.put("txRate", "0.0");
+            netStats.put("rxErrors", "0");
+            netStats.put("rxRate", "0.0");
+            netStats.put("rxDropped", "0");
 
-        netStats.put("txErrors", "0");
-        netStats.put("state", "unknown");
-        netStats.put("macAddr", vm.getMacAddress()); // 00:1a:4a:16:01:51
-        netStats.put("name", "vnet0");
-        netStats.put("txDropped", "0");
-        netStats.put("txRate", "0.0");
-        netStats.put("rxErrors", "0");
-        netStats.put("rxRate", "0.0");
-        netStats.put("rxDropped", "0");
-
-        resultMap.put("vnet0", netStats);
-
+            resultMap.put("vnet" + Integer.valueOf(count), netStats);
+            ++count;
+        }
         return resultMap;
     }
 
     Map getVMDisksMap(VM vm) {
         Map resultMap = map();
 
-        Map disk1Map = map();
-        Map disk2Map = map();
+        List<Device> diskDevices = vm.getDevicesByType(Device.DeviceType.DISK);
 
-        disk1Map.put("vda", disk1Map);
-        disk1Map.put("hdc", disk2Map);
+        List values = Arrays.asList("a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" "));
+        for(Device disk : diskDevices) {
+            if( values.isEmpty() ) {
+                break;
+            }
+            Map diskMap = map();
+            diskMap.put("readLatency", "0");
+            diskMap.put("apparentsize", "197120");
+            diskMap.put("writeLatency", "0");
+            diskMap.put("imageID", disk.getImageID());
+            diskMap.put("flushLatency", "0");
+            diskMap.put("readRate", "0");
+            diskMap.put("truesize", "139264");
+            diskMap.put("writeRate", "0.00");
 
-        disk1Map.put("readLatency", "0");
-        disk1Map.put("apparentsize", "197120");
-        disk1Map.put("writeLatency", "0");
-        disk1Map.put("imageID", vm.getImageId());
-        disk1Map.put("flushLatency", "0");
-        disk1Map.put("readRate", "0");
-        disk1Map.put("truesize", "139264");
-        disk1Map.put("writeRate", "0.00");
-
-        disk2Map.put("readLatency", "0");
-        disk2Map.put("apparentsize", "0");
-        disk2Map.put("writeLatency", "0");
-        disk2Map.put("flushLatency", "0");
-        disk2Map.put("readRate", "0");
-        disk2Map.put("truesize", "0");
-        disk2Map.put("writeRate", "0.00");
+            resultMap.put("vd" + values.get(0), diskMap);
+            values.remove(0);
+        }
 
         return resultMap;
     }

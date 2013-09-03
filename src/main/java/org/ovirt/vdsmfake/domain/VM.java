@@ -286,10 +286,8 @@ public class VM extends BaseObject {
     }
 
     public String getMacAddress() {
-        for (Device device : devices) {
-            if (device.getDeviceType() == DeviceType.NIC) {
-                return device.getMacAddr();
-            }
+        for (Device device : getDevicesByType(DeviceType.NIC)) {
+            return device.getMacAddr();
         }
         return VM.NONE_STRING;
     }
