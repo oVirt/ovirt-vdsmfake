@@ -81,7 +81,7 @@ public class Api extends AbstractService {
         return vmService.list();
     }
 
-    public Map list(String isFull, List<String> vmIds) {
+    public Map list(boolean isFull, List<String> vmIds) {
         return vmService.list(isFull, vmIds);
     }
 
@@ -115,6 +115,26 @@ public class Api extends AbstractService {
 
     public Map getAllVmStats() {
         return vmService.getAllVmStats();
+    }
+
+    public Map getAllVmRuntimeStats() {
+        return vmService.getAllVmRuntimeStats();
+    }
+
+    public Map getAllVmDeviceStats() {
+        return vmService.getAllVmDeviceStats();
+    }
+
+    public Map getVmStatus(List<String> vmIds) {
+        return vmService.getVmStatus(vmIds);
+    }
+
+    public Map getVmConfInfo(List<String> vmIds) {
+        return vmService.getVmConfInfo(vmIds);
+    }
+
+    public Map getVmGuestDetails(List<String> vmIds) {
+        return vmService.getVmGuestDetails(vmIds);
     }
 
     public Map migrate(Map<String, String> migrationInfo) {

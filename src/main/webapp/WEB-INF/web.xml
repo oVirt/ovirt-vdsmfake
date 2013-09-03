@@ -26,9 +26,56 @@
 	<context-param>
 		<param-name>cacheDir</param-name>
 		<param-value>/var/log/vdsmfake/cache</param-value>
-	</context-param>	
+	</context-param>
 
-	<!-- log request/responses dir -->
+    <!-- number of seconds to pass before the value should be updated -->
+    <context-param>
+        <param-name>vmConfAndStatsUpdateIntervals</param-name>
+        <param-value><![CDATA[
+cpuSys:     10
+cpuUser:    10
+hash:       300
+]]></param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>vmConfAndStatsConstants</param-name>
+        <param-value><![CDATA[
+acpiEnable:             true
+clientIp:
+displayIp:              0
+displayPort:            5902
+displaySecurePort:      -1
+displayType:            qxl
+emulatedMachine:        pc-0.14
+guestIPs:
+username:
+fqdn:
+keyboardLayout:         en-us
+kvmEnable:              true
+memUsage:               0
+monitorResponse:        0
+nicModel:               rtl8139,pv
+nice:                   0
+pauseCode:              NOERR
+pid:                    10294
+pitReinjection:         false
+session:                Unknown
+smartcardEnable:        false
+smp:                    1
+smpCoresPerSocket:      1
+statsAge:               0.15
+timeOffset:             0
+transparentHugePages:   true
+username:               Unknown
+vmType:                 kvm
+balloonInfo:
+    balloon_max:    524288
+    balloon_cur:    524288
+]]></param-value>
+    </context-param>
+
+    <!-- log request/responses dir -->
 	<context-param>
 		<param-name>logDir</param-name>
 		<param-value>/var/log/vdsmfake/xml</param-value>
@@ -37,17 +84,19 @@
     <!-- target server for forwarded requests to VDSM can be overriden here:
            the proxy is activated if this address is set only     
     -->
-	<context-param>
-		<param-name>forwardVdsmServer</param-name>
-		<param-value></param-value> <!-- http://server.example.com  -->
-	</context-param>
+    <!--
+        <context-param>
+            <param-name>forwardVdsmServer</param-name>
+            <param-value>http://server.example.com</param-value>
+        </context-param>
+    -->
 
 	<!-- comma-separated list of not logged methods to VDSM, e.g. getVdsCapabilities,
 	    *..ignore all  
 	-->
 	<context-param>
 		<param-name>notLoggedMethods</param-name>
-		<param-value>list,getVdsHardwareInfo,getVdsCapabilities</param-value> <!-- getVdsCapabilities,list,getVdsStats,getAllVmStats,getVmStats -->
+		<param-value>getVdsHardwareInfo,getVdsCapabilities</param-value> <!-- getVdsCapabilities,list,getVdsStats,getAllVmStats,getVmStats -->
 	</context-param>
 
 	<context-param>

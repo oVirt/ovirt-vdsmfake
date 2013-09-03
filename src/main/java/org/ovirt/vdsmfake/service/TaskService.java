@@ -70,13 +70,13 @@ public class TaskService extends AbstractService {
             Map taskMap = map();
 
             if (!task.isFinished()) {
-                taskMap.put("code", Integer.valueOf(0));
+                taskMap.put("code", "0");
                 taskMap.put("message", "Task is initializing");
                 taskMap.put("taskState", "running");
                 taskMap.put("taskResult", "");
                 taskMap.put("taskID", task.getId());
             } else {
-                taskMap.put("code", Integer.valueOf(0));
+                taskMap.put("code", "0");
                 taskMap.put("message", "1 jobs completed successfully");
                 taskMap.put("taskState", "finished");
                 taskMap.put("taskResult", "success");
