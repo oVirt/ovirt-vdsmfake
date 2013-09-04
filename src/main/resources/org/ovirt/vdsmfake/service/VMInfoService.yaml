@@ -1,0 +1,40 @@
+# number of seconds to pass before the value should be updated
+update-intervals:
+    cpuSys:     10
+    cpuUser:    10
+    hash:       300
+
+# constants to use for VMs
+value-constants:
+    acpiEnable:             true
+    clientIp:
+    displayIp:              0
+    displayPort:            5902
+    displaySecurePort:      -1
+    displayType:            qxl
+    emulatedMachine:        pc-0.14
+    guestIPs:
+    username:
+    fqdn:
+    keyboardLayout:         en-us
+    kvmEnable:              true
+    memUsage:               0
+    monitorResponse:        0
+    nicModel:               rtl8139,pv
+    nice:                   0
+    pauseCode:              NOERR
+    pid:                    10294
+    pitReinjection:         false
+    session:                Unknown
+    smartcardEnable:        false
+    smp:                    1
+    smpCoresPerSocket:      1
+    statsAge:               0.15
+    timeOffset:             0
+    transparentHugePages:   true
+    username:               Unknown
+    vmType:                 kvm
+    balloonInfo:
+        balloon_max:    524288
+        balloon_cur:    524288
+

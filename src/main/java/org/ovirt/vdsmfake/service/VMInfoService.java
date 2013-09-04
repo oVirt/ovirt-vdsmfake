@@ -25,16 +25,15 @@ public class VMInfoService extends AbstractService {
     }
 
     public VMInfoService() {
-        // vmConfAndStatsConstants
-        LoggerFactory.getLogger(VMInfoService.class).info("Logging vmConfAndStatsConstants: ", AppConfig.getInstance().getVmConfAndStatsConstants());
         Yaml y = new Yaml();
-        values = (Map)y.load(AppConfig.getInstance().getVmConfAndStatsConstants());
+        Map m = (Map)y.load(VMInfoService.class.getResourceAsStream("VMInfoService.yaml"));
+        values = (Map)m.get("value-constants");
         for( Object e: values.keySet() ){
             if(values.get(e) == null) {
                 values.put(e, "");
             }
         }
-        LinkedHashMap timing = (LinkedHashMap)y.load(AppConfig.getInstance().getVmConfAndStatsUpdateIntervals());
+        LinkedHashMap timing = (LinkedHashMap)m.get("update-intervals");
         for( Object e: timing.keySet() ){
             randomValueTimeouts.put((String) e, (long)(((Integer)timing.get(e)) * 1000));
         }
