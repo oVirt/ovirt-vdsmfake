@@ -13,6 +13,12 @@ value-constants:
     displaySecurePort:      -1
     displayType:            qxl
     emulatedMachine:        pc-0.14
+    appsList:
+                            - kernel-2.6.18-348.el5
+                            - rhevm-guest-agent-1.0.7-3.el5
+                            - kernel-2.6.18-348.3.1.el5
+                            - xorg-x11-drv-qxl-0.0.12-2.el5
+                            - kernel-2.6.18-348.4.1.el5
     guestIPs:
     username:
     fqdn:

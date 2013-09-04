@@ -1,12 +1,7 @@
 package org.ovirt.vdsmfake.service;
 
-import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.domain.VM;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.events.Event;
-
-import java.io.StringReader;
 import java.util.*;
 
 /**
@@ -74,7 +69,6 @@ public class VMInfoService extends AbstractService {
 
     private Map getDynamicValues(VM vm) {
         Map values = map();
-        values.put("appsList",              lst());
         values.put("cpuSys",                "0." + getRandomNumber(vm, "cpuSys", 2));
         values.put("cpuUser",               "0." + getRandomNumber(vm, "cpuUser", 2));
         values.put("hash",                  getRandomNumber(vm, "hash", 20)); // 3077163634575265748
