@@ -15,6 +15,7 @@
 */
 package org.ovirt.vdsmfake.domain;
 
+
 /**
  *
  *
@@ -119,6 +120,9 @@ public class Device extends BaseObject {
     }
 
     public String getImageID() {
+        if( imageID == null || imageID.isEmpty() ) {
+            return "00000000-0000-0000-0000-000000000000";
+        }
         return imageID;
     }
 

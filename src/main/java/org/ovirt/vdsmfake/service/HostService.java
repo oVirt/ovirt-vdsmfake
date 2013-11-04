@@ -283,6 +283,7 @@ public class HostService extends AbstractService {
         resultList.add("3.0");
         resultList.add("3.1");
         resultList.add("3.2");
+        resultList.add("3.3");
 
         return resultList;
     }
@@ -292,6 +293,7 @@ public class HostService extends AbstractService {
         resultList.add("3.0");
         resultList.add("3.1");
         resultList.add("3.2");
+        resultList.add("3.3");
 
         return resultList;
     }
@@ -323,6 +325,8 @@ public class HostService extends AbstractService {
         resultList.add("pc-0.14");
         resultList.add("pc-0.15");
         resultList.add("pc-1.0");
+        resultList.add("pc-1.0");
+        resultList.add("rhel6.4.0");
         resultList.add("pc");
         resultList.add("isapc");
 

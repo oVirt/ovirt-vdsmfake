@@ -15,11 +15,7 @@
 */
 package org.ovirt.vdsmfake.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
 
 import org.ovirt.vdsmfake.domain.Device;
 import org.ovirt.vdsmfake.domain.Host;
@@ -216,7 +212,10 @@ public class VMService extends AbstractService {
 
         List<Device> diskDevices = vm.getDevicesByType(Device.DeviceType.DISK);
 
-        List values = Arrays.asList("a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" "));
+        List values_ = Arrays.asList("a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" "));
+        LinkedList<String> values = new LinkedList<String>();
+        values.addAll(values_);
+
         for(Device disk : diskDevices) {
             if( values.isEmpty() ) {
                 break;
