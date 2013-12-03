@@ -6,11 +6,11 @@ update-intervals:
 
 # constants to use for VMs
 value-constants:
-    acpiEnable:             true
+    acpiEnable:             'true'
     clientIp:
-    displayIp:              0
-    displayPort:            5902
-    displaySecurePort:      -1
+    displayIp:              '0'
+    displayPort:            '5902'
+    displaySecurePort:      '-1'
     displayType:            qxl
     emulatedMachine:        pc-0.14
     appsList:
@@ -23,24 +23,24 @@ value-constants:
     username:
     fqdn:
     keyboardLayout:         en-us
-    kvmEnable:              true
-    memUsage:               0
-    monitorResponse:        0
+    kvmEnable:              'true'
+    memUsage:               '0'
+    monitorResponse:        '0'
     nicModel:               rtl8139,pv
-    nice:                   0
+    nice:                   '0'
     pauseCode:              NOERR
-    pid:                    10294
-    pitReinjection:         false
+    pid:                    '10294'
+    pitReinjection:         'false'
     session:                Unknown
-    smartcardEnable:        false
-    smp:                    1
-    smpCoresPerSocket:      1
-    statsAge:               0.15
-    timeOffset:             0
-    transparentHugePages:   true
+    smartcardEnable:        'false'
+    smp:                    '1'
+    smpCoresPerSocket:      '1'
+    statsAge:               '0.15'
+    timeOffset:             '0'
+    transparentHugePages:   'true'
     username:               Unknown
     vmType:                 kvm
     balloonInfo:
-        balloon_max:    524288
-        balloon_cur:    524288
+        balloon_max:    '524288'
+        balloon_cur:    '524288'
 
