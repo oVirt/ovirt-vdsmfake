@@ -52,7 +52,8 @@ public class AppConfig {
         randomDelay = getLong(paramMap.get("randomDelay"));
         networkBridgeName = paramMap.get("networkBridgeName");
         cacheDir = paramMap.get("cacheDir");
-        logDir = paramMap.get("logDir");
+        // Each run will store its logs separately
+        logDir = paramMap.get("logDir") + "/" + System.currentTimeMillis();
         forwardVdsmServer = paramMap.get("forwardVdsmServer");
         vdsmPort = paramMap.get("vdsmPort");
         vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
