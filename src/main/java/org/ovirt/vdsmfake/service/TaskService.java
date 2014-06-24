@@ -47,12 +47,14 @@ public class TaskService extends AbstractService {
             resultMap.put("code", Integer.valueOf(0));
             resultMap.put("message", "Task is initializing");
             resultMap.put("taskState", "running");
+            resultMap.put("taskStatus", "running");
             resultMap.put("taskResult", "");
             resultMap.put("taskID", taskUUID);
         } else {
             resultMap.put("code", Integer.valueOf(0));
             resultMap.put("message", "1 jobs completed successfully");
             resultMap.put("taskState", "finished");
+            resultMap.put("taskStatus", "finished");
             resultMap.put("taskResult", "success");
             resultMap.put("taskID", taskUUID);
         }
@@ -73,12 +75,14 @@ public class TaskService extends AbstractService {
                 taskMap.put("code", "0");
                 taskMap.put("message", "Task is initializing");
                 taskMap.put("taskState", "running");
+                taskMap.put("taskStatus", "running");
                 taskMap.put("taskResult", "");
                 taskMap.put("taskID", task.getId());
             } else {
                 taskMap.put("code", "0");
                 taskMap.put("message", "1 jobs completed successfully");
                 taskMap.put("taskState", "finished");
+                taskMap.put("taskStatus", "finished");
                 taskMap.put("taskResult", "success");
                 taskMap.put("taskID", task.getId());
             }

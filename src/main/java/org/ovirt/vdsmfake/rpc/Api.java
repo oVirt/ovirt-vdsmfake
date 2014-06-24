@@ -15,6 +15,7 @@
 */
 package org.ovirt.vdsmfake.rpc;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -240,6 +241,11 @@ public class Api extends AbstractService {
 
     public Map connectStoragePool(String spUUID, int hostSpmId, String SCSIKey, String masterdomainId,
             int masterVersion) {
+        return storageService.connectStoragePool(spUUID, hostSpmId, SCSIKey, masterdomainId, masterVersion);
+    }
+
+    public Map connectStoragePool(String spUUID, int hostSpmId, String SCSIKey, String masterdomainId,
+            int masterVersion, Map data) {
         return storageService.connectStoragePool(spUUID, hostSpmId, SCSIKey, masterdomainId, masterVersion);
     }
 
@@ -718,6 +724,10 @@ public class Api extends AbstractService {
 
     public Map getFileList(String spUUID) {
         return storageService.getFileList(spUUID);
+    }
+
+    public Map setMOMPolicyParameters(Map data) {
+        return getOKStatusNotImplemented();
     }
 
 }

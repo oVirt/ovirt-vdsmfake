@@ -15,6 +15,8 @@
 */
 package org.ovirt.vdsmfake.service;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +82,9 @@ public class HostService extends AbstractService {
             infoMap.put("emulatedMachines", getEmulatedMachinesList());
             infoMap.put("operatingSystem", getOperatingSystemMap());
             infoMap.put("lastClient", "10.36.6.76");
+            infoMap.put("rngSources", Arrays.asList(new String[] { "RANDOM" }));
+            infoMap.put("selinux", getSELinux());
+            infoMap.put("kdumpStatus", "1");
 
             resultMap.put("info", infoMap);
 
@@ -88,6 +93,12 @@ public class HostService extends AbstractService {
             throw error(e);
         }
 
+    }
+
+    private Object getSELinux() {
+        Map seLinuxMap = map();
+        seLinuxMap.put("mode", "1");
+        return seLinuxMap;
     }
 
     private Map getHBAInventoryMap() {
@@ -284,6 +295,8 @@ public class HostService extends AbstractService {
         resultList.add("3.1");
         resultList.add("3.2");
         resultList.add("3.3");
+        resultList.add("3.4");
+        resultList.add("3.5");
 
         return resultList;
     }
@@ -294,6 +307,8 @@ public class HostService extends AbstractService {
         resultList.add("3.1");
         resultList.add("3.2");
         resultList.add("3.3");
+        resultList.add("3.4");
+        resultList.add("3.5");
 
         return resultList;
     }
@@ -504,5 +519,4 @@ public class HostService extends AbstractService {
     private String getNetworkBridgeName() {
         return AppConfig.getInstance().getNetworkBridgeName();
     }
-
 }
