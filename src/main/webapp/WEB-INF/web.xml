@@ -57,6 +57,12 @@
 		<param-value>54321</param-value>
 	</context-param>
 
+    <!--  json listen port -->
+	<context-param>
+		<param-name>jsonListenPort</param-name>
+		<param-value>54322</param-value>
+	</context-param>
+
 	<filter>
 		<filter-name>XmlRpcFilter</filter-name>
 		<filter-class>org.ovirt.vdsmfake.servlet.XmlRpcFilter</filter-class>

@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.ovirt.vdsmfake.rpc.json.JsonRpcServer;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class AppLifecycleListener implements ServletContextListener {
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.destroy();
+        JsonRpcServer.shutdown();
     }
 
     @Override
@@ -63,6 +65,14 @@ public class AppLifecycleListener implements ServletContextListener {
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.init();
+
+        // if json is configured - start the json listener
+        if (paramMap.containsKey("jsonListenPort")) {
+            int jsonPort = Integer.parseInt(paramMap.get("jsonListenPort"));
+            JsonRpcServer server = new JsonRpcServer(jsonPort);
+            server.start();
+        }
+
     }
 
 }

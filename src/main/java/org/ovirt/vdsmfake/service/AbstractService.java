@@ -40,7 +40,7 @@ public abstract class AbstractService {
     final static String ERROR = "Error";
     protected Logger log = LoggerFactory.getLogger(AbstractService.class);
 
-    public Map getStatusMap(String message, int code) {
+    public static Map getStatusMap(String message, int code) {
         Map resultMap = new HashMap();
 
         Map statusMap = new HashMap();
