@@ -63,6 +63,13 @@
 		<param-value>54322</param-value>
 	</context-param>
 
+	<!--  secured JSON communication -->
+	<context-param>
+		<param-name>jsonSecured</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+
 	<filter>
 		<filter-name>XmlRpcFilter</filter-name>
 		<filter-class>org.ovirt.vdsmfake.servlet.XmlRpcFilter</filter-class>
@@ -82,7 +89,7 @@
 		<servlet-class>org.ovirt.vdsmfake.servlet.XmlRpcServlet</servlet-class>
 		<init-param>
 			<param-name>enabledForExtensions</param-name>
-			<param-value>false</param-value>
+			<param-value>true</param-value>
 			<description>
 				Sets, whether the servlet supports vendor extensions for XML-RPC.
 			</description>

@@ -13,7 +13,14 @@ public class FakeVDSM {
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.init();
 
-        JsonRpcServer server = new JsonRpcServer(54322);
+        boolean encrypted = false;
+
+        String encryptedProp = System.getProperty("fake.encrypted");
+        if (encryptedProp != null) {
+            encrypted = true;
+        }
+
+        JsonRpcServer server = new JsonRpcServer(54322, encrypted);
         server.start();
         while (true) {
             Thread.sleep(1000);

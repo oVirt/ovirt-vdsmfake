@@ -327,8 +327,10 @@ public class StorageService extends AbstractService {
 
             final DataCenter dataCenter = getDataCenterById(spUUID);
             final StorageDomain storageDomain = dataCenter.getStorageDomainMap().get(sdUUID);
-            storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
-            updateStorageDomain(storageDomain);
+            if (storageDomain != null) {
+                storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
+                updateStorageDomain(storageDomain);
+            }
 
             return getOKStatus();
         } catch (Exception e) {

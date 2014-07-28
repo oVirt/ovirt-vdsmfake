@@ -23,16 +23,32 @@ public class JsonRpcServer {
     private final static int TIMEOUT = 5000;
     private static ReactorListener listener;
     private int jsonPort;
+    private boolean encrypted;
 
-    public JsonRpcServer(int jsonPort) {
+    public JsonRpcServer(int jsonPort, boolean encrypted) {
         this.jsonPort = jsonPort;
+        this.encrypted = encrypted;
     }
 
     public void start() {
         try {
-            String hostName = "localhost";
+
+            String hostName = System.getProperty("fake.host");
+
+            if (hostName == null) {
+                hostName = "localhost";
+            }
+
             log.debug("Opening a Stomp server " + hostName + ":" + jsonPort);
-            Reactor reactor = ReactorFactory.getReactor(null, ReactorType.STOMP);
+            Reactor reactor;
+
+            if (!encrypted) {
+                reactor = ReactorFactory.getReactor(null, ReactorType.STOMP);
+            } else {
+                reactor = ReactorFactory.getReactor(new FakeVDSMSSLProvider(System.getProperty("fake.keystore"),
+                        System.getProperty("fake.truststore"), "changeit", null), ReactorType.STOMP);
+            }
+
             final Future<ReactorListener> futureListener =
                     reactor.createListener(hostName, jsonPort, new ReactorListener.EventListener() {
 

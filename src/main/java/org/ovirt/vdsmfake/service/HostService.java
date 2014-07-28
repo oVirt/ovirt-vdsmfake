@@ -332,9 +332,9 @@ public class HostService extends AbstractService {
     }
 
     public List getEmulatedMachinesList() {
+        // List resultList = lst();
         List resultList = lst();
-        resultList.add("pc-0.10");
-        resultList.add("pc-0.11");
+        resultList.add("vdsmfake");
         resultList.add("pc-0.12");
         resultList.add("pc-0.13");
         resultList.add("pc-0.14");

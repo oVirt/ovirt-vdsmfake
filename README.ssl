@@ -1,0 +1,18 @@
+To configure Tomcat for SSL, execute the following commands:
+1. Create a PKCS12 certificate.
+Run the following utility:
+ovirt.git/packaging/bin/pki-enroll-pkcs12.sh --name=<<name>> --password=<<password>> --subject="/C=us/O=ACME/OU=People/CN=Dummy"
+
+2. Install the generated certificate in Tomcat.
+Open TOMCAT/conf/server.xml
+Remove the remark on the SSL connector and change its port (54321 is the VDSM default port, but anyone can be set. See vds_static table in postgres).
+Add the following attributes to the SSL connector:
+keystoreFile="<<GENERATED_FILE_LOCATION>>" keystorePass="<<password>>" keystoreType="PKCS12"
+
+3. Start tomcat
+
+To configure JSON for SSL, execute the following commands:
+1. vi TOMCAT/bin/setenv.sh (if needed, create this file and chmod +x it)
+Add the following line:
+JAVA_OPTS="$JAVA_OPTS -Dfake.host= -Dfake.truststore= -Dfake.keystore=
+2. Edit your web.xml file and set "jsonSecured" to "true"
