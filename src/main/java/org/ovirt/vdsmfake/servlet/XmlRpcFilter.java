@@ -47,6 +47,7 @@ public class XmlRpcFilter implements Filter {
     static final String METHOD_CALL_NS = "api";
 
     private static final Logger log = LoggerFactory.getLogger(XmlRpcFilter.class);
+    private static final Logger communicationLog = LoggerFactory.getLogger("org.ovirt.vdsmfake.communication");
 
     private static AtomicInteger logCounter = new AtomicInteger();
 
@@ -108,8 +109,12 @@ public class XmlRpcFilter implements Filter {
             if (conf.isLogDirSet() && conf.isMethodLoggingEnabled(methodName)) {
                 int fIndex = logCounter.incrementAndGet();
 
-                FileUtils.writeByteArrayToFile(new File(conf.getLogDir(), getPrefix(fIndex) + "_req_" + methodName), wrapper.getInputStreamData());
-                FileUtils.writeByteArrayToFile(new File(conf.getLogDir(), getPrefix(fIndex) + "_res_" + methodName), responseWrapper.getOutputStreamData());
+                if (communicationLog.isDebugEnabled()) {
+                    communicationLog.info(
+                            (getPrefix(fIndex) + "_req_" + methodName), wrapper.getInputStreamData());
+                    communicationLog.info(
+                            (getPrefix(fIndex) + "_res_" + methodName), responseWrapper.getOutputStreamData());
+                }
             }
 
             // write response

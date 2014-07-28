@@ -17,10 +17,23 @@
             <param name="ConversionPattern" value="%d [%t] %-5p - %m %n" />
         </layout>
     </appender>
+    <appender name="COMMUNICATION" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="/var/log/vdsmfake/communication.log" />
+        <param name="MaxFileSize" value="5MB" />
+        <param name="Encoding" value="UTF-8" />
+        <param name="MaxBackupIndex" value="1000" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p - %m %n" />
+        </layout>
+    </appender>
     <logger name="org.ovirt" additivity="false">
         <level value="debug" />
         <appender-ref ref="APP" />
         <appender-ref ref="SYSTEMOUT" />
+    </logger>
+    <logger name="org.ovirt.vdsmfake.communication" additivity="false">
+        <level value="info" />
+        <appender-ref ref="COMMUNICATION" />
     </logger>
     <logger name="org.mortbay" additivity="false">
         <level value="debug" />
