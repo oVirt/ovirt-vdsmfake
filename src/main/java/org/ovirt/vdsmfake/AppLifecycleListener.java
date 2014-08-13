@@ -70,7 +70,8 @@ public class AppLifecycleListener implements ServletContextListener {
         if (paramMap.containsKey("jsonListenPort")) {
             int jsonPort = Integer.parseInt(paramMap.get("jsonListenPort"));
             boolean encrypted = Boolean.parseBoolean(paramMap.get("jsonSecured"));
-            JsonRpcServer server = new JsonRpcServer(jsonPort, encrypted);
+            String hostName = paramMap.get("jsonHost");
+            JsonRpcServer server = new JsonRpcServer(hostName, jsonPort, encrypted);
             server.start();
         }
 

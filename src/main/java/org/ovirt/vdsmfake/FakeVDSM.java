@@ -20,7 +20,7 @@ public class FakeVDSM {
             encrypted = true;
         }
 
-        JsonRpcServer server = new JsonRpcServer(54322, encrypted);
+        JsonRpcServer server = new JsonRpcServer("localhost", 54322, encrypted);
         server.start();
         while (true) {
             Thread.sleep(1000);

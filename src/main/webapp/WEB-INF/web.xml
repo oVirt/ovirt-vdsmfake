@@ -69,6 +69,11 @@
 		<param-value>false</param-value>
 	</context-param>
 
+	<!--  host that json listens to -->
+	<context-param>
+		<param-name>jsonHost</param-name>
+		<param-value>localhost</param-value>
+	</context-param>
 
 	<filter>
 		<filter-name>XmlRpcFilter</filter-name>
