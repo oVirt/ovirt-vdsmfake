@@ -5,19 +5,20 @@
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
 
-           http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 package org.ovirt.vdsmfake.domain;
 
 import java.sql.Timestamp;
 import java.util.*;
 
+import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device.DeviceType;
 
 /**
@@ -30,6 +31,8 @@ public class VM extends BaseObject {
     public static final String NONE_STRING = "?";
     private Map<String, String> randomNumberStore;
     private Map<String, Long> lastRandomNumberUpdate;
+    private String ip = NONE_STRING;
+
 
     long timeCreated;
 
@@ -138,9 +141,18 @@ public class VM extends BaseObject {
         vm.setMemSize(memSize);
         vm.setCpuType(cpuType);
         vm.setCustomMap(customMap);
+        vm.setIp(Utils.ipGenerator());
         vm.getDevices().addAll(getDevices());
 
         return vm;
+    }
+
+    public String getIp() {
+        return this.ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public int getMemSize() {

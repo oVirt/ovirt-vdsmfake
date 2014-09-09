@@ -5,22 +5,20 @@
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
 
-           http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 package org.ovirt.vdsmfake.service;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.DataCenter;
@@ -35,22 +33,38 @@ import org.slf4j.LoggerFactory;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public abstract class AbstractService {
+public abstract class AbstractService{
 
     final static String ERROR = "Error";
+    public long constantDelay;
+    public long randomDelay;
     protected Logger log = LoggerFactory.getLogger(AbstractService.class);
 
+
+    public static Map getStatusMap(String message, int code) {
+
+        Map<String, Object> resultMap = new HashMap();
+        Map<String, Object> statusMap = new HashMap();
+
+        statusMap.put("message", message);
+        statusMap.put("code", Integer.valueOf(code));
+
+        resultMap.put("status", statusMap);
+
+        return resultMap;
+    }
+
     public Map getOKStatus() {
-        return ResultCodes.OK.newMap();
+        return getStatusMap("OK", 0);
     }
 
     public Map getOKStatusNotImplemented() {
         log.warn("The method is not fully implemented!", new Exception());
-        return ResultCodes.OK.newMap();
+        return getStatusMap("OK", 0);
     }
 
     public Map getDoneStatus() {
-        return ResultCodes.DONE.newMap();
+        return getStatusMap("Done", 0);
     }
 
     public Map map() {
@@ -113,4 +127,5 @@ public abstract class AbstractService {
     public String getRandomNum(int length) {
         return Utils.getRandomNum(length);
     }
+
 }

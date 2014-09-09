@@ -5,25 +5,28 @@
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
 
-           http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 package org.ovirt.vdsmfake.service;
 
 import java.util.*;
 
+
+import org.ovirt.vdsmfake.AppConfig;
+import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.VM;
+import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;
-
 /**
  *
  *
@@ -139,40 +142,69 @@ public class VMService extends AbstractService {
         // plan next status task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_FROM_VM_REMOVE_FROM_HOST, 20000l, vm));
 
+        Map<String, Object> resultMap = map();
+
+        Map statusMap = map();
+        statusMap.put("message", success ? "Migration process starting" : "VM not found");
+        statusMap.put("code", (success ? "0" : "100"));
+
+        resultMap.put("status", statusMap);
+
         log.info("Migrating VM {} from host: {} to: {}", new Object[] { vm.getId(), vm.getHost().getName(), targetHost.getName() });
-        return success ? ResultCodes.MIGRATION_STARTING.map() : ResultCodes.VM_NOT_FOUND.map();
+
+        return resultMap;
     }
-    static private final List VmStatsKeys = Arrays.asList("username fqdn memUage balloonInfo username acpiEnable pid displayIp displayPort session displaySecurePort timeOffset hash pauseCode kvmEnable monitorResponse statsAge elapsedTime vmType cpuSys appsList guestIPs".split(" "));
+    private final static List VmStatsKeys = Arrays.asList("username fqdn memUage balloonInfo username acpiEnable pid displayIp displayPort session displaySecurePort timeOffset hash pauseCode kvmEnable monitorResponse statsAge elapsedTime vmType cpuSys appsList guestIPs".split(" "));
     public Map getVmStats(String uuid) {
+
         final Host host = getActiveHost();
-
         Map resultMap = getDoneStatus();
-
         List statusList = new ArrayList();
 
         VM vm = host.getRunningVMs().get(uuid);
-
-        if (vm != null) {
-            Map vmStatMap = VMInfoService.getInstance().getFromKeys(vm, VmStatsKeys);
-            vmStatMap.put("status", vm.getStatus().toString());
-            vmStatMap.put("network", getNetworkStatsMap(vm));
-            vmStatMap.put("vmId", vm.getId());
-            vmStatMap.put("displayType", vm.getDisplayType());
-            vmStatMap.put("disks", getVMDisksMap(vm));
-            vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
-            statusList.add(vmStatMap);
+        if (vm != null){
+            statusList.add(fillVmStatsMap(vm));
         }
 
         resultMap.put("statsList", statusList);
 
+        Utils.getLatency();
+
         return resultMap;
     }
 
+    List getNetworkInterfaces(VM vm){
+
+        Map resultMap = map();
+        List net = new ArrayList();
+        List<Device> nicDevices = vm.getDevicesByType(Device.DeviceType.NIC);
+        for (Device device: nicDevices){
+
+            List templist =  new ArrayList();
+            List templist2 =  new ArrayList();
+            //TODO: change some hardcodeed fileds.
+            templist.add("fe80::21a:4aff:fe62:8900");
+            resultMap.put("inet6", templist);
+            resultMap.put("hw", device.getMacAddr());
+
+            templist2.add(vm.getIp());
+            resultMap.put("inet", templist2);
+            resultMap.put("name", "eth0");
+
+            net.add(resultMap);
+
+        }
+        log.debug("network list is {}", net.toString());
+        return net;
+    }
+
     Map getNetworkStatsMap(VM vm) {
+
         List<Device> nicDevices = vm.getDevicesByType(Device.DeviceType.NIC);
 
         String macAddress = vm.getMacAddress();
         if( macAddress.equals(VM.NONE_STRING) ) {
+            log.debug("no mac address for vm {}", vm.getId());
             return map();
         }
 
@@ -181,18 +213,21 @@ public class VMService extends AbstractService {
         for(Device device : nicDevices)
         {
             Map netStats = map();
+            String dName = "vnet" + Integer.valueOf(count);
 
+            //TODO: change hardcoded fileds.
             netStats.put("txErrors", "0");
             netStats.put("state", "unknown");
-            netStats.put("macAddr", device.getMacAddr()); // 00:1a:4a:16:01:51
-            netStats.put("name", "vnet0");
+            netStats.put("macAddr", vm.getMacAddress()); // 00:1a:4a:16:01:51
+            netStats.put("name", dName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", "0.0");
+            netStats.put("txRate", "7.0");
             netStats.put("rxErrors", "0");
-            netStats.put("rxRate", "0.0");
+            netStats.put("rxRate", "7.0");
             netStats.put("rxDropped", "0");
+            netStats.put("speed", "999");
 
-            resultMap.put("vnet" + Integer.valueOf(count), netStats);
+            resultMap.put(dName, netStats);
             ++count;
         }
         return resultMap;
@@ -344,18 +379,110 @@ public class VMService extends AbstractService {
 
     private Map fillVmStatsMap(VM vm)
     {
+        AppConfig appConfig = AppConfig.getInstance();
         Map vmStatMap = VMInfoService.getInstance().getFromKeys(vm, VmStatsKeys);
         vmStatMap.put("status", vm.getStatus().toString());
+
+        // ip validation if no exist set ip, for vms which already registered in the setup
+        if (vm.getIp() == null || vm.getIp().equals("0.0.0.0") || vm.getIp().isEmpty() || vm.getIp().equals("?")){
+            vm.setIp(Utils.ipGenerator());
+        }
+
+        //missing data
+        Map dis = map();
+        ArrayList display = new ArrayList();
+        dis.put("tlsPort", "5900");
+        dis.put("ipAddress", vm.getIp());
+        dis.put("type", "spice");
+        dis.put("port", "-1");
+        display.add(dis);
+        vmStatMap.put("displayInfo", display);
+
+        vmStatMap.put("pid", "1111");
+        vmStatMap.put("session", "Unknown");
+        vmStatMap.put("timeOffset", "0");
+        vmStatMap.put("pauseCode", "NOERR");
+
+        Map ballon = map();
+        //TODO: compute 10% from the actual mem for ballooning.
+        ballon.put("balloon_max", "2048");
+        ballon.put("balloon_min", "1024");
+        ballon.put("balloon_target", "2048");
+        ballon.put("balloon_cur", "512");
+
+        vmStatMap.put("balloonInfo", ballon);
+
+        vmStatMap.put("guestIPs", vm.getIp());
+        vmStatMap.put("guestName", "localhost.localdomain");
+        vmStatMap.put("guestFQDN", "localhost.localdomain");
+        vmStatMap.put("guestOs", " 2.6.32-504.1.3.el6.x86_64");
+        vmStatMap.put("guestCPUCount", "-1");
+
+        //cpu
+        vmStatMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoadValues()));
+        vmStatMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoadValues()));
+        vmStatMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoadValues()));
+
+        //memory
+        vmStatMap.put("memUsage", Utils.rangeParsser(appConfig.getMemLoadValues()));
+
+
+        //network
+        vmStatMap.put("netIfaces", getNetworkInterfaces(vm));
         Map network = getNetworkStatsMap(vm);
         if( !network.isEmpty() ) {
             vmStatMap.put("network", network);
         }
-        vmStatMap.put("vmId", vm.getId());
+
         Map disks = getVMDisksMap(vm);
         if( !disks.isEmpty() ) {
             vmStatMap.put("disks", disks);
         }
         vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
+
+
+        vmStatMap.put("vcpuCount", "1");
+        vmStatMap.put("clientIp", "");
+        vmStatMap.put("hash", Integer.toString(vm.hashCode()));
+        vmStatMap.put("vmType", "kvm");
+        vmStatMap.put("vmId", vm.getId());
+        vmStatMap.put("displayIp", vm.getIp());
+        vmStatMap.put("vcpuPeriod", 100000);
+        vmStatMap.put("displayPort", "-1");
+        vmStatMap.put("vcpuQuota", "-1");
+        vmStatMap.put("kvmEnable", "true");
+        vmStatMap.put("monitorResponse", "0");
+        vmStatMap.put("statsAge", "2.46");
+        vmStatMap.put("username", "None");
+        vmStatMap.put("lastLogin", 1426169218.410367);
+        ArrayList emptylist = new ArrayList();
+        vmStatMap.put("ioTune", emptylist);
+        vmStatMap.put("displaySecurePort", "5900");
+        vmStatMap.put("vmJobs", map());
+
+        Map memstats = map();
+        if (!vmStatMap.get("memUsage").toString().isEmpty()) {
+            memstats.put("swap_out", "0");
+            memstats.put("majflt", "0");
+            memstats.put("swap_usage", "0");
+            memstats.put("swap_total", "0");
+            memstats.put("swap_in", "0");
+            memstats.put("mem_free", Integer.toString(vm.getMemSize() - Integer.valueOf(vmStatMap.get("memUsage").toString())));
+            memstats.put("pageflt", "131");
+            memstats.put("mem_total", Integer.toString(vm.getMemSize()));
+            memstats.put("mem_unused", memstats.get("mem_free"));
+
+            vmStatMap.put("memoryStats", memstats);
+        }
+
+        //adding app list
+        ArrayList applist = new ArrayList();
+        applist.add("kernel-2.6.32-431.el6");
+        applist.add("rhevm-guest-agent-common-1.0.9-1.el6ev");
+        vmStatMap.put("appsList", applist);
+
+        vmStatMap.put("displayType", "qxl");
+
         return vmStatMap;
     }
 
@@ -369,6 +496,10 @@ public class VMService extends AbstractService {
         List statusList = new ArrayList();
 
         for (VM vm : host.getRunningVMs().values()) {
+            VdsmManager vdsmManager = VdsmManager.getInstance();
+            if (!vdsmManager.allRunningVms.contains(vm.getId())){
+                vdsmManager.allRunningVms.add(vm.getId());
+            }
             statusList.add(fillVmStatsMap(vm));
         }
 
@@ -390,13 +521,23 @@ public class VMService extends AbstractService {
 
         vm.setStatus(VM.VMStatus.PoweringDown);
 
+        Map resultMap = map();
+
         // add async task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
 
-        return ResultCodes.MACHINE_DESTROYED.map();
+        Map statusMap = map();
+        statusMap.put("message", "Machine destroyed");
+        statusMap.put("code", "0");
+
+        resultMap.put("status", statusMap);
+
+        return resultMap;
     }
 
     public Map shutdown(String vmId, String timeout, String message) {
+        final Map resultMap = getStatusMap("Machine shut down", 0);
+
         final VM vm = getActiveHost().getRunningVMs().get(vmId);
         if (vm != null) {
             vm.setStatus(VM.VMStatus.PoweringDown);
@@ -405,7 +546,7 @@ public class VMService extends AbstractService {
         // add asynch task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
 
-        return ResultCodes.MACHINE_SHUTDOWN.map();
+        return resultMap;
     }
 
     public Map create(Map vmParams) {
@@ -420,6 +561,8 @@ public class VMService extends AbstractService {
             vm.setName((String) vmParams.get("vmName"));
             vm.setCpuType((String) vmParams.get("cpuType"));
             vm.setHost(host);
+            vm.setIp(Utils.ipGenerator());
+
 
             Integer memSize = 0;
             Object boxedMemSize = vmParams.get("memSize");
@@ -456,7 +599,7 @@ public class VMService extends AbstractService {
             vmParams.put("status", vm.getStatus().toString()); // WaitForLaunch
             resultMap.put("vmList", vmParams);
 
-            log.info("VM {} created on host {}", vmId, host.getName());
+            log.debug("VM {} created on host {}", vmId, host.getName());
 
             return resultMap;
         } catch (Exception e) {

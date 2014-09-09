@@ -21,7 +21,37 @@
 		<param-name>randomDelay</param-name>
 		<param-value>0</param-value>
 	</context-param>
-	
+
+	<!-- minimum delay in ms -->
+	<context-param>
+		<param-name>delayMinimum</param-name>
+		<param-value>0</param-value>
+	</context-param>
+
+	<!-- storage latency in ms -->
+	<context-param>
+		<param-name>storageDelay</param-name>
+		<param-value>10,100</param-value>
+	</context-param>
+
+	<!-- network load in percentage e.g 10,15-->
+	<context-param>
+		<param-name>networkLoad</param-name>
+		<param-value>10,15</param-value>
+	</context-param>
+
+	<!-- CPU load in percentage e.g 10,15-->
+	<context-param>
+		<param-name>cpuLoad</param-name>
+		<param-value>10,20</param-value>
+	</context-param>
+
+	<!-- memory load in percentage e.g 10,15-->
+	<context-param>
+		<param-name>memLoad</param-name>
+		<param-value>5,10</param-value>
+	</context-param>
+
 	<!-- store/load object to/from this directory -->
 	<context-param>
 		<param-name>cacheDir</param-name>
@@ -66,7 +96,7 @@
 	<!--  secured JSON communication -->
 	<context-param>
 		<param-name>jsonSecured</param-name>
-		<param-value>false</param-value>
+		<param-value>true</param-value>
 	</context-param>
 
 	<!--  host that json listens to -->

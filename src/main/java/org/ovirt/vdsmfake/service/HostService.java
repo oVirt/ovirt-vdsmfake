@@ -5,22 +5,22 @@
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
 
-           http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 package org.ovirt.vdsmfake.service;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.vdsmfake.AppConfig;
+import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
@@ -59,7 +59,7 @@ public class HostService extends AbstractService {
             infoMap.put("networks", getNetworksMap(host));
             infoMap.put("bridges", getBridgesMap(host));
             infoMap.put("uuid", host.getUuid() + "_80:" + host.getMacAddress()); // 018CE76D-8EFE-D511-B30D-80C16E727330_80:c1:6e:6c:51:54
-            infoMap.put("lastClientIface", getNetworkBridgeName());
+            infoMap.put("lastClientIface", AppConfig.getInstance().getNetworkBridgeName());
             infoMap.put("nics", getNicsMap(host));
             infoMap.put("software_revision", "0.141");
             infoMap.put("clusterLevels", getClusterLevelsList());
@@ -185,13 +185,13 @@ public class HostService extends AbstractService {
         Map resultMap = map();
 
         Map ovirtmgmtMap = map();
-        resultMap.put(getNetworkBridgeName(), ovirtmgmtMap);
+        resultMap.put(AppConfig.getInstance().getNetworkBridgeName(), ovirtmgmtMap);
 
-        ovirtmgmtMap.put("iface", getNetworkBridgeName());
+        ovirtmgmtMap.put("iface", AppConfig.getInstance().getNetworkBridgeName());
         ovirtmgmtMap.put("addr", host.getIpAddress()); // 10.34.63.177
 
         Map cfgMap = map();
-        cfgMap.put("DEVICE", getNetworkBridgeName());
+        cfgMap.put("DEVICE", AppConfig.getInstance().getNetworkBridgeName());
         cfgMap.put("DELAY", "0");
         cfgMap.put("BOOTPROTO", "dhcp");
         cfgMap.put("TYPE", "Ethernet");
@@ -215,7 +215,7 @@ public class HostService extends AbstractService {
         Map resultMap = map();
 
         Map ovirtmgmtMap = map();
-        resultMap.put(getNetworkBridgeName(), ovirtmgmtMap);
+        resultMap.put(AppConfig.getInstance().getNetworkBridgeName(), ovirtmgmtMap);
 
         ovirtmgmtMap.put("addr", host.getIpAddress()); // 10.34.63.177
         ovirtmgmtMap.put("mtu", "1500");
@@ -224,7 +224,7 @@ public class HostService extends AbstractService {
         ovirtmgmtMap.put("gateway", host.getIpAddress("GATEWAY")); // 10.34.63.254
 
         Map cfgMap = map();
-        cfgMap.put("DEVICE", getNetworkBridgeName());
+        cfgMap.put("DEVICE", AppConfig.getInstance().getNetworkBridgeName());
         cfgMap.put("DELAY", "0");
         cfgMap.put("BOOTPROTO", "dhcp");
         cfgMap.put("TYPE", "Ethernet");
@@ -249,7 +249,7 @@ public class HostService extends AbstractService {
         resultMap.put("em2", em2Map);
 
         Map cfg1Map = map();
-        cfg1Map.put("BRIDGE", getNetworkBridgeName());
+        cfg1Map.put("BRIDGE", AppConfig.getInstance().getNetworkBridgeName());
         cfg1Map.put("DEVICE", "em1");
         cfg1Map.put("UUID", host.getUuid("EM1")); // 1c7b3a5a-500f-41ec-ae03-bb619aeb4081
         cfg1Map.put("NETBOOT", "yes");
@@ -268,7 +268,7 @@ public class HostService extends AbstractService {
         em1Map.put("speed", Integer.valueOf(1000));
 
         Map cfg2Map = map();
-        cfg2Map.put("BRIDGE", getNetworkBridgeName());
+        cfg2Map.put("BRIDGE", AppConfig.getInstance().getNetworkBridgeName());
         cfg2Map.put("DEVICE", "em2");
         cfg2Map.put("UUID", host.getUuid("EM2")); // 011c667a-5c74-4882-9b62-35da3021cf8
         cfg2Map.put("NETBOOT", "yes");
@@ -332,9 +332,9 @@ public class HostService extends AbstractService {
     }
 
     public List getEmulatedMachinesList() {
-        // List resultList = lst();
         List resultList = lst();
-        resultList.add("vdsmfake");
+        resultList.add("pc-0.10");
+        resultList.add("pc-0.11");
         resultList.add("pc-0.12");
         resultList.add("pc-0.13");
         resultList.add("pc-0.14");
@@ -342,6 +342,13 @@ public class HostService extends AbstractService {
         resultList.add("pc-1.0");
         resultList.add("pc-1.0");
         resultList.add("rhel6.4.0");
+        resultList.add("rhel6.5.0");
+        resultList.add("rhel6.6.0");
+        resultList.add("rhel6.7.0");
+        resultList.add("rhel6.8.0");
+        resultList.add("rhel6.9.0");
+        resultList.add("rhel7.0.0");
+        resultList.add("rhel7.5.0");
         resultList.add("pc");
         resultList.add("isapc");
 
@@ -376,6 +383,7 @@ public class HostService extends AbstractService {
     }
 
     public Map getVdsStats() {
+        AppConfig appConfig = AppConfig.getInstance();
         final Host host = getActiveHost();
 
         try {
@@ -393,20 +401,20 @@ public class HostService extends AbstractService {
                     nTotal++;
                 }
             }
-
             infoMap.put("vmCount", nTotal);
-            infoMap.put("memUsed", getRandomNum(2));
+            infoMap.put("memUsed", Utils.rangeParsser(appConfig.getMemLoadValues()));
             infoMap.put("storageDomains", getStorageDomainsStatsMap());
-            infoMap.put("network", getNetworkStatMap());
+            infoMap.put("network", getNetworkStatMap(host.getMacAddress()));
             infoMap.put("txDropped", "0");
-            infoMap.put("cpuUser", "0." + getRandomNum(2));
+            infoMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoadValues()));
             infoMap.put("ksmPages", Integer.valueOf(100));
             infoMap.put("elapsedTime", host.getElapsedTimeInSeconds() + "");
-            infoMap.put("cpuLoad", "0." + getRandomNum(2));
-            infoMap.put("cpuSys", "0." + getRandomNum(2));
+            infoMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoadValues()));
+            infoMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoadValues()));
             infoMap.put("diskStats", getDiskStatsMap());
             infoMap.put("memCommitted", Integer.valueOf(0));
             infoMap.put("ksmState", Boolean.FALSE); //boolean..0
+
 
             int nMigrating = 0;
             for (VM vm : host.getRunningVMs().values()) {
@@ -428,7 +436,7 @@ public class HostService extends AbstractService {
             infoMap.put("statsAge", "0.43");
             infoMap.put("dateTime", host.getDateTimeGMT()); // 2013-02-10T19:09:11 GMT
             infoMap.put("anonHugePages", "662");
-            infoMap.put("cpuIdle", "99.66");
+            infoMap.put("cpuIdle", Utils.getCpuIdle(infoMap.get("cpuUser").toString()));
 
             int nActive = 0;
             for (VM vm : getActiveHost().getRunningVMs().values()) {
@@ -441,6 +449,7 @@ public class HostService extends AbstractService {
             infoMap.put("cpuSysVdsmd", "0.25");
 
             resultMap.put("info", infoMap);
+            Utils.getLatency();
 
             return resultMap;
         } catch (Exception e) {
@@ -471,7 +480,11 @@ public class HostService extends AbstractService {
         return resultMap;
     }
 
-    Map getNetworkStatMap() {
+    Map getNetworkStatMap(String hostMacAdd) {
+        AppConfig appConfig = AppConfig.getInstance();
+        if (hostMacAdd==null){
+            hostMacAdd = "";
+        }
         Map resultMap = map();
 
         String[] nets = new String[] { "bond0", "bond1", "bond2", "bond3", "bond3", "bond4", "em1", "em2" };
@@ -480,12 +493,13 @@ public class HostService extends AbstractService {
             Map netStats = map();
             netStats.put("txErrors", "0");
             netStats.put("state", "up");
-            netStats.put("macAddr", ""); // null
+            netStats.put("macAddr", hostMacAdd); // null
             netStats.put("name", netName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", "0.0");
+	        netStats.put("txRate", Utils.rangeParsser(appConfig.getNetworkLoadValues()));
             netStats.put("rxErrors", "0");
             netStats.put("rxRate", "0.0");
+	        netStats.put("rxRate", Utils.rangeParsser(appConfig.getNetworkLoadValues()));
             netStats.put("rxDropped", "14965");
 
             resultMap.put(netName, netStats);
@@ -514,9 +528,5 @@ public class HostService extends AbstractService {
         resultMap.put("/tmp", freeMap);
 
         return resultMap;
-    }
-
-    private String getNetworkBridgeName() {
-        return AppConfig.getInstance().getNetworkBridgeName();
     }
 }

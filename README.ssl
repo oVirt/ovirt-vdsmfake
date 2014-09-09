@@ -16,3 +16,8 @@ To configure JSON for SSL, execute the following commands:
 Add the following line:
 JAVA_OPTS="$JAVA_OPTS -Dfake.host= -Dfake.truststore= -Dfake.keystore=
 2. Edit your web.xml file and set "jsonSecured" to "true"
+
+
+-Dfake.host= ip of vdsmfake>
+-Dfake.truststore= fullpath to your pki file
+-Dfake.truststore= your java home certes e.g /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.71-2.5.3.0.fc20.x86_64/jre/lib/security/cacerts

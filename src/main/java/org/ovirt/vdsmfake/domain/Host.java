@@ -33,11 +33,6 @@ public class Host extends BaseObject {
     String spUUID;
     long timeCreated;
 
-    // SPM_ACQUIRED = 'SPM'
-    // SPM_CONTEND = 'Contend'
-    // SPM_FREE = 'Free'
-    // SPM_ID_FREE = -1
-    // LVER_INVALID = -1
     public enum SpmStatus {
         ACQUIRED("SPM"),
         CONTEND("Contend"),
@@ -139,8 +134,8 @@ public class Host extends BaseObject {
         propsMap.put("UUID_EM2", Utils.getUuid());
         propsMap.put("UUID_GENERATION_ID", Utils.getUuid());
 
-        propsMap.put("IP", Utils.getIpAddress());
-        propsMap.put("IP_GATEWAY", Utils.getIpAddress());
+        propsMap.put("IP", Utils.ipGenerator());
+        propsMap.put("IP_GATEWAY", Utils.ipGenerator());
 
         propsMap.put("MAC", Utils.getMacAddress());
         propsMap.put("MAC_EM1", Utils.getMacAddress());

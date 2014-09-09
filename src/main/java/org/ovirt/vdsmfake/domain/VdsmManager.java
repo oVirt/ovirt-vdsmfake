@@ -17,9 +17,8 @@ package org.ovirt.vdsmfake.domain;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.PersistUtils;
@@ -49,8 +48,13 @@ public class VdsmManager implements Serializable {
     }
 
     final Map<String, DataCenter> dataCenterMap = new Hashtable<String, DataCenter>();
-    final Map<String, Host> hostMap = new Hashtable<String, Host>();
+    final Map<String, Host> hostMap = new Hashtable<String, Host>(0);
     final Map<String, StorageDomain> storageDomainMap = new HashMap<String, StorageDomain>();
+    public final Vector allRunningVms = new Vector<String>(0);
+
+    public Map<String, Host> getHostMap() {
+        return this.hostMap;
+    }
 
     void storeObject(BaseObject baseObject) {
         final File f =

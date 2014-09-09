@@ -16,9 +16,7 @@
 package org.ovirt.vdsmfake;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * App config data
@@ -32,6 +30,11 @@ public class AppConfig {
 
     long constantDelay;
     long randomDelay;
+    long delayMinimum;
+    ArrayList storageDelay;
+    ArrayList networkLoad;
+    ArrayList cpuLoadList;
+    ArrayList memLoad;
     String networkBridgeName;
     String cacheDir;
     String logDir;
@@ -48,8 +51,12 @@ public class AppConfig {
     }
 
     public void init(Map<String, String> paramMap) {
-        constantDelay = getLong(paramMap.get("constantDelay"));
-        randomDelay = getLong(paramMap.get("randomDelay"));
+        constantDelay = Utils.getLong(paramMap.get("constantDelay"));
+        randomDelay = Utils.getLong(paramMap.get("randomDelay"));
+        networkLoad = Utils.splitString(paramMap.get("networkLoad"));
+        cpuLoadList = Utils.splitString(paramMap.get("cpuLoad"));
+        memLoad = Utils.splitString(paramMap.get("memLoad"));
+        storageDelay = Utils.splitString(paramMap.get("storageDelay"));
         networkBridgeName = paramMap.get("networkBridgeName");
         cacheDir = paramMap.get("cacheDir");
         // Each run will store its logs separately
@@ -58,6 +65,7 @@ public class AppConfig {
         vdsmPort = paramMap.get("vdsmPort");
         vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
         vmConfAndStatsUpdateIntervals = paramMap.get("vmConfAndStatsUpdateIntervals");
+
 
         final String notLoggedMethods = paramMap.get("notLoggedMethods");
         // ...
@@ -97,21 +105,11 @@ public class AppConfig {
         return randomDelay;
     }
 
-    public void setRandomDelay(long randomDelay) {
-        this.randomDelay = randomDelay;
+    public long getDelayMinimum() {
+        return this.delayMinimum;
     }
 
-    long getLong(String val) {
-        if (val == null || val.trim().length() == 0) {
-            return 0;
-        }
 
-        try {
-            return Long.valueOf(val);
-        } catch (Exception e) {
-            return 0;
-        }
-    }
 
     public String getNetworkBridgeName() {
         return networkBridgeName;
@@ -187,4 +185,19 @@ public class AppConfig {
         }
     }
 
+    public ArrayList getStorageDelay() {
+        return storageDelay;
+    }
+
+    public ArrayList getCpuLoadValues(){
+        return cpuLoadList;
+    }
+
+    public ArrayList getNetworkLoadValues() {
+        return networkLoad;
+    }
+
+    public ArrayList getMemLoadValues() {
+        return memLoad;
+    }
 }

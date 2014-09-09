@@ -5,18 +5,19 @@
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
 
-           http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+ */
 package org.ovirt.vdsmfake.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.Filter;
@@ -27,6 +28,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.ovirt.vdsmfake.domain.Host;
+import org.ovirt.vdsmfake.domain.VdsmManager;
+import org.ovirt.vdsmfake.service.AbstractService;
+import org.ovirt.vdsmfake.service.VMService;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom.Document;
@@ -48,8 +54,8 @@ public class XmlRpcFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(XmlRpcFilter.class);
     private static final Logger communicationLog = LoggerFactory.getLogger("org.ovirt.vdsmfake.communication");
-
     private static AtomicInteger logCounter = new AtomicInteger();
+
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -61,10 +67,22 @@ public class XmlRpcFilter implements Filter {
 
         try {
             final String method = ((HttpServletRequest)request).getMethod();
+            final String pathInfo = ((HttpServletRequest)request).getPathInfo();
+            final String newline = "\n";
+            final String tabnewline = "\n\n\n\n";
 
             if ("GET".equals(method)) {
+                StringBuilder output = new StringBuilder();
+                output.append("Hello, this is VDSM Fake!").append(tabnewline);
+                output.append(" ==== Statistics ======").append(newline);
+
+                VdsmManager vdsmManager = VdsmManager.getInstance();
+                output.append("running hosts: ").append(vdsmManager.getHostMap().size()).append(newline);
+                output.append("running vms: ").append(vdsmManager.allRunningVms.size()).append(newline);
+
+                //print output
                 response.setContentType("text/plain");
-                response.getWriter().write("Hello, this is VDSM Fake.");
+                response.getWriter().write(output.toString());
                 return;
             }
 
