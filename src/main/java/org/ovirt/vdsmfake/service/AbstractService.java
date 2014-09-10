@@ -40,29 +40,17 @@ public abstract class AbstractService {
     final static String ERROR = "Error";
     protected Logger log = LoggerFactory.getLogger(AbstractService.class);
 
-    public static Map getStatusMap(String message, int code) {
-        Map resultMap = new HashMap();
-
-        Map statusMap = new HashMap();
-        statusMap.put("message", message);
-        statusMap.put("code", Integer.valueOf(code));
-
-        resultMap.put("status", statusMap);
-
-        return resultMap;
-    }
-
     public Map getOKStatus() {
-        return getStatusMap("OK", 0);
+        return ResultCodes.OK.newMap();
     }
 
     public Map getOKStatusNotImplemented() {
         log.warn("The method is not fully implemented!", new Exception());
-        return getStatusMap("OK", 0);
+        return ResultCodes.OK.newMap();
     }
 
     public Map getDoneStatus() {
-        return getStatusMap("Done", 0);
+        return ResultCodes.DONE.newMap();
     }
 
     public Map map() {

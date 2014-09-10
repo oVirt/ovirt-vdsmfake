@@ -139,17 +139,8 @@ public class VMService extends AbstractService {
         // plan next status task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_FROM_VM_REMOVE_FROM_HOST, 20000l, vm));
 
-        Map resultMap = map();
-
-        Map statusMap = map();
-        statusMap.put("message", success ? "Migration process starting" : "VM not found");
-        statusMap.put("code", (success ? "0" : "100"));
-
-        resultMap.put("status", statusMap);
-
         log.info("Migrating VM {} from host: {} to: {}", new Object[] { vm.getId(), vm.getHost().getName(), targetHost.getName() });
-
-        return resultMap;
+        return success ? ResultCodes.MIGRATION_STARTING.map() : ResultCodes.VM_NOT_FOUND.map();
     }
     static private final List VmStatsKeys = Arrays.asList("username fqdn memUage balloonInfo username acpiEnable pid displayIp displayPort session displaySecurePort timeOffset hash pauseCode kvmEnable monitorResponse statsAge elapsedTime vmType cpuSys appsList guestIPs".split(" "));
     public Map getVmStats(String uuid) {
@@ -399,23 +390,13 @@ public class VMService extends AbstractService {
 
         vm.setStatus(VM.VMStatus.PoweringDown);
 
-        Map resultMap = map();
-
         // add async task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
 
-        Map statusMap = map();
-        statusMap.put("message", "Machine destroyed");
-        statusMap.put("code", "0");
-
-        resultMap.put("status", statusMap);
-
-        return resultMap;
+        return ResultCodes.MACHINE_DESTROYED.map();
     }
 
     public Map shutdown(String vmId, String timeout, String message) {
-        final Map resultMap = getStatusMap("Machine shut down", 0);
-
         final VM vm = getActiveHost().getRunningVMs().get(vmId);
         if (vm != null) {
             vm.setStatus(VM.VMStatus.PoweringDown);
@@ -424,7 +405,7 @@ public class VMService extends AbstractService {
         // add asynch task
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
 
-        return resultMap;
+        return ResultCodes.MACHINE_SHUTDOWN.map();
     }
 
     public Map create(Map vmParams) {

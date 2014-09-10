@@ -5,6 +5,7 @@ import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 import org.ovirt.vdsm.jsonrpc.client.ResponseBuilder;
 import org.ovirt.vdsmfake.service.AbstractService;
+import org.ovirt.vdsmfake.service.ResultCodes;
 
 @SuppressWarnings("rawtypes")
 public class UnsupportedCommand extends JsonCommand {
@@ -12,7 +13,7 @@ public class UnsupportedCommand extends JsonCommand {
     @SuppressWarnings("unchecked")
     @Override
     public ResponseBuilder run(JsonNode params, ResponseBuilder builder) {
-        return builder.withResult(AbstractService.getStatusMap("OK", 0));
+        return builder.withResult(ResultCodes.OK.map());
     }
 
     @Override
