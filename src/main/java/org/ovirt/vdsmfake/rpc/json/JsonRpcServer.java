@@ -58,7 +58,6 @@ public class JsonRpcServer {
 
                         @Override
                         public void onAcccept(final ReactorClient client) {
-                            client.setRetryPolicy(new RetryPolicy(180000, 0, 1000000));
                             client.addEventListener(new MessageListener() {
                                 // you can provide your implementation of MessageListener
                                 @Override
