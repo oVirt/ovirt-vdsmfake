@@ -202,6 +202,7 @@ public class StorageService extends AbstractService {
 
         StorageDomain storageDomain = getStorageDomainById(sdUUID);
         storageDomain.setName(domainName);
+        storageDomain.setConnection(typeSpecificArg);
         storageDomain.setDomainClass(StorageDomain.DomainClass.getByCode(domClass));
         storageDomain.setStorageType(StorageDomain.StorageType.getByCode(storageType));
         // store
@@ -573,7 +574,6 @@ public class StorageService extends AbstractService {
 
             Map infoMap = map();
             infoMap.put("uuid", storageDomain.getId());
-            infoMap.put("master_ver", dataCenter.getMasterVersion());
             infoMap.put("lver", host.getSpmLver());
             infoMap.put("version", "0");
             infoMap.put("role", storageDomain.getDomainRole().getName());
@@ -582,15 +582,18 @@ public class StorageService extends AbstractService {
             infoMap.put("type", storageDomain.getStorageType().toString()); // NFS
             infoMap.put("class", storageDomain.getDomainClass().getName()); // Iso
             infoMap.put("name", storageDomain.getName());
-
             List poolList = lst();
 
-            poolList.add(dataCenter.getId());
-            poolList.add(getUuid());
-            poolList.add(getUuid()); // TODO: not sure what is it for the value, the response has 3 values, the first is spUuid
+            if (dataCenter != null) {
+                infoMap.put("master_ver", dataCenter.getMasterVersion());
+
+                poolList.add(dataCenter.getId());
+                poolList.add(getUuid());
+                poolList.add(getUuid()); // TODO: not sure what is it for the value, the response has 3 values, the
+                                         // first is spUuid
+            }
 
             infoMap.put("pool", poolList);
-
             resultMap.put("info", infoMap);
 
             return resultMap;

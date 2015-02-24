@@ -1,10 +1,13 @@
 package org.ovirt.vdsmfake.rpc.json;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
 import org.ovirt.vdsm.jsonrpc.client.ResponseBuilder;
@@ -14,7 +17,6 @@ import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorClient.MessageListener;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorListener;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorType;
-import org.ovirt.vdsm.jsonrpc.client.utils.retry.RetryPolicy;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,9 +93,9 @@ public class JsonRpcServer {
         }
 
         public void run() {
+            JsonRpcRequest request = null;
             try {
-                JsonRpcRequest request =
-                        JsonRpcRequest.fromByteArray(message);
+                request = JsonRpcRequest.fromByteArray(message);
 
                 ContextHolder.init();
                 ContextHolder.setServerName(client.getHostname());
@@ -102,14 +104,28 @@ public class JsonRpcServer {
                 builder =
                         CommandFactory.createCommand(methodName).run(request.getParams(),
                                 builder);
-                JsonRpcResponse response = builder.build();
-                if (log.isInfoEnabled()) {
-                    log.info("Request is " + request.getMethod() + " got response "
-                            + new String(response.toByteArray()));
-                }
-                client.sendMessage(response.toByteArray());
+                send(builder.build(), request.getMethod());
             } catch (Throwable e) {
                 log.error("Failure in processing request", e);
+                Map<String, Object> error = new HashMap<>();
+                error.put("code", 100);
+                error.put("message", e.getMessage());
+
+                if (request != null) {
+                    send(new ResponseBuilder(request.getId()).withError(error).build(), request.getMethod());
+                }
+            }
+        }
+
+        private void send(JsonRpcResponse response, String method) {
+            if (log.isInfoEnabled()) {
+                log.info("Request is " + method + " got response "
+                        + new String(response.toByteArray()));
+            }
+            try {
+                client.sendMessage(response.toByteArray());
+            } catch (ClientConnectionException e) {
+                log.error("Failure in sending response", e);
             }
         }
     }

@@ -46,7 +46,7 @@ public class DataCenter extends BaseObject {
     }
 
     public String getMasterStorageDomainId() {
-        return masterStorageDomainId;
+        return masterStorageDomainId == null ? this.id : masterStorageDomainId;
     }
 
     public void setMasterStorageDomainId(String masterStorageDomainId) {
