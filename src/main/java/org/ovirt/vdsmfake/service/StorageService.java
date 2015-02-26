@@ -247,7 +247,7 @@ public class StorageService extends AbstractService {
             final DataCenter dataCenter = getDataCenterById(spUUID);
             final Host host = getActiveHost();
 
-            Map resultMap = getOKStatus();
+            Map resultMap = map();
 
             Map infoMap = map();
             infoMap.put("spm_id", host.getSpmId());
@@ -261,6 +261,14 @@ public class StorageService extends AbstractService {
             int i=0;
             StringBuilder b = new StringBuilder();
             for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
+
+                //force ACTIVE Status for storage domain.
+                if (!storageDomain.getDomainStatus().equals(StorageDomain.DomainStatus.ACTIVE)){
+                    storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
+                    updateStorageDomain(storageDomain);
+                }
+                //TODO: name of storage domain not sent, API talk with id no naming relations, might be problematic. storageDomain.setName("sd_fake")
+
                 b.append(storageDomain.getId()).append(":").append(storageDomain.getDomainStatus().getName());
 
                 if (i != dataCenter.getStorageDomainMap().values().size() - 1) {
