@@ -15,9 +15,12 @@
 */
 package org.ovirt.vdsmfake.service;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.ovirt.vdsmfake.domain.Task;
+import org.ovirt.vdsmfake.task.TaskProcessor;
 
 /**
  *
@@ -63,12 +66,26 @@ public class TaskService extends AbstractService {
     }
 
     public Map getAllTasksStatuses() {
-        final Map resultMap = getOKStatus();
 
-        final Map allTasksStatusMap = map();
+        Map resultMap = getOKStatus();
+        Map allTasksStatusMap = map();
+
+        // adding new getter in order to process stored tasks, due to context holder server changes.
+        for (Map.Entry<String, String> entry :  TaskProcessor.getTasksMap().entrySet()) {
+            processor(allTasksStatusMap, getActiveHostByName(entry.getKey()).getRunningTasks().values());
+        }
+        TaskProcessor.clearTaskMap();
+
+        //backward compatibility
+        processor(allTasksStatusMap, getActiveHost().getRunningTasks().values());
+
+
         resultMap.put("allTasksStatus", allTasksStatusMap);
+        return resultMap;
+    }
 
-        for (Task task : getActiveHost().getRunningTasks().values()) {
+    private void processor(Map allTasksStatusMap, Collection<Task> tasksMap) {
+        for (Task task : tasksMap) {
             Map taskMap = map();
 
             if (!task.isFinished()) {
@@ -89,8 +106,6 @@ public class TaskService extends AbstractService {
 
             allTasksStatusMap.put(task.getId(), taskMap);
         }
-
-        return resultMap;
     }
 
     public Map getAllTasksInfo() {
@@ -100,6 +115,7 @@ public class TaskService extends AbstractService {
         resultMap.put("allTasksInfo", allTasksStatusMap);
 
         // TODO ?
+        log.info("allTasksInfo not fully implemented");
 
         return resultMap;
     }

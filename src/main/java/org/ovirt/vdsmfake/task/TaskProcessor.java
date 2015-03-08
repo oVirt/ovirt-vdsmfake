@@ -15,11 +15,8 @@
 */
 package org.ovirt.vdsmfake.task;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +31,22 @@ public class TaskProcessor extends TimerTask {
 
     final static TaskProcessor instance = new TaskProcessor();
     final List<TaskRequest> queue = new LinkedList<TaskRequest>();
+    private static Map<String, String> tasksmap = new ConcurrentHashMap<String, String>();
     Timer timer;
 
     private TaskProcessor() {
+    }
+
+    public static Map<String, String> getTasksMap() {
+        return tasksmap;
+    }
+
+    public static void setTasksMap(String hostName, String taskId) {
+        tasksmap.put(hostName, taskId);
+    }
+
+    public static void clearTaskMap(){
+        tasksmap.clear();
     }
 
     public synchronized void addTask(TaskRequest taskRequest) {

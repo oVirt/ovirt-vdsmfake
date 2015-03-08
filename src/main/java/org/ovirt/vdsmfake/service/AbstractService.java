@@ -21,10 +21,8 @@ import java.util.*;
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.ovirt.vdsmfake.Utils;
-import org.ovirt.vdsmfake.domain.DataCenter;
-import org.ovirt.vdsmfake.domain.Host;
-import org.ovirt.vdsmfake.domain.StorageDomain;
-import org.ovirt.vdsmfake.domain.VdsmManager;
+import org.ovirt.vdsmfake.domain.*;
+import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +79,10 @@ public abstract class AbstractService{
         return host;
     }
 
+    public Host getActiveHostByName(String serverName) {
+        return VdsmManager.getInstance().getHostByName(serverName);
+    }
+
     public void updateHost(Host host) {
         VdsmManager.getInstance().updateHost(host);
     }
@@ -128,4 +130,16 @@ public abstract class AbstractService{
         return Utils.getRandomNum(length);
     }
 
+    public synchronized void syncTask(Host host, Task task){
+        if (host == null){
+            host = getActiveHost();
+        }
+        try {
+            host.getRunningTasks().put(task.getId(), task);
+            log.debug("sync task:{} to host:{}", task.getName(), host.getName());
+            TaskProcessor.setTasksMap(host.getName(), task.getId());
+        }catch (Exception e){
+            log.error("something went wrong durring task sync {}", e);
+        }
+    }
 }

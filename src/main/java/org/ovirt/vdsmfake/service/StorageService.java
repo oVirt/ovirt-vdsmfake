@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
@@ -444,6 +445,7 @@ public class StorageService extends AbstractService {
 
         task.setTarget(host);
         getActiveHost().getRunningTasks().put(task.getId(), task);
+        TaskProcessor.setTasksMap(host.getName(), task.getId());
 
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_START_SPM, 10000l, task));
 
@@ -510,12 +512,11 @@ public class StorageService extends AbstractService {
             updateDataCenter(dataCenter);
 
             final Map resultMap = getOKStatus();
-
             final Task task = new Task(getUuid());
 
             resultMap.put("uuid", task.getId());
 
-            getActiveHost().getRunningTasks().put(task.getId(), task);
+            syncTask(null, task);
 
             TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_CREATE_VOLUME, 5000l, task));
 

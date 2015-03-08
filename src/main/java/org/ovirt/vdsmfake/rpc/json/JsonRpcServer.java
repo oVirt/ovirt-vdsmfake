@@ -105,6 +105,7 @@ public class JsonRpcServer {
                     ContextHolder.setServerName(Integer.toString(client.hashCode()));
                     log.error("client identifier were not found, using hash");
                 }
+
                 ResponseBuilder builder = new ResponseBuilder(request.getId());
                 String methodName = request.getMethod();
                 builder =
