@@ -45,10 +45,9 @@ public class VMService extends AbstractService {
 
     public Map list() {
         final Host host = getActiveHost();
-
         final Map resultMap = getDoneStatus();
-
         final List statusList = new ArrayList();
+
         for (VM vm : host.getRunningVMs().values()) {
             Map vmMap = map();
             vmMap.put("status", vm.getStatus().toString()); // Up

@@ -17,13 +17,7 @@ public class GetVmListCommand extends JsonCommand {
     @SuppressWarnings("unchecked")
     @Override
     protected Map activateApi(JsonNode params) {
-        Map data = api.list();
-        List<String> justVmIdList = new ArrayList();
-        for (Map<String, String> vmItem : (List<Map>) data.get("vmList")) {
-            justVmIdList.add(vmItem.get("vmId"));
-        }
-        data.put("vmList", justVmIdList);
-        return data;
+        return api.list();
     }
 
 }
