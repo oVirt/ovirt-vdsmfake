@@ -43,6 +43,7 @@ public class AppConfig {
     String vmConfAndStatsConstants;
     String vmConfAndStatsUpdateIntervals;
     String targetServerUrl; // not set in web.xml
+    int jsonHandlersThreadsPool;
 
     final Set<String> notLoggedMethodSet = new HashSet<String>();
 
@@ -65,6 +66,7 @@ public class AppConfig {
         vdsmPort = paramMap.get("vdsmPort");
         vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
         vmConfAndStatsUpdateIntervals = paramMap.get("vmConfAndStatsUpdateIntervals");
+        jsonHandlersThreadsPool = Integer.valueOf(paramMap.get("jsonHandlersThreadsPool"));
 
 
         final String notLoggedMethods = paramMap.get("notLoggedMethods");
@@ -199,5 +201,9 @@ public class AppConfig {
 
     public ArrayList getMemLoadValues() {
         return memLoad;
+    }
+
+    public int getJsonHandlersThreadsPool() {
+        return jsonHandlersThreadsPool;
     }
 }

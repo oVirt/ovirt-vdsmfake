@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
@@ -17,6 +18,7 @@ import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorClient.MessageListener;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorListener;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorType;
+import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,11 @@ public class JsonRpcServer {
     private int jsonPort;
     private boolean encrypted;
     private String hostName;
-    private ExecutorService service = Executors.newFixedThreadPool(200);
+    private ExecutorService service = Executors.newFixedThreadPool(AppConfig.getInstance().getJsonHandlersThreadsPool(), new BasicThreadFactory.Builder()
+            .namingPattern("jsonHandlers-pool-%d")
+            .daemon(true)
+            .priority(Thread.MAX_PRIORITY)
+            .build());
 
     public JsonRpcServer(String hostName, int jsonPort, boolean encrypted) {
         this.hostName = hostName;

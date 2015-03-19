@@ -7,14 +7,12 @@
 	<version>1.0.2-SNAPSHOT</version>
 	<name>vdsmfake Maven Webapp</name>
 	<url>http://maven.apache.org</url>
-
 	<properties>
 		<slf4j.version>1.5.11</slf4j.version>
 		<jsonListenPort>54321</jsonListenPort>
 		<vdsmPort>54322</vdsmPort>
 		<jsonSecured>false</jsonSecured>
 	</properties>
-
 	<repositories>
 		<repository>
 			<id>jboss</id>
@@ -22,7 +20,6 @@
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -35,32 +32,27 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.12</version>
         </dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.10.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 			<version>1.1.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -71,7 +63,6 @@
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
 		</dependency>
-
 		<!-- LOGGING DEPENDENCIES - LOG4J -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -96,26 +87,26 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.xmlrpc</groupId>
 			<artifactId>xmlrpc-server</artifactId>
 			<version>3.1.3</version>
 		</dependency>
-		
         <dependency>
 			<groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
 			<artifactId>vdsm-jsonrpc-java-client</artifactId>
 			<version>1.1.2-SNAPSHOT</version>
         </dependency>
-		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
 	</dependencies>
-
 	<build>
-		<finalName>vdsmfake</finalName>		
+		<finalName>vdsmfake</finalName>
 		<plugins>
-		
-		    <!-- Use just: mvn jetty:run -->		
+		    <!-- Use just: mvn jetty:run -->
 			<plugin>
 				<inherited>true</inherited>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -126,7 +117,6 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>

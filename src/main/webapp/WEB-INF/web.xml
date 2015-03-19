@@ -53,6 +53,10 @@
 		<param-name>logDir</param-name>
 		<param-value>/var/log/vdsmfake/xml</param-value>
 	</context-param>
+	<context-param>
+		<param-name>jsonHandlersThreadsPool</param-name>
+		<param-value>50</param-value>
+	</context-param>
     <!-- target server for forwarded requests to VDSM can be overriden here: the proxy is activated if this address is set only -->
 	<!--<context-param>
             <param-name>forwardVdsmServer</param-name>
