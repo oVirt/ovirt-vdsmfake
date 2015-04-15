@@ -98,7 +98,13 @@ public class JsonRpcServer {
                 request = JsonRpcRequest.fromByteArray(message);
 
                 ContextHolder.init();
-                ContextHolder.setServerName(client.getHostname());
+                if (client.getRetryPolicy().getIdentifier() != null){
+                    ContextHolder.setServerName(client.getRetryPolicy().getIdentifier());
+                    log.debug("client policy identifier {}", client.getRetryPolicy().getIdentifier());
+                }else{
+                    ContextHolder.setServerName(Integer.toString(client.hashCode()));
+                    log.error("client identifier were not found, using hash");
+                }
                 ResponseBuilder builder = new ResponseBuilder(request.getId());
                 String methodName = request.getMethod();
                 builder =
