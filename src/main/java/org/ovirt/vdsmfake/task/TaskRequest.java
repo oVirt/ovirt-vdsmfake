@@ -120,6 +120,12 @@ public class TaskRequest {
                 task.setFinished(true);
                 break;
 
+            case FINISH_REMOVE_VOLUME:
+                task = (Task) target;
+                log.info("Volume removed, task: {}", task.getId());
+                task.setFinished(true);
+                break;
+
             default:
                 log.error("Unhandled status detected.");
                 break;

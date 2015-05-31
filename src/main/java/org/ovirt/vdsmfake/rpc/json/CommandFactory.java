@@ -37,6 +37,7 @@ import org.ovirt.vdsmfake.rpc.json.commands.VmMigrateCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmSetTicketCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmShutdownCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VolumeCreateCommand;
+import org.ovirt.vdsmfake.rpc.json.commands.ImageDelete;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,8 @@ public class CommandFactory {
             return new TaskClearCommand();
         case "Task.revert":
             return new TaskRevertCommand();
-            // Unsupported command
+        case "Image.delete":
+            return new ImageDelete();
         default:
             // TODO: Support Host.setMOMPolicyParameters
             Exception e = new Exception();

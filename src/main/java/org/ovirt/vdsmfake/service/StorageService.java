@@ -653,4 +653,27 @@ public class StorageService extends AbstractService {
             throw error(e);
         }
     }
+    public Map deleteImage(String imgUUID,
+                           String spUUID,
+                           String sdUUID,
+                           boolean postZero,
+                           boolean force) {
+        try {
+
+            log.info("Removing volume: {}", imgUUID);
+
+            final Map resultMap = getOKStatus();
+            final Task task = new Task(getUuid());
+
+            resultMap.put("uuid", task.getId());
+
+            syncTask(null, task);
+
+            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_REMOVE_VOLUME, 5000l, task));
+
+            return resultMap;
+        } catch (Exception e) {
+            throw error(e);
+        }
+    }
 }

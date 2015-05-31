@@ -657,12 +657,8 @@ public class Api extends AbstractService {
         return getOKStatusNotImplemented();
     }
 
-    public Map deleteImage(String sdUUID, String spUUID, String imgGUID, String postZero) {
-        return getOKStatusNotImplemented();
-    }
-
-    public Map deleteImage(String sdUUID, String spUUID, String imgGUID, String postZero, String force) {
-        return getOKStatusNotImplemented();
+    public Map deleteImage(String imgGUID, String spUUID, String sdUUID, boolean postZero, boolean force) {
+        return storageService.deleteImage(imgGUID, spUUID, sdUUID, postZero, force);
     }
 
     public Map moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
