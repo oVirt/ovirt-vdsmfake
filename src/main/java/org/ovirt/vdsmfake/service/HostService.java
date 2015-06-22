@@ -63,7 +63,7 @@ public class HostService extends AbstractService {
             infoMap.put("nics", getNicsMap(host));
             infoMap.put("software_revision", "0.141");
             infoMap.put("clusterLevels", getClusterLevelsList());
-            infoMap.put("cpuFlags", "fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,nopl,xtopology,nonstop_tsc,aperfmperf,pni,pclmulqdq,dtes64,monitor,ds_cpl,vmx,smx,est,tm2,ssse3,cx16,xtpr,pdcm,pcid,dca,sse4_1,sse4_2,popcnt,aes,lahf_lm,arat,dtherm,tpr_shadow,vnmi,flexpriority,ept,vpid,model_Nehalem,model_Conroe,model_coreduo,model_core2duo,model_Penryn,model_Westmere,model_n270");
+            infoMap.put("cpuFlags", "fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept,fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,model_Conroe,model_Penryn,model_Westmere,model_SandyBridge");
             infoMap.put("ISCSIInitiatorName", "iqn.1994-05.com.example:ef52ec17bb0");
             infoMap.put("netConfigDirty", "False");
             infoMap.put("supportedENGINEs", getSupportedENGINEsList());
