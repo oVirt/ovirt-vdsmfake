@@ -96,7 +96,7 @@
 	<!--  secured JSON communication -->
 	<context-param>
 		<param-name>jsonSecured</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 
 	<!--  host that json listens to -->
