@@ -119,6 +119,10 @@ public class Api extends AbstractService {
         return vmService.getAllVmStats();
     }
 
+    public Map hostdevListByCaps() {
+        return hostService.getHostDeviceList();
+    }
+
     public Map getAllVmRuntimeStats() {
         return vmService.getAllVmRuntimeStats();
     }

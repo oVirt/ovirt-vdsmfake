@@ -297,6 +297,7 @@ public class HostService extends AbstractService {
         resultList.add("3.3");
         resultList.add("3.4");
         resultList.add("3.5");
+        resultList.add("3.6");
 
         return resultList;
     }
@@ -309,6 +310,7 @@ public class HostService extends AbstractService {
         resultList.add("3.3");
         resultList.add("3.4");
         resultList.add("3.5");
+        resultList.add("3.6");
 
         return resultList;
     }
@@ -341,6 +343,7 @@ public class HostService extends AbstractService {
         resultList.add("pc-0.15");
         resultList.add("pc-1.0");
         resultList.add("pc-1.0");
+        resultList.add("pc-i440fx-2.1");
         resultList.add("rhel6.4.0");
         resultList.add("rhel6.5.0");
         resultList.add("rhel6.6.0");
@@ -526,6 +529,14 @@ public class HostService extends AbstractService {
         freeMap = map();
         freeMap.put("free", "44231");
         resultMap.put("/tmp", freeMap);
+
+        return resultMap;
+    }
+
+    public Map getHostDeviceList() {
+        Map resultMap = map();
+
+        resultMap.put("deviceList", map());
 
         return resultMap;
     }
