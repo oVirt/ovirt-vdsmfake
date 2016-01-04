@@ -731,4 +731,8 @@ public class Api extends AbstractService {
         return getOKStatusNotImplemented();
     }
 
+    public Map HostDevListByCaps() {
+        return hostService.hostdevListByCaps();
+    }
+
 }

@@ -38,6 +38,7 @@ import org.ovirt.vdsmfake.rpc.json.commands.VmSetTicketCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmShutdownCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VolumeCreateCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.ImageDelete;
+import org.ovirt.vdsmfake.rpc.json.commands.HostDevListByCaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,8 @@ public class CommandFactory {
             return new HostGetStorageDomainsCommand();
         case "Host.getVMFullList":
             return new GetFullVmListCommand();
+        case "Host.HostDevListByCaps":
+            return new HostDevListByCaps();
         case "VM.create":
             return new VmCreateCommand();
         case "VM.destroy":

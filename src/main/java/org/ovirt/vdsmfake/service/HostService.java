@@ -82,7 +82,7 @@ public class HostService extends AbstractService {
             infoMap.put("emulatedMachines", getEmulatedMachinesList());
             infoMap.put("operatingSystem", getOperatingSystemMap());
             infoMap.put("lastClient", "10.36.6.76");
-            infoMap.put("rngSources", Arrays.asList(new String[] { "RANDOM" }));
+            infoMap.put("rngSources", Arrays.asList(new String[]{"RANDOM"}));
             infoMap.put("selinux", getSELinux());
             infoMap.put("kdumpStatus", "1");
 
@@ -320,7 +320,7 @@ public class HostService extends AbstractService {
     public Map getBondingsMap() {
         Map resultMap = map();
 
-        for (int i=0;i < 5;i++) {
+        for (int i = 0; i < 5; i++) {
             Map bondMap = map();
             bondMap.put("addr", ""); // null
             bondMap.put("cfg", map());
@@ -470,10 +470,10 @@ public class HostService extends AbstractService {
 
         Map resultMap = map();
 
-        if(host.getSpUUID() != null) {
+        if (host.getSpUUID() != null) {
             final DataCenter dataCenter = getDataCenterById(host.getSpUUID());
 
-            for(StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
+            for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
                 // for all domains
                 Map domainMap = map();
                 domainMap.put("delay", "0.0141088962555");
@@ -490,13 +490,13 @@ public class HostService extends AbstractService {
 
     Map getNetworkStatMap(String hostMacAdd) {
         AppConfig appConfig = AppConfig.getInstance();
-        if (hostMacAdd==null){
+        if (hostMacAdd == null) {
             hostMacAdd = "";
         }
         Map resultMap = map();
 
-        String[] nets = new String[] { "bond0", "bond1", "bond2", "bond3", "bond3", "bond4", "em1", "em2" };
-        for(String netName : nets) {
+        String[] nets = new String[]{"bond0", "bond1", "bond2", "bond3", "bond3", "bond4", "em1", "em2"};
+        for (String netName : nets) {
 
             Map netStats = map();
             netStats.put("txErrors", "0");
@@ -504,10 +504,10 @@ public class HostService extends AbstractService {
             netStats.put("macAddr", hostMacAdd); // null
             netStats.put("name", netName);
             netStats.put("txDropped", "0");
-	        netStats.put("txRate", Utils.rangeParsser(appConfig.getNetworkLoadValues()));
+            netStats.put("txRate", Utils.rangeParsser(appConfig.getNetworkLoadValues()));
             netStats.put("rxErrors", "0");
             netStats.put("rxRate", "0.0");
-	        netStats.put("rxRate", Utils.rangeParsser(appConfig.getNetworkLoadValues()));
+            netStats.put("rxRate", Utils.rangeParsser(appConfig.getNetworkLoadValues()));
             netStats.put("rxDropped", "14965");
 
             resultMap.put(netName, netStats);
@@ -545,4 +545,71 @@ public class HostService extends AbstractService {
 
         return resultMap;
     }
+
+    public Map hostdevListByCaps() {
+        //TODO: still not fully supported - in progress
+        final Host host = getActiveHost();
+
+        try {
+            Map resultMap = getDoneStatus();
+
+            Map infoMap = map();
+            infoMap.put("computer", getCapability());
+            infoMap.put("pci_0000_00_1b_0", getHardware(0));
+            infoMap.put("pci_0000_00_1b_1", getHardware(1));
+            infoMap.put("pci_0000_00_1b_2", getHardware(2));
+            infoMap.put("pci_0000_00_1b_3", getHardware(3));
+            infoMap.put("pci_0000_00_1b_4", getHardware(4));
+            infoMap.put("pci_0000_00_1b_5", getHardware(5));
+            infoMap.put("pci_0000_00_1b_6", getHardware(6));
+            infoMap.put("pci_0000_00_1b_7", getHardware(7));
+            infoMap.put("pci_0000_00_1b_8", getHardware(8));
+            infoMap.put("pci_0000_00_1b_9", getHardware(9));
+            infoMap.put("pci_0000_00_1b_10", getHardware(10));
+            infoMap.put("pci_0000_00_1b_11", getHardware(11));
+            infoMap.put("pci_0000_00_1f_12", getHardware(12));
+
+            resultMap.put("info", infoMap);
+            return resultMap;
+        } catch (Exception e) {
+            throw error(e);
+        }
+
+    }
+
+    Map getHardware(int slot){
+        Map resultMap = map();
+
+        Map pciaddresses = map();
+        pciaddresses.put("bus", 0);
+        pciaddresses.put("domain", 0);
+        pciaddresses.put("function", 0);
+        pciaddresses.put("slot", slot);
+
+        Map pciInfo = map();
+        pciInfo.put("address", pciaddresses);
+        pciInfo.put("capability", "pci");
+        pciInfo.put("parent", "computer");
+        pciInfo.put("product", "4 Series Chipset DRAM Controller");
+        pciInfo.put("product_id", "0x2e11" + slot);
+        pciInfo.put("vendor", "Intel Corporation");
+        pciInfo.put("vendor_id", "0x8086");
+
+        resultMap.put("params", pciInfo);
+
+        return resultMap;
+    }
+
+    Map getCapability(){
+        Map resultMap = map();
+
+        Map system = map();
+        system.put("capability", "system");
+        system.put("product", "ProLiant DL160 G6");
+
+        resultMap.put("params", system);
+
+        return resultMap;
+    }
+
 }
