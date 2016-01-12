@@ -346,6 +346,8 @@ public class HostService extends AbstractService {
         resultList.add("pc-1.0");
         resultList.add("pc-1.0");
         resultList.add("pc-i440fx-2.1");
+        resultList.add("pseries-rhel7.2.0");
+        resultList.add("pc-i440fx-rhel7.2.0");
         resultList.add("rhel6.4.0");
         resultList.add("rhel6.5.0");
         resultList.add("rhel6.6.0");
@@ -353,6 +355,7 @@ public class HostService extends AbstractService {
         resultList.add("rhel6.8.0");
         resultList.add("rhel6.9.0");
         resultList.add("rhel7.0.0");
+        resultList.add("rhel7.2.0");
         resultList.add("rhel7.5.0");
         resultList.add("pc");
         resultList.add("isapc");
