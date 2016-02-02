@@ -98,10 +98,14 @@ public class JsonRpcServer {
                 request = JsonRpcRequest.fromByteArray(message);
 
                 ContextHolder.init();
-                if (client.getRetryPolicy().getIdentifier() != null){
+                if (client.getRetryPolicy().getIdentifier() != null) {
                     ContextHolder.setServerName(client.getRetryPolicy().getIdentifier());
                     log.debug("client policy identifier {}", client.getRetryPolicy().getIdentifier());
-                }else{
+                }
+                else if (client.getHostname() != null) {
+                    ContextHolder.setServerName(client.getHostname());
+                }
+                else{
                     ContextHolder.setServerName(Integer.toString(client.hashCode()));
                     log.error("client identifier were not found, using hash");
                 }
