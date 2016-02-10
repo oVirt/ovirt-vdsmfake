@@ -17,6 +17,8 @@ package org.ovirt.vdsmfake.domain;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  *
@@ -164,7 +166,7 @@ public class StorageDomain extends BaseObject {
     // set if attached
     DataCenter dataCenter;
 
-    final Map<String, Volume> volumes = new HashMap<String, Volume>();
+    final ConcurrentMap<String, Volume> volumes = new ConcurrentHashMap<>();
 
     public String getConnection() {
         return connection;

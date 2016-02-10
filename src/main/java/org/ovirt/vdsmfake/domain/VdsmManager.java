@@ -18,7 +18,8 @@ package org.ovirt.vdsmfake.domain;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.PersistUtils;
@@ -51,9 +52,26 @@ public class VdsmManager implements Serializable {
     final Map<String, Host> hostMap = new Hashtable<String, Host>(0);
     final Map<String, StorageDomain> storageDomainMap = new HashMap<String, StorageDomain>();
     public final Vector allRunningVms = new Vector<String>(0);
+    final ConcurrentMap<String, Host> spmMap = new ConcurrentHashMap<>();
+
+    public ConcurrentMap getSpmMap() {
+        return this.spmMap;
+    }
+
+    public void setSpmMap(String spId, Host host) {
+        this.spmMap.put(spId, host);
+    }
+
+    public void removeSpmFromMap(String spId) {
+        this.spmMap.remove(spId);
+    }
 
     public Map<String, Host> getHostMap() {
         return this.hostMap;
+    }
+
+    public Host getSpmHost(String spUUID){
+        return this.spmMap.get(spUUID);
     }
 
     void storeObject(BaseObject baseObject) {

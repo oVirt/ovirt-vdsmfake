@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.vdsmfake.Utils;
-import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
+import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.StorageDomain;
-import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
-import org.ovirt.vdsmfake.domain.Task;
 import org.ovirt.vdsmfake.domain.Volume;
+import org.ovirt.vdsmfake.domain.Task;
+import org.ovirt.vdsmfake.domain.VdsmManager;
+import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;
@@ -457,6 +457,8 @@ public class StorageService extends AbstractService {
 
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_START_SPM, 10000l, task));
 
+        VdsmManager.getInstance().setSpmMap(spUUID, host);
+
         return resultMap;
     }
 
@@ -469,6 +471,8 @@ public class StorageService extends AbstractService {
         updateHost(host);
 
         Map resultMap = getOKStatus();
+
+        VdsmManager.getInstance().removeSpmFromMap(spUUID);
 
         return resultMap;
     }
@@ -524,9 +528,9 @@ public class StorageService extends AbstractService {
 
             resultMap.put("uuid", task.getId());
 
-            syncTask(null, task);
+            syncTask(VdsmManager.getInstance().getSpmHost(spUUID), task);
 
-            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_CREATE_VOLUME, 5000l, task));
+            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_CREATE_VOLUME, 3000l, task));
 
             return resultMap;
         } catch (Exception e) {
