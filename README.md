@@ -3,7 +3,7 @@ VDSM is a daemon component written in Python required by oVirt-Engine (Virtualiz
 '''VDSM Fake''' is a support application framework for oVirt Engine project. It is a Java web application which enables to simulate selected tasks of real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with very limited set of hardware resources.
 The aim is to get marginal performance characteristics of oVirt Engine JEE application (JBoss) and its repository database (PostgreSQL), but also network throughput, etc.
 
-== Technology ==
+## Technology
 The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of host IP address it is needed to specify fake host name.
 Apache XML-RPC library is a core technology for the Engine and VDSM communication.
 Many configured entities must be persisted after their creation. Simple Java object serialization is used for this
@@ -71,7 +71,7 @@ function add_host {
   curl -H "Accept: application/json" -H "Content-type: application/xml" -X POST --user $1 http://localhost:8080/ovirt-engine/api/hosts --data "$xml"
 }
 
-for i in `seq 0 10`; do bash add_host admin@internal:mypwd test$i; done
+for i in `seq 0 10`; do add_host admin@internal:mypwd test$i; done
 ```
 
 ## Functionality
