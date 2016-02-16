@@ -22,10 +22,9 @@ import java.util.Map;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.ovirt.vdsmfake.rpc.json.JsonRpcServer;
 import org.ovirt.vdsmfake.task.TaskProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Init/release data when application starts/ends
@@ -35,12 +34,9 @@ import org.slf4j.LoggerFactory;
  */
 public class AppLifecycleListener implements ServletContextListener {
 
-    private static final Logger log = LoggerFactory
-            .getLogger(AppLifecycleListener.class);
-
     @Override
     public void contextDestroyed(ServletContextEvent event) {
-        log.info("Application destroyed.");
+        System.out.println("Application destroyed.");
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.destroy();
@@ -49,7 +45,7 @@ public class AppLifecycleListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
-        log.info("Application initialized.");
+        System.out.println("Application initialized.");
 
         final Map<String, String> paramMap = new HashMap<String, String>();
 
@@ -57,8 +53,13 @@ public class AppLifecycleListener implements ServletContextListener {
         final Enumeration<String> paramNames = event.getServletContext().getInitParameterNames();
         while(paramNames.hasMoreElements()) {
             final String key = paramNames.nextElement();
-            paramMap.put(key, event.getServletContext().getInitParameter(key));
+            paramMap.put(key, System.getProperty(key,event.getServletContext().getInitParameter(key)));
         }
+        // Make sure that the logDir system property is always set for log4j configuration
+        System.setProperty("logDir", paramMap.get("logDir"));
+
+        //Initialize log4j
+        PropertyConfigurator.configure(getClass().getResource("/log4j.xml"));
 
         // fill application global parameters
         AppConfig.getInstance().init(paramMap);

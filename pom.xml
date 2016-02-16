@@ -10,6 +10,9 @@
 
 	<properties>
 		<slf4j.version>1.5.11</slf4j.version>
+		<jsonListenPort>54321</jsonListenPort>
+		<vdsmPort>54322</vdsmPort>
+		<jsonSecured>false</jsonSecured>
 	</properties>
 
 	<repositories>
@@ -91,8 +94,7 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-			<scope>runtime</scope>
+			<version>1.2.17</version>
 		</dependency>
 
 		<dependency>
@@ -130,9 +132,19 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.3.7.v20160115</version>
 				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<name>cacheDir</name>
+							<value>${project.basedir}/target/fakevdsm/cache</value>
+						</systemProperty>
+						<systemProperty>
+							<name>logDir</name>
+							<value>${project.basedir}/target/fakevdsm/log</value>
+						</systemProperty>
+					</systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<httpConnector>
-						<port>54321</port>
+						<port>${vdsmPort}</port>
 					</httpConnector>
 					<webApp>
 						<contextPath>/</contextPath>

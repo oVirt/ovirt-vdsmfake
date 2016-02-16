@@ -9,7 +9,7 @@
         </layout>
     </appender>
     <appender name="APP" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/var/log/vdsmfake/app.log" />
+        <param name="File" value="${logDir}/app.log" />
         <param name="MaxFileSize" value="5MB" />
         <param name="Encoding" value="UTF-8" />
         <param name="MaxBackupIndex" value="1000" />
@@ -18,7 +18,7 @@
         </layout>
     </appender>
     <appender name="COMMUNICATION" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/var/log/vdsmfake/communication.log" />
+        <param name="File" value="${logDir}/communication.log" />
         <param name="MaxFileSize" value="5MB" />
         <param name="Encoding" value="UTF-8" />
         <param name="MaxBackupIndex" value="1000" />

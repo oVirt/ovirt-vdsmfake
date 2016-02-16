@@ -6,15 +6,17 @@ The aim is to get marginal performance characteristics of oVirt Engine JEE appli
 == Technology ==
 The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of host IP address it is needed to specify fake host name.
 Apache XML-RPC library is a core technology for the Engine and VDSM communication.
-Many configured entities must be persisted after their creation. Simple Java object serialization is used for this purpose (directory /var/log/vdsmfake/cache).
+Many configured entities must be persisted after their creation. Simple Java object serialization is used for this
+purpose. They are stored in `/var/log/fakevdsm/cache` by default. Set the system porperty `${cacheDir}` to customize
+the location.
 
 == Functionality ==
 The application runs in 2 modes:
 * simulation
 * proxy to real VDSM
 
-All or selected XML requests/responses are optionally logged into a directory (/var/log/vdsmfake/xml).
-Currently the configuration is possible to update in web.xml, log4j.xml files only.
+All XML/Json requests/responses are optionally logged into the default path `/var/log/vakevdsm/`. Set the
+system property ${logDir} to customize the location. Log4j logs into this directory too.
 
 == Supported methods ==
 * create hosts
@@ -27,10 +29,12 @@ Currently the configuration is possible to update in web.xml, log4j.xml files on
 VDSM Fake is a Maven configured project. Source code:
 * git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
 
+== Run the project ==
+Executing `mvn jetty:run` is enough. You can find the logs and the cached entities inside of  `${project.basedir}/target/fakevdsm`.
+
 == Installation ==
 Required directories (set RW access):
 * /var/log/vdsmfake
-* /var/log/vdsmfake/xml
 * /var/log/vdsmfake/cache
 
 Maven commands:

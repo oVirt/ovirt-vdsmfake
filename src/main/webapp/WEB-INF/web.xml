@@ -84,13 +84,13 @@
 
 	<context-param>
 		<param-name>vdsmPort</param-name>
-		<param-value>54321</param-value>
+		<param-value>54322</param-value>
 	</context-param>
 
     <!--  json listen port -->
 	<context-param>
 		<param-name>jsonListenPort</param-name>
-		<param-value>54322</param-value>
+		<param-value>54321</param-value>
 	</context-param>
 
 	<!--  secured JSON communication -->
