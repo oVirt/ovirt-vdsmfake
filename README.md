@@ -51,6 +51,18 @@ sudo -i
 for i in `seq 0 10`; do echo 127.0.0.1 test$i >> /etc/hosts; done
 ```
 
+Use `dnsmasq` for more dynamic approach to make every X.vdsm.simulator resolve to an IP:
+
+```bash
+dnsmasq --address=/vdsm.simulator/127.0.0.1
+```
+
+Add 127.0.0.1 as a dns server:
+```bash
+cat /etc/resolv.conf
+nameserver 127.0.0.1
+```
+
 ### Add the fake hosts
 
 ```bash
