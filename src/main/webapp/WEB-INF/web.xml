@@ -86,6 +86,7 @@
 		<param-name>jsonHost</param-name>
 		<param-value>localhost</param-value>
 	</context-param>
+
 	<filter>
 		<filter-name>XmlRpcFilter</filter-name>
 		<filter-class>org.ovirt.vdsmfake.servlet.XmlRpcFilter</filter-class>
@@ -97,6 +98,16 @@
 	<listener>
 		<listener-class>org.ovirt.vdsmfake.AppLifecycleListener</listener-class>
 	</listener>
+ <servlet>
+		<display-name>HystrixMetricsStreamServlet</display-name>
+		<servlet-name>HystrixMetricsStreamServlet</servlet-name>
+		<servlet-class>com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>HystrixMetricsStreamServlet</servlet-name>
+		<url-pattern>/hystrix.stream</url-pattern>
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>XmlRpcServlet</servlet-name>
 		<servlet-class>org.ovirt.vdsmfake.servlet.XmlRpcServlet</servlet-class>
@@ -112,6 +123,7 @@
 		<servlet-name>XmlRpcServlet</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
+
 	<session-config>
 		<session-timeout>2</session-timeout>
 	</session-config>

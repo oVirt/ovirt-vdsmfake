@@ -15,9 +15,7 @@
  */
 package org.ovirt.vdsmfake.servlet;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.Filter;
@@ -29,18 +27,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.vdsmfake.domain.Host;
-import org.ovirt.vdsmfake.domain.VdsmManager;
-import org.ovirt.vdsmfake.service.AbstractService;
-import org.ovirt.vdsmfake.service.VMService;
-
-import org.apache.commons.io.FileUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.xpath.XPath;
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.ovirt.vdsmfake.XMLUtils;
+import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,11 +60,14 @@ public class XmlRpcFilter implements Filter {
 
         try {
             final String method = ((HttpServletRequest)request).getMethod();
-            final String pathInfo = ((HttpServletRequest)request).getPathInfo();
             final String newline = "\n";
             final String tabnewline = "\n\n\n\n";
 
             if ("GET".equals(method)) {
+                if ("/hystrix.stream".equals(((HttpServletRequest) request).getServletPath())) {
+                    chain.doFilter(request, response);
+                    return;
+                }
                 StringBuilder output = new StringBuilder();
                 output.append("Hello, this is VDSM Fake!").append(tabnewline);
                 output.append(" ==== Statistics ======").append(newline);

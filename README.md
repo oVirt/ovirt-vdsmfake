@@ -128,3 +128,18 @@ entities inside of  `${project.basedir}/target/fakevdsm`.
 * Generate WAR and standalone archive: mvn package
 * Run sample web server: mvn jetty:run
 
+### Monitoring
+
+To make it easy to see if performance test results for ovirt-engine are tainted
+by this application, all JSON requests are monitored.
+First, to see if the response preparations from vdsmfake are reasonable fast,
+they are monitored. These metrics have the postfix **.Prepare**.
+Second, to see how fast the data is transfered and accepted by ovirt-engine,
+the send time is monitored. Metrics representing the send time have the postfix
+**.Send**.
+
+Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream with
+Jetty and on http://localhost:8080/hystrix.stream in the standalone version
+with Tomcat.
+
+Graphite support is planned to allow the visualization in tools like Grafana.

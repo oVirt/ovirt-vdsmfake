@@ -8,7 +8,9 @@ import org.ovirt.vdsmfake.rpc.json.commands.GetFullVmListCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.GetHardwareInfoCommmand;
 import org.ovirt.vdsmfake.rpc.json.commands.GetStatsCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.GetVmListCommand;
+import org.ovirt.vdsmfake.rpc.json.commands.HostDevListByCaps;
 import org.ovirt.vdsmfake.rpc.json.commands.HostGetStorageDomainsCommand;
+import org.ovirt.vdsmfake.rpc.json.commands.ImageDelete;
 import org.ovirt.vdsmfake.rpc.json.commands.JsonCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.SpmGetStatusCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.SpmStartCommand;
@@ -37,8 +39,6 @@ import org.ovirt.vdsmfake.rpc.json.commands.VmMigrateCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmSetTicketCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmShutdownCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VolumeCreateCommand;
-import org.ovirt.vdsmfake.rpc.json.commands.ImageDelete;
-import org.ovirt.vdsmfake.rpc.json.commands.HostDevListByCaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

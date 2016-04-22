@@ -1,5 +1,7 @@
 package org.ovirt.vdsmfake.rpc.json;
 
+import static com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +24,11 @@ import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 
 public class JsonRpcServer {
     private static final Logger log = LoggerFactory
@@ -116,12 +123,28 @@ public class JsonRpcServer {
                     log.error("client identifier were not found, using hash");
                 }
 
-                ResponseBuilder builder = new ResponseBuilder(request.getId());
-                String methodName = request.getMethod();
-                builder =
-                        CommandFactory.createCommand(methodName).run(request.getParams(),
+                HystrixCommand.Setter setter = setter(request.getMethod() + ".Prepare");
+                final JsonRpcRequest finalRequest = request;
+                final HystrixCommand<ResponseBuilder> preparationCommand = new HystrixCommand(setter) {
+
+                    @Override protected Object run() throws Exception {
+                        ResponseBuilder builder = new ResponseBuilder(finalRequest.getId());
+                        CommandFactory.createCommand(finalRequest.getMethod()).run(finalRequest.getParams(),
                                 builder);
-                send(builder.build(), request.getMethod());
+                        return builder;
+                    }
+                };
+                final ResponseBuilder builder = preparationCommand.execute();
+                setter = setter(request.getMethod() + ".Send");
+
+                final HystrixCommand<Object> sendCommand = new HystrixCommand(setter) {
+
+                    @Override protected Object run() throws Exception {
+                        send(builder.build(), finalRequest.getMethod());
+                        return null;
+                    }
+                };
+                sendCommand.execute();
             } catch (Throwable e) {
                 log.error("Failure in processing request", e);
                 Map<String, Object> error = new HashMap<>();
@@ -146,4 +169,22 @@ public class JsonRpcServer {
             }
         }
     }
+
+    private HystrixCommand.Setter setter(final String key) {
+        return HystrixCommand.Setter.withGroupKey(
+                HystrixCommandGroupKey.Factory.asKey(key)
+        ).andCommandKey(
+                HystrixCommandKey.Factory.asKey(key)
+        ).andCommandPropertiesDefaults(
+                HystrixCommandProperties.Setter()
+                        .withExecutionIsolationStrategy(SEMAPHORE)
+                        .withExecutionTimeoutEnabled(false)
+                        .withCircuitBreakerEnabled(false)
+                        .withFallbackEnabled(false)
+                        .withMetricsRollingStatisticalWindowInMilliseconds(60000)
+                        .withMetricsRollingStatisticalWindowBuckets(60)
+                        .withExecutionIsolationSemaphoreMaxConcurrentRequests(300)
+        );
+    }
+
 }
