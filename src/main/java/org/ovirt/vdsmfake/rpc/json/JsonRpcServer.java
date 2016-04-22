@@ -29,6 +29,8 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.contrib.servopublisher.HystrixServoMetricsPublisher;
+import com.netflix.hystrix.strategy.HystrixPlugins;
 
 public class JsonRpcServer {
     private static final Logger log = LoggerFactory
@@ -52,6 +54,7 @@ public class JsonRpcServer {
     }
 
     public void start() {
+        HystrixPlugins.getInstance().registerMetricsPublisher(HystrixServoMetricsPublisher.getInstance());
         try {
             String hostName = System.getProperty("fake.host");
 

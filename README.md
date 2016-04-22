@@ -142,4 +142,7 @@ Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream with
 Jetty and on http://localhost:8080/hystrix.stream in the standalone version
 with Tomcat.
 
+Further all metrics are exposed in 'com.netflix.servo' in JMX. They only become
+visible **after** the first hystrix command was executed.
+
 Graphite support is planned to allow the visualization in tools like Grafana.
