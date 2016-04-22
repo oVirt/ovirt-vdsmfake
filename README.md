@@ -94,14 +94,37 @@ VDSM Fake is a Maven configured project. Source code:
 * git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
 
 ## Run the project
-Executing `mvn jetty:run` is enough. You can find the logs and the cached entities inside of  `${project.basedir}/target/fakevdsm`.
 
-## Installation
-Required directories (set RW access):
-* /var/log/vdsmfake
+### Standalone
+
+The *maven-tomcat7-plugin* can generate a standalone war file for you which
+will unclude a Tomcat7 server.  First create the *standalone.jar* file:
+
+```
+mvn package
+```
+
+Then run the application:
+
+```
+java -jar target/standalone.jar -DcacheDir=target/fakevdsm/cache -DlogDir=target/fakevdsm/log
+```
+
+### WAR
+
+Run `mvn package` and copy the file *target/vdsmfake.war* into the deployment
+folder of your favourite application server.
+
+Default values for *cacheDir* and *logDir* are:
 * /var/log/vdsmfake/cache
+* /var/log/vdsmfake/log
 
-Maven commands:
-* Generate WAR file: mvn install
+### Development
+
+Executing `mvn jetty:run` is enough. You can find the logs and the cached
+entities inside of  `${project.basedir}/target/fakevdsm`.
+
+## Maven commands
+* Generate WAR and standalone archive: mvn package
 * Run sample web server: mvn jetty:run
 
