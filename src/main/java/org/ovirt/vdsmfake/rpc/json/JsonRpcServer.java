@@ -2,7 +2,9 @@ package org.ovirt.vdsmfake.rpc.json;
 
 import static com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +33,12 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.contrib.servopublisher.HystrixServoMetricsPublisher;
 import com.netflix.hystrix.strategy.HystrixPlugins;
+import com.netflix.servo.publish.BasicMetricFilter;
+import com.netflix.servo.publish.MetricObserver;
+import com.netflix.servo.publish.MonitorRegistryMetricPoller;
+import com.netflix.servo.publish.PollRunnable;
+import com.netflix.servo.publish.PollScheduler;
+import com.netflix.servo.publish.graphite.GraphiteMetricObserver;
 
 public class JsonRpcServer {
     private static final Logger log = LoggerFactory
@@ -54,7 +62,7 @@ public class JsonRpcServer {
     }
 
     public void start() {
-        HystrixPlugins.getInstance().registerMetricsPublisher(HystrixServoMetricsPublisher.getInstance());
+
         try {
             String hostName = System.getProperty("fake.host");
 
@@ -188,6 +196,23 @@ public class JsonRpcServer {
                         .withMetricsRollingStatisticalWindowBuckets(60)
                         .withExecutionIsolationSemaphoreMaxConcurrentRequests(300)
         );
+    }
+
+    public static void initMonitoring() {
+        HystrixPlugins.getInstance().registerMetricsPublisher(HystrixServoMetricsPublisher.getInstance());
+
+        // Minimal Servo configuration for publishing to Graphite
+        final List<MetricObserver> observers = new ArrayList<MetricObserver>();
+
+        String graphiteUrl = System.getProperty("graphite.url");
+        int graphiteInterval = Integer.getInteger("graphite.interval", 15);
+        if (graphiteUrl != null) {
+            observers.add(new GraphiteMetricObserver("vdsmfake", graphiteUrl));
+            PollScheduler.getInstance().start();
+            PollRunnable task =
+                    new PollRunnable(new MonitorRegistryMetricPoller(), BasicMetricFilter.MATCH_ALL, true, observers);
+            PollScheduler.getInstance().addPoller(task, graphiteInterval, TimeUnit.SECONDS);
+        }
     }
 
 }

@@ -100,13 +100,13 @@ VDSM Fake is a Maven configured project. Source code:
 The *maven-tomcat7-plugin* can generate a standalone war file for you which
 will unclude a Tomcat7 server.  First create the *standalone.jar* file:
 
-```
+```bash
 mvn package
 ```
 
 Then run the application:
 
-```
+```bash
 java -jar target/standalone.jar -DcacheDir=target/fakevdsm/cache -DlogDir=target/fakevdsm/log
 ```
 
@@ -145,4 +145,29 @@ with Tomcat.
 Further all metrics are exposed in 'com.netflix.servo' in JMX. They only become
 visible **after** the first hystrix command was executed.
 
-Graphite support is planned to allow the visualization in tools like Grafana.
+Finally exporting metrics to Graphite is possible too. By default it is disabled.
+Setting the sytem property `graphite.url` to the graphite destionation server
+enables the export mechanism. With the system property `graphite.interval` the
+export interval in seconds can be specified. By default the export will happen
+every 15 seconds. For example
+
+```bash
+mvn clean jetty:run -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
+```
+
+exports hystrix metrics every 20 seconds to the graphite database at
+`localhost:2003`.
+
+An easy way to get Graphite and Grafana up and running is docker:
+
+```bash
+docker run -d -p 8070:80 -p 2003:2003 -p 8125:8125/udp -p 8126:8126 \
+    --name grafana-dashboard choopooly/grafana-graphite
+```
+
+Graphite will listen on `localhost:2003` and Grafana at `localhost:8070`. The
+metrics prefix is `vdsmfake`. 
+
+This application uses Netflix Servo for the export.
+[Here](http://www.nurkiewicz.com/2015/02/storing-months-of-historical-metrics.html)
+is a nice post about how to do the same thing with Dropwizard.

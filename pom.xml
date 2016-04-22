@@ -117,6 +117,16 @@
 			<artifactId>hystrix-servo-metrics-publisher</artifactId>
 			<version>1.4.26</version>
 		</dependency>
+		<dependency>
+			<groupId>com.netflix.servo</groupId>
+			<artifactId>servo-core</artifactId>
+			<version>0.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.servo</groupId>
+			<artifactId>servo-graphite</artifactId>
+			<version>0.10.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>vdsmfake</finalName>
