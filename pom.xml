@@ -175,6 +175,10 @@
 							<name>logDir</name>
 							<value>${project.basedir}/target/fakevdsm/log</value>
 						</systemProperty>
+						<systemProperty>
+							<name>archaius.dynamicPropertyFactory.registerConfigWithJMX</name>
+							<value>true</value>
+						</systemProperty>
 					</systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<httpConnector>
