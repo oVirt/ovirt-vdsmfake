@@ -44,6 +44,14 @@ mvn jetty:run -DjsonListenPort=54322 -DvdsmPort=54321
 Here we are flipping the XML-RPC and the JSON-RPC ports, so that the engine will find the XML-RPC server on the default
 vdsm port `54321`.
 
+### Docker
+
+```bash
+git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
+docker build -t vdsmfake .
+docker run --rm -p 8080:8080 -p54321:54321 vdsmfake
+```
+
 ### Create fake host names
 
 ```bash
