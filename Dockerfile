@@ -16,6 +16,6 @@ RUN dnf --best --allowerasing -y install java-1.8.0-openjdk-devel maven tar nss 
 
 COPY src/main/resources/log4j-stdout.xml /log4j-stdout.xml
 
-ENTRYPOINT ["/usr/bin/java", "-jar", "/vdsmfake.jar", "-Dlog4j.configuration=file:/log4j-stdout.xml" ]
+ENTRYPOINT ["/usr/bin/java", "-jar", "/vdsmfake.jar", "-Dlog4j.configuration=file:/log4j-stdout.xml", "-DcacheDir=/var/cache/vdsmfake", "-Dfake.host=0.0.0.0" ]
 
-CMD [ "-DcacheDir=/var/cache/vdsmfake" ]
+EXPOSE 54321
