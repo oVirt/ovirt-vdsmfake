@@ -51,7 +51,11 @@ public class HostService extends AbstractService {
             Map infoMap = map();
             infoMap.put("HBAInventory", getHBAInventoryMap());
             infoMap.put("packages2", getPackages2Map());
-            infoMap.put("cpuModel", "Intel(R) Xeon(R) CPU E5606 @ 2.13GHz");
+
+            AppConfig.ArchitectureType architecture = AppConfig.getInstance().getArchitectureType();
+            infoMap.put("cpuModel", architecture.getCpuModel());
+            infoMap.put("cpuFlags", architecture.getCpuFlags());
+
             infoMap.put("hooks", map());
             infoMap.put("cpuSockets", "1");
             infoMap.put("vmTypes", getVmTypesList());
@@ -63,7 +67,6 @@ public class HostService extends AbstractService {
             infoMap.put("nics", getNicsMap(host));
             infoMap.put("software_revision", "0.141");
             infoMap.put("clusterLevels", getClusterLevelsList());
-            infoMap.put("cpuFlags", "fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept,fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,model_Conroe,model_Penryn,model_Westmere,model_SandyBridge");
             infoMap.put("ISCSIInitiatorName", "iqn.1994-05.com.example:ef52ec17bb0");
             infoMap.put("netConfigDirty", "False");
             infoMap.put("supportedENGINEs", getSupportedENGINEsList());

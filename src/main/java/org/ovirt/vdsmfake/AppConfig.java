@@ -44,6 +44,7 @@ public class AppConfig {
     String vmConfAndStatsUpdateIntervals;
     String targetServerUrl; // not set in web.xml
     int jsonHandlersThreadsPool;
+    ArchitectureType architectureType;
 
     final Set<String> notLoggedMethodSet = new HashSet<String>();
 
@@ -67,6 +68,7 @@ public class AppConfig {
         vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
         vmConfAndStatsUpdateIntervals = paramMap.get("vmConfAndStatsUpdateIntervals");
         jsonHandlersThreadsPool = Integer.valueOf(paramMap.get("jsonHandlersThreadsPool"));
+        architectureType = ArchitectureType.valueOf(paramMap.get("architectureType").toUpperCase());
 
 
         final String notLoggedMethods = paramMap.get("notLoggedMethods");
@@ -110,8 +112,6 @@ public class AppConfig {
     public long getDelayMinimum() {
         return this.delayMinimum;
     }
-
-
 
     public String getNetworkBridgeName() {
         return networkBridgeName;
@@ -205,5 +205,30 @@ public class AppConfig {
 
     public int getJsonHandlersThreadsPool() {
         return jsonHandlersThreadsPool;
+    }
+
+    public ArchitectureType getArchitectureType() {
+        return architectureType;
+    }
+
+    public enum  ArchitectureType {
+        X86_64("Intel(R) Xeon(R) CPU E5606 @ 2.13GHz","fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept,fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,model_Conroe,model_Penryn,model_Westmere,model_SandyBridge"),
+        PPC64("IBM POWER8","powernv,model_POWER8");
+
+        private String cpuModel;
+        private String cpuFlags;
+
+        private ArchitectureType(String cpuModel, String cpuFlags){
+            this.cpuModel = cpuModel;
+            this.cpuFlags = cpuFlags;
+        }
+
+        public String getCpuModel() {
+            return cpuModel;
+        }
+
+        public String getCpuFlags() {
+            return cpuFlags;
+        }
     }
 }

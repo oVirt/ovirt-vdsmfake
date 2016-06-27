@@ -19,7 +19,7 @@ sudo -i -u postgres
 export ENGINE_DB=dbname
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'SSLEnabled';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'EncryptHostCommunication';"
-psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' where option_name = 'InstallVds'"
+psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' where option_name = 'InstallVds';"
 ```
 
 This disables SSL encryption and skips installation when adding VDSM hosts. Restart the engine after the values were
@@ -96,6 +96,15 @@ system property ${logDir} to customize the location. Log4j logs into this direct
 * create VM from iso (+ create network, create volume)
 * run/shutdown VM
 * migrate VM
+
+## Changing the simulated host architecture
+VDSM fake can be used to simulate two architectures: ppc64 or x86_64.
+To do so set the system property ${architectureType} to one of the following values: ppc64 or x86_64.
+```bash
+mvn jetty:run -DarchitectureType=ppc64
+```
+This property is optional. The default architecture type is x86_64 and is set in web.xml.
+If no architecture type is provided the default architecture will be used.
 
 ## Project
 VDSM Fake is a Maven configured project. Source code:

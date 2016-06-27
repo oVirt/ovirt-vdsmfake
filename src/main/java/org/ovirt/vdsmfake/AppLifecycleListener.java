@@ -34,6 +34,8 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
  */
 public class AppLifecycleListener implements ServletContextListener {
 
+    public static final String ARCHITECTURE_TYPE = "architectureType";
+
     @Override
     public void contextDestroyed(ServletContextEvent event) {
         System.out.println("Application destroyed.");
@@ -61,6 +63,10 @@ public class AppLifecycleListener implements ServletContextListener {
         //Initialize log4j
         PropertyConfigurator.configure(getClass().getResource("/log4j.xml"));
 
+        String architectureType = System.getProperty(ARCHITECTURE_TYPE);
+        if(architectureType != null){
+            paramMap.put(ARCHITECTURE_TYPE, architectureType);
+        }
         // fill application global parameters
         AppConfig.getInstance().init(paramMap);
 

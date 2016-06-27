@@ -43,6 +43,11 @@
 		<param-name>memLoad</param-name>
 		<param-value>5,10</param-value>
 	</context-param>
+	<!-- cpu type to emulate-->
+	<context-param>
+		<param-name>architectureType</param-name>
+		<param-value>x86_64</param-value>
+	</context-param>
 	<!-- store/load object to/from this directory -->
 	<context-param>
 		<param-name>cacheDir</param-name>
