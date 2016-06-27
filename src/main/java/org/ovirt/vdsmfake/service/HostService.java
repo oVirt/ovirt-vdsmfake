@@ -203,6 +203,7 @@ public class HostService extends AbstractService {
         ovirtmgmtMap.put("stp", "off");
         ovirtmgmtMap.put("bridged", Boolean.TRUE); // boolean..1
         ovirtmgmtMap.put("gateway", "10.34.63.254");
+        ovirtmgmtMap.put("switch", "legacy");
 
         List portsList = lst();
         portsList.add("em1");
@@ -299,6 +300,7 @@ public class HostService extends AbstractService {
         resultList.add("3.5");
         resultList.add("3.6");
         resultList.add("4.0");
+        resultList.add("4.1");
 
         return resultList;
     }
@@ -313,6 +315,7 @@ public class HostService extends AbstractService {
         resultList.add("3.5");
         resultList.add("3.6");
         resultList.add("4.0");
+        resultList.add("4.1");
 
         return resultList;
     }
