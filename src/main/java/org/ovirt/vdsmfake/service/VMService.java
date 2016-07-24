@@ -172,33 +172,31 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
-    List getNetworkInterfaces(VM vm){
+    List<Map<String, Object>> getNetworkInterfaces(VM vm){
 
-        Map resultMap = map();
-        List net = new ArrayList();
-        List<Device> nicDevices = vm.getDevicesByType(Device.DeviceType.NIC);
-        for (Device device: nicDevices){
+        Map<String, Object> resultMap = new HashMap();
+        List<String> inet6Addresses =  new ArrayList<>();
+        List<String> inet4Addresses =  new ArrayList<>();
+        List<Map<String, Object>> nets = new ArrayList<>();
 
-            List templist =  new ArrayList();
-            List templist2 =  new ArrayList();
-            //TODO: change some hardcodeed fileds.
-            templist.add("fe80::21a:4aff:fe62:8900");
-            resultMap.put("inet6", templist);
-            resultMap.put("hw", device.getMacAddr());
+        resultMap.put("name", "eth0");
 
-            templist2.add(vm.getIp());
-            resultMap.put("inet", templist2);
-            resultMap.put("name", "eth0");
+        inet6Addresses.add("fe80::21a:4aff:fe16:2016");
+        inet6Addresses.add("2620:52:0:2380:21a:4aff:fe16:2016");
 
-            net.add(resultMap);
+        resultMap.put("inet6", inet6Addresses);
 
-        }
-        log.debug("network list is {}", net.toString());
-        return net;
+        inet4Addresses.add(vm.getIp());
+        resultMap.put("inet", inet4Addresses);
+        resultMap.put("hw", vm.getMacAddress());
+
+        nets.add(resultMap);
+
+        log.debug("network list is {}", nets.toString());
+        return nets;
     }
 
     Map getNetworkStatsMap(VM vm) {
-
         List<Device> nicDevices = vm.getDevicesByType(Device.DeviceType.NIC);
 
         String macAddress = vm.getMacAddress();
@@ -211,20 +209,23 @@ public class VMService extends AbstractService {
         int count = 0;
         for(Device device : nicDevices)
         {
+            ArrayList loadValues = AppConfig.getInstance().getNetworkLoadValues();
             Map netStats = map();
-            String dName = "vnet" + Integer.valueOf(count);
+            String dName = "vnet" + count;
 
-            //TODO: change hardcoded fileds.
             netStats.put("txErrors", "0");
             netStats.put("state", "unknown");
-            netStats.put("macAddr", vm.getMacAddress()); // 00:1a:4a:16:01:51
+            netStats.put("macAddr", device.getMacAddr());
             netStats.put("name", dName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", "7.0");
+            netStats.put("txRate", Utils.rangeParsser(loadValues));
             netStats.put("rxErrors", "0");
-            netStats.put("rxRate", "7.0");
+            netStats.put("rxRate",  Utils.rangeParsser(loadValues));
+            netStats.put("tx",  Utils.rangeParsser(loadValues));
+            netStats.put("rx",  Utils.rangeParsser(loadValues));
             netStats.put("rxDropped", "0");
-            netStats.put("speed", "999");
+            netStats.put("speed", "1000");
+            netStats.put("sampleTime", "4318787.08");
 
             resultMap.put(dName, netStats);
             ++count;
