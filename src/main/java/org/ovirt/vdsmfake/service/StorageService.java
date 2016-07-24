@@ -1,5 +1,5 @@
 /**
- Copyright (c) 2012 Red Hat, Inc.
+ Copyright (c) 2016 Red Hat, Inc.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -331,15 +331,23 @@ public class StorageService extends AbstractService {
         return resultMap;
     }
 
+    private void activateClearance(StorageDomain storageDomain){
+        storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
+        updateStorageDomain(storageDomain);
+    }
+
     public Map activateStorageDomain(String sdUUID, String spUUID) {
         try {
             log.info("Activating storage domain, spUUID: {} sdUUID: {}", new Object[] { spUUID, sdUUID });
 
-            final DataCenter dataCenter = getDataCenterById(spUUID);
-            final StorageDomain storageDomain = dataCenter.getStorageDomainMap().get(sdUUID);
+            final StorageDomain storageDomain = getDataCenterById(spUUID).getStorageDomainMap().get(sdUUID);
             if (storageDomain != null) {
-                storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
-                updateStorageDomain(storageDomain);
+                activateClearance(storageDomain);
+                log.info("storage were activated {} {}", storageDomain.getName(), sdUUID);
+            } else {
+                log.warn("No storage domains were activated for storage domain '{}' and storage pool '{}'",
+                        sdUUID,
+                        spUUID);
             }
 
             return getOKStatus();

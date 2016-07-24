@@ -39,6 +39,7 @@ import org.ovirt.vdsmfake.rpc.json.commands.VmMigrateCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmSetTicketCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VmShutdownCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.VolumeCreateCommand;
+import org.ovirt.vdsmfake.rpc.json.commands.StorageDomainAttachCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,6 +112,8 @@ public class CommandFactory {
             return new StorageDomainGetStatsCommand();
         case "StorageDomain.create":
             return new StorageDomainCreateCommand();
+        case "StorageDomain.attach":
+            return new StorageDomainAttachCommand();
         case "Volume.create":
             return new VolumeCreateCommand();
         case "Task.getStatus":
