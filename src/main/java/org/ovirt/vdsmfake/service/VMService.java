@@ -414,8 +414,10 @@ public class VMService extends AbstractService {
         vmStatMap.put("guestIPs", vm.getIp());
         vmStatMap.put("guestName", "localhost.localdomain");
         vmStatMap.put("guestFQDN", "localhost.localdomain");
-        vmStatMap.put("guestOs", " 2.6.32-504.1.3.el6.x86_64");
-        vmStatMap.put("guestCPUCount", "-1");
+        vmStatMap.put("guestOs", "2.6.32-642.el6.x86_64");
+        vmStatMap.put("guestOsInfo", getGuestOsInto());
+        vmStatMap.put("guestCPUCount", "1");
+        vmStatMap.put("guestTimezone", getGuestTimeZone());
 
         //cpu
         vmStatMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoadValues()));
@@ -605,5 +607,23 @@ public class VMService extends AbstractService {
             log.error(ERROR, e);
             throw new RuntimeException(ERROR, e);
         }
+    }
+
+    private Map<String, String> getGuestOsInto(){
+        Map<String, String> resultMap = map();
+        resultMap.put("kernel","2.6.32-642.el6.x86_64");
+        resultMap.put("type", "linux");
+        resultMap.put("version", "6.7");
+        resultMap.put("arch", "x86_64");
+        resultMap.put("codename", "Santiago");
+        resultMap.put("distribution", "Red Hat Enterprise Linux Server");
+        return resultMap;
+    }
+
+    private Map<String, String> getGuestTimeZone(){
+        Map<String, String> resultMap = map();
+        resultMap.put("zone","Israel");
+        resultMap.put("offset", "120");
+        return resultMap;
     }
 }
