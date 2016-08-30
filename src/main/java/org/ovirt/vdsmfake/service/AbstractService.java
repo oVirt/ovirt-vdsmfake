@@ -130,7 +130,7 @@ public abstract class AbstractService{
         return Utils.getRandomNum(length);
     }
 
-    public synchronized void syncTask(Host host, Task task){
+    public void syncTask(Host host, Task task){
         if (host == null){
             host = getActiveHost();
             log.debug("host is null, task {} will be sync by any active host {}", task.getName(), host.getName());

@@ -48,11 +48,11 @@ public class VdsmManager implements Serializable {
         return instance;
     }
 
-    final Map<String, DataCenter> dataCenterMap = new Hashtable<String, DataCenter>();
-    final Map<String, Host> hostMap = new Hashtable<String, Host>(0);
-    final Map<String, StorageDomain> storageDomainMap = new HashMap<String, StorageDomain>();
+    final ConcurrentMap<String, DataCenter> dataCenterMap = new ConcurrentHashMap<String, DataCenter>();
+    final ConcurrentMap<String, Host> hostMap = new ConcurrentHashMap<String, Host>(0);
+    final ConcurrentMap<String, StorageDomain> storageDomainMap = new ConcurrentHashMap<String, StorageDomain>();
     public final Vector allRunningVms = new Vector<String>(0);
-    final ConcurrentMap<String, Host> spmMap = new ConcurrentHashMap<>();
+    final ConcurrentMap<String, Host> spmMap = new ConcurrentHashMap<String, Host>();
 
     public ConcurrentMap getSpmMap() {
         return this.spmMap;
@@ -103,7 +103,7 @@ public class VdsmManager implements Serializable {
         return baseObject;
     }
 
-    public synchronized Host getHostByName(String serverName) {
+    public Host getHostByName(String serverName) {
         Host host = null;
 
         if (hostMap.containsKey(serverName)) {
@@ -129,7 +129,7 @@ public class VdsmManager implements Serializable {
         return host;
     }
 
-    public synchronized void updateHost(Host host) {
+    public void updateHost(Host host) {
         if (!hostMap.containsKey(host.getId())) {
             hostMap.put(host.getId(), host);
         }
@@ -140,7 +140,7 @@ public class VdsmManager implements Serializable {
         storeObject(host);
     }
 
-    public synchronized DataCenter getDataCenterById(String id) {
+    public DataCenter getDataCenterById(String id) {
         DataCenter dataCenter = null;
 
         if (dataCenterMap.containsKey(id)) {
@@ -160,7 +160,7 @@ public class VdsmManager implements Serializable {
         return dataCenter;
     }
 
-    public synchronized void updateDataCenter(DataCenter dataCenter) {
+    public void updateDataCenter(DataCenter dataCenter) {
         if (!dataCenterMap.containsKey(dataCenter.getId())) {
             dataCenterMap.put(dataCenter.getId(), dataCenter);
         }
@@ -171,7 +171,7 @@ public class VdsmManager implements Serializable {
         log.info("Data center {} stored", dataCenter.getId());
     }
 
-    public synchronized StorageDomain getStorageDomainById(String id) {
+    public StorageDomain getStorageDomainById(String id) {
         StorageDomain storageDomain = null;
 
         if (storageDomainMap.containsKey(id)) {
@@ -191,7 +191,7 @@ public class VdsmManager implements Serializable {
         return storageDomain;
     }
 
-    public synchronized void removeStorageDomain(StorageDomain storageDomain) {
+    public void removeStorageDomain(StorageDomain storageDomain) {
         storageDomainMap.remove(storageDomain.getId());
 
         log.info("Removing storage domain: {}", storageDomain.getId());
@@ -200,7 +200,7 @@ public class VdsmManager implements Serializable {
         removeObject(storageDomain);
     }
 
-    public synchronized void updateStorageDomain(StorageDomain storageDomain) {
+    public void updateStorageDomain(StorageDomain storageDomain) {
         log.info("Updating storage domain: {}", storageDomain.getId());
 
         if (!storageDomainMap.containsKey(storageDomain.getId())) {
@@ -211,7 +211,7 @@ public class VdsmManager implements Serializable {
         storeObject(storageDomain);
     }
 
-    public synchronized void setMasterDomain(String spUuid, String masterSdUuid) {
+    public void setMasterDomain(String spUuid, String masterSdUuid) {
         log.info("Setting master domain, sp: {}, master sd: {}: ", spUuid, masterSdUuid);
 
         if (masterSdUuid == null) {

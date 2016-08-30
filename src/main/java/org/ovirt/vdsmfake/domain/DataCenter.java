@@ -15,8 +15,9 @@
 */
 package org.ovirt.vdsmfake.domain;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
 
@@ -32,7 +33,7 @@ public class DataCenter extends BaseObject {
      */
     private static final long serialVersionUID = -5241720601365197280L;
 
-    final Map<String, StorageDomain> storageDomainMap = new HashMap<String, StorageDomain>();
+    final ConcurrentMap<String, StorageDomain> storageDomainMap = new ConcurrentHashMap<>();
 
     String masterStorageDomainId;
     Integer masterVersion = 0;
