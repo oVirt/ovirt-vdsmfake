@@ -33,6 +33,9 @@ import org.ovirt.vdsmfake.domain.VM;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class HostService extends AbstractService {
 
+    private static final int TOTAL_MEMORY_SIZE = 7976;
+    private static final int NUMBER_OF_NUMA_NODES = 2;
+
     final static HostService instance = new HostService();
 
     public static HostService getInstance() {
@@ -50,6 +53,7 @@ public class HostService extends AbstractService {
 
             Map infoMap = map();
             infoMap.put("HBAInventory", getHBAInventoryMap());
+            infoMap.put("autoNumaBalancing", "1");
             infoMap.put("packages2", getPackages2Map());
 
             AppConfig.ArchitectureType architecture = AppConfig.getInstance().getArchitectureType();
@@ -65,6 +69,9 @@ public class HostService extends AbstractService {
             infoMap.put("uuid", host.getUuid() + "_80:" + host.getMacAddress()); // 018CE76D-8EFE-D511-B30D-80C16E727330_80:c1:6e:6c:51:54
             infoMap.put("lastClientIface", AppConfig.getInstance().getNetworkBridgeName());
             infoMap.put("nics", getNicsMap(host));
+            infoMap.put("numaNodeDistance", getNumaNodeDistanceMap());
+            infoMap.put("numaNodes", getNumaNodesMap());
+            infoMap.put("onlineCpus", getOnlineCpusList());
             infoMap.put("software_revision", "0.141");
             infoMap.put("clusterLevels", getClusterLevelsList());
             infoMap.put("ISCSIInitiatorName", "iqn.1994-05.com.example:ef52ec17bb0");
@@ -73,7 +80,7 @@ public class HostService extends AbstractService {
             infoMap.put("reservedMem", "321");
             infoMap.put("bondings", getBondingsMap());
             infoMap.put("software_version", "4.10");
-            infoMap.put("memSize", "7976");
+            infoMap.put("memSize", Integer.toString(TOTAL_MEMORY_SIZE));
             infoMap.put("cpuSpeed", "1200.000");
             infoMap.put("version_name", "Snow Man");
             infoMap.put("vlans", map());
@@ -293,6 +300,87 @@ public class HostService extends AbstractService {
 
     }
 
+    Map getNumaNodeDistanceMap() {
+      Map numaNodeDistanceMap = map();
+
+      // Node 0
+      List nodeZeroDistList = lst();
+      nodeZeroDistList.add("10");
+      nodeZeroDistList.add("20");
+      numaNodeDistanceMap.put("0", nodeZeroDistList);
+
+      // Node 1
+      List nodeOneDistList = lst();
+      nodeOneDistList.add("20");
+      nodeOneDistList.add("10");
+      numaNodeDistanceMap.put("1", nodeOneDistList);
+
+      return numaNodeDistanceMap;
+    }
+
+    Map getNumaNodesMap() {
+      Map numaNodesMap = map();
+      int totalMemPerNode = TOTAL_MEMORY_SIZE / NUMBER_OF_NUMA_NODES;
+
+      // Node 0
+      Map nodeZeroMap = map();
+      List nodeZeroCpuList = lst();
+      nodeZeroCpuList.add(Integer.valueOf(1));
+      nodeZeroCpuList.add(Integer.valueOf(3));
+      nodeZeroCpuList.add(Integer.valueOf(5));
+      nodeZeroCpuList.add(Integer.valueOf(7));
+      nodeZeroCpuList.add(Integer.valueOf(9));
+      nodeZeroCpuList.add(Integer.valueOf(11));
+      nodeZeroCpuList.add(Integer.valueOf(13));
+      nodeZeroCpuList.add(Integer.valueOf(15));
+
+      nodeZeroMap.put("cpus", nodeZeroCpuList);
+      nodeZeroMap.put("totalMemory", Integer.valueOf(totalMemPerNode));
+
+      numaNodesMap.put("0", nodeZeroMap);
+
+      // Node 1
+      Map nodeOneMap = map();
+      List nodeOneCpuList = lst();
+      nodeOneCpuList.add(Integer.valueOf(0));
+      nodeOneCpuList.add(Integer.valueOf(2));
+      nodeOneCpuList.add(Integer.valueOf(4));
+      nodeOneCpuList.add(Integer.valueOf(6));
+      nodeOneCpuList.add(Integer.valueOf(8));
+      nodeOneCpuList.add(Integer.valueOf(10));
+      nodeOneCpuList.add(Integer.valueOf(12));
+      nodeOneCpuList.add(Integer.valueOf(14));
+
+      nodeOneMap.put("cpus", nodeOneCpuList);
+      nodeOneMap.put("totalMemory", Integer.valueOf(totalMemPerNode));
+
+      numaNodesMap.put("1", nodeOneMap);
+
+      return numaNodesMap;
+    }
+
+    List getOnlineCpusList() {
+      List onlineCpusList = lst();
+      onlineCpusList.add(Integer.valueOf(1));
+      onlineCpusList.add(Integer.valueOf(3));
+      onlineCpusList.add(Integer.valueOf(5));
+      onlineCpusList.add(Integer.valueOf(7));
+      onlineCpusList.add(Integer.valueOf(9));
+      onlineCpusList.add(Integer.valueOf(11));
+      onlineCpusList.add(Integer.valueOf(13));
+      onlineCpusList.add(Integer.valueOf(15));
+      onlineCpusList.add(Integer.valueOf(0));
+      onlineCpusList.add(Integer.valueOf(2));
+      onlineCpusList.add(Integer.valueOf(4));
+      onlineCpusList.add(Integer.valueOf(6));
+      onlineCpusList.add(Integer.valueOf(8));
+      onlineCpusList.add(Integer.valueOf(10));
+      onlineCpusList.add(Integer.valueOf(12));
+      onlineCpusList.add(Integer.valueOf(14));
+
+      return onlineCpusList;
+    }
+
     public List getClusterLevelsList() {
         List resultList = lst();
         resultList.add("3.0");
@@ -416,7 +504,14 @@ public class HostService extends AbstractService {
                 }
             }
             infoMap.put("vmCount", nTotal);
-            infoMap.put("memUsed", Utils.rangeParsser(appConfig.getMemLoadValues()));
+
+            String memUsedPercent = Utils.rangeParsser(appConfig.getMemLoadValues());
+            infoMap.put("memUsed", memUsedPercent);
+
+            double memUsedInMB = TOTAL_MEMORY_SIZE - (Double.valueOf(memUsedPercent) / 100);
+            int memFree = (int) (TOTAL_MEMORY_SIZE - memUsedInMB);
+            infoMap.put("memFree", Integer.toString(memFree));
+
             infoMap.put("storageDomains", getStorageDomainsStatsMap());
             infoMap.put("network", getNetworkStatMap(host.getMacAddress()));
             infoMap.put("txDropped", "0");
@@ -428,7 +523,6 @@ public class HostService extends AbstractService {
             infoMap.put("diskStats", getDiskStatsMap());
             infoMap.put("memCommitted", Integer.valueOf(0));
             infoMap.put("ksmState", Boolean.FALSE); //boolean..0
-
 
             int nMigrating = 0;
             for (VM vm : host.getRunningVMs().values()) {
@@ -461,6 +555,7 @@ public class HostService extends AbstractService {
 
             infoMap.put("vmActive", nActive);
             infoMap.put("cpuSysVdsmd", "0.25");
+            infoMap.put("numaNodeMemFree", getNumaNodeMemFreeMap(memFree, memUsedPercent));
 
             resultMap.put("info", infoMap);
             Utils.getLatency();
@@ -469,6 +564,28 @@ public class HostService extends AbstractService {
         } catch (Exception e) {
             throw error(e);
         }
+    }
+
+    Map getNumaNodeMemFreeMap(int memFree, String memUsed) {
+      double memFreePerNode = ((double) memFree) / NUMBER_OF_NUMA_NODES;
+      int nodeZeroMemFree = (int) Math.floor(memFreePerNode);
+      int nodeOneMemFree = (int) Math.ceil(memFreePerNode);
+
+      // Node 0
+      Map nodeZeroNumaFreeMemMap = map();
+      nodeZeroNumaFreeMemMap.put("memFree", Integer.valueOf(nodeZeroMemFree));
+      nodeZeroNumaFreeMemMap.put("memPercent", memUsed);
+
+      // Node 1
+      Map nodeOneNumaFreeMemMap = map();
+      nodeOneNumaFreeMemMap.put("memFree", Integer.valueOf(nodeOneMemFree));
+      nodeOneNumaFreeMemMap.put("memPercent", memUsed);
+
+      Map numaNodeMemFreeMap = map();
+      numaNodeMemFreeMap.put("0", nodeZeroNumaFreeMemMap);
+      numaNodeMemFreeMap.put("1", nodeOneNumaFreeMemMap);
+
+      return numaNodeMemFreeMap;
     }
 
     Map getStorageDomainsStatsMap() {
