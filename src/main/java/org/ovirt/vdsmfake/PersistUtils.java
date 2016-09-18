@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.ovirt.vdsmfake.domain.BaseObject;
+import org.ovirt.vdsmfake.domain.DataCenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,9 @@ public class PersistUtils {
     private static final Logger log = LoggerFactory.getLogger(PersistUtils.class);
 
     public static void store(BaseObject baseObject, File f) {
+        if (baseObject instanceof DataCenter && baseObject.getName().contains("?")){
+            baseObject.setName(baseObject.getId());
+        }
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(new FileOutputStream(f));

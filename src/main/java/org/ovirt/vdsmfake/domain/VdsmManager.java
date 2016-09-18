@@ -64,6 +64,8 @@ public class VdsmManager implements Serializable {
         return this.spmMap.get(spUUID);
     }
 
+    //TODO: caching and stored cached files needs a rework, when the app started, and when stored the files
+
     void storeObject(BaseObject baseObject) {
         final File f =
                 new File(AppConfig.getInstance().getCacheDir(), baseObject.getClass().getSimpleName() + "_"
@@ -120,9 +122,7 @@ public class VdsmManager implements Serializable {
     }
 
     public void updateHost(Host host) {
-        if (!hostMap.containsKey(host.getId())) {
-            hostMap.put(host.getId(), host);
-        }
+        hostMap.put(host.getId(), host);
 
         log.info("Storing host: {}", host.getName());
 
@@ -137,28 +137,37 @@ public class VdsmManager implements Serializable {
             return dataCenterMap.get(id);
         }
 
+        // read cache from stored file
         dataCenter = (DataCenter) loadObject(DataCenter.class, id);
-        if (dataCenter == null) {
-            dataCenter = new DataCenter();
-            dataCenter.setId(id);
-        } else {
-            log.info("Data center restored from file, id: {}", id);
-        }
 
-        dataCenterMap.put(id, dataCenter);
+        if (dataCenter == null) {
+            dataCenter = reInitializeDataCenter(id);
+        } else {
+            dataCenterMap.put(id, dataCenter);
+        }
 
         return dataCenter;
     }
 
+    private DataCenter reInitializeDataCenter(String dcId) throws RuntimeException {
+        log.warn("about to reinitialize dc");
+        DataCenter dataCenter = new DataCenter();
+        dataCenter.setId(dcId);
+        updateDataCenter(dataCenter);
+        return dataCenter;
+    }
+
     public void updateDataCenter(DataCenter dataCenter) {
-        if (!dataCenterMap.containsKey(dataCenter.getId())) {
-            dataCenterMap.put(dataCenter.getId(), dataCenter);
+        // save to the cache
+        try {
+            storeObject(dataCenter);
+        } catch (Exception e) {
+            log.error("failed to store object {}", e.getStackTrace());
         }
 
-        // save to the cache
-        storeObject(dataCenter);
+        dataCenterMap.put(dataCenter.getId(), dataCenter);
 
-        log.info("Data center {} stored", dataCenter.getId());
+        log.info("Data center {} restored", dataCenter.getId());
     }
 
     public StorageDomain getStorageDomainById(String id) {
@@ -168,16 +177,23 @@ public class VdsmManager implements Serializable {
             return storageDomainMap.get(id);
         }
 
+        // read cache from stored file
         storageDomain = (StorageDomain) loadObject(StorageDomain.class, id);
+
         if (storageDomain == null) {
-            storageDomain = new StorageDomain();
-            storageDomain.setId(id);
+            storageDomain = recoverStorageDomain(id);
         } else {
-            log.info("Data center restored from file, id: {}", id);
+            storageDomainMap.put(id, storageDomain);
         }
 
-        storageDomainMap.put(id, storageDomain);
+        return storageDomain;
+    }
 
+    private StorageDomain recoverStorageDomain(String sdUUID) {
+        log.warn("about to recover SD {}", sdUUID);
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(sdUUID);
+        updateStorageDomain(storageDomain);
         return storageDomain;
     }
 
@@ -193,9 +209,7 @@ public class VdsmManager implements Serializable {
     public void updateStorageDomain(StorageDomain storageDomain) {
         log.info("Updating storage domain: {}", storageDomain.getId());
 
-        if (!storageDomainMap.containsKey(storageDomain.getId())) {
-            storageDomainMap.put(storageDomain.getId(), storageDomain);
-        }
+        storageDomainMap.put(storageDomain.getId(), storageDomain);
 
         // save to the cache
         storeObject(storageDomain);
