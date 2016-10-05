@@ -15,38 +15,38 @@
 */
 package org.ovirt.vdsmfake.task;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- *
- */
 public class TaskProcessor extends TimerTask {
 
     private static final Logger log = LoggerFactory.getLogger(TaskProcessor.class);
-
-    final static TaskProcessor instance = new TaskProcessor();
-    final List<TaskRequest> queue = new LinkedList<TaskRequest>();
-    private static ConcurrentMap<String, String> tasksmap = new ConcurrentHashMap<String, String>();
-    Timer timer;
+    private static final TaskProcessor instance = new TaskProcessor();
+    private final ConcurrentMap<String, String> tasksmap = new ConcurrentHashMap<>();
+    private final List<TaskRequest> queue = new LinkedList<>();
+    private Timer timer;
 
     private TaskProcessor() {
     }
 
-    public static Map<String, String> getTasksMap() {
+    public Map<String, String> getTasksMap() {
         return tasksmap;
     }
 
-    public static void setTasksMap(String hostName, String taskId) {
+    public void setTasksMap(String hostName, String taskId) {
         tasksmap.put(hostName, taskId);
     }
 
-    public static void clearTaskMap(){
+    public void clearTaskMap() {
         tasksmap.clear();
     }
 
@@ -60,7 +60,7 @@ public class TaskProcessor extends TimerTask {
 
     public void init() {
         timer = new Timer();
-        timer.scheduleAtFixedRate(this, 0, 2000l); // every 2 seconds
+        timer.scheduleAtFixedRate(this, 0, 2000); // every 2 seconds
     }
 
     public void destroy() {

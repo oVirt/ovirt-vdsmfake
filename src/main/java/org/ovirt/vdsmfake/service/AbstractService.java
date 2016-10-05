@@ -138,7 +138,7 @@ public abstract class AbstractService{
         try {
             host.getRunningTasks().put(task.getId(), task);
             log.debug("sync task:{} to host:{}", task.getName(), host.getName());
-            TaskProcessor.setTasksMap(host.getName(), task.getId());
+            TaskProcessor.getInstance().setTasksMap(host.getName(), task.getId());
         }catch (Exception e){
             log.error("something went wrong durring task sync {}", e);
         }

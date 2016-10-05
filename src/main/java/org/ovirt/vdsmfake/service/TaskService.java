@@ -71,10 +71,10 @@ public class TaskService extends AbstractService {
         Map allTasksStatusMap = map();
 
         // adding new getter in order to process stored tasks, due to context holder server changes.
-        for (Map.Entry<String, String> entry :  TaskProcessor.getTasksMap().entrySet()) {
+        for (Map.Entry<String, String> entry :  TaskProcessor.getInstance().getTasksMap().entrySet()) {
             processor(allTasksStatusMap, getActiveHostByName(entry.getKey()).getRunningTasks().values());
         }
-        TaskProcessor.clearTaskMap();
+        TaskProcessor.getInstance().clearTaskMap();
 
         //backward compatibility
         processor(allTasksStatusMap, getActiveHost().getRunningTasks().values());

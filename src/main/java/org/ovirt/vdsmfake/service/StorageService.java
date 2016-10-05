@@ -461,7 +461,7 @@ public class StorageService extends AbstractService {
 
         task.setTarget(host);
         getActiveHost().getRunningTasks().put(task.getId(), task);
-        TaskProcessor.setTasksMap(host.getName(), task.getId());
+        TaskProcessor.getInstance().setTasksMap(host.getName(), task.getId());
 
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_START_SPM, 10000l, task));
 
