@@ -305,14 +305,14 @@ public class HostService extends AbstractService {
 
       // Node 0
       List nodeZeroDistList = lst();
-      nodeZeroDistList.add("10");
-      nodeZeroDistList.add("20");
+      nodeZeroDistList.add(Integer.valueOf(10));
+      nodeZeroDistList.add(Integer.valueOf(20));
       numaNodeDistanceMap.put("0", nodeZeroDistList);
 
       // Node 1
       List nodeOneDistList = lst();
-      nodeOneDistList.add("20");
-      nodeOneDistList.add("10");
+      nodeOneDistList.add(Integer.valueOf(20));
+      nodeOneDistList.add(Integer.valueOf(10));
       numaNodeDistanceMap.put("1", nodeOneDistList);
 
       return numaNodeDistanceMap;
