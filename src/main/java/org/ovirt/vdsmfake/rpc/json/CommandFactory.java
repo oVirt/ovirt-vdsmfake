@@ -69,7 +69,7 @@ public class CommandFactory {
             return new HostGetStorageDomainsCommand();
         case "Host.getVMFullList":
             return new GetFullVmListCommand();
-        case "Host.HostDevListByCaps":
+        case "Host.hostdevListByCaps":
             return new HostDevListByCaps();
         case "VM.create":
             return new VmCreateCommand();
