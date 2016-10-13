@@ -31,9 +31,9 @@ public class AppConfig {
     long constantDelay;
     long randomDelay;
     long delayMinimum;
-    ArrayList storageDelay;
-    ArrayList networkLoad;
-    ArrayList cpuLoadList;
+    ArrayList<String> storageDelay;
+    ArrayList<String> networkLoad;
+    ArrayList<String> cpuLoadList;
     ArrayList memLoad;
     String networkBridgeName;
     String cacheDir;
@@ -42,9 +42,13 @@ public class AppConfig {
     String vdsmPort;
     String vmConfAndStatsConstants;
     String vmConfAndStatsUpdateIntervals;
+    List<String> eventSupportedMethods;
     String targetServerUrl; // not set in web.xml
     int jsonHandlersThreadsPool;
     ArchitectureType architectureType;
+    Boolean jsonEvents;
+    int eventsThreadPoolSize;
+    int jsonThreadPoolSize;
 
     final Set<String> notLoggedMethodSet = new HashSet<String>();
 
@@ -69,6 +73,10 @@ public class AppConfig {
         vmConfAndStatsUpdateIntervals = paramMap.get("vmConfAndStatsUpdateIntervals");
         jsonHandlersThreadsPool = Integer.valueOf(paramMap.get("jsonHandlersThreadsPool"));
         architectureType = ArchitectureType.valueOf(paramMap.get("architectureType").toUpperCase());
+        jsonEvents = Boolean.valueOf(paramMap.get("jsonEvents"));
+        eventSupportedMethods = Utils.splitString(paramMap.get("eventSupportedMethods"));
+        eventsThreadPoolSize = Integer.valueOf(paramMap.get("eventsThreadPoolSize"));
+        jsonThreadPoolSize = Integer.valueOf(paramMap.get("jsonThreadPoolSize"));
 
 
         final String notLoggedMethods = paramMap.get("notLoggedMethods");
@@ -230,5 +238,21 @@ public class AppConfig {
         public String getCpuFlags() {
             return cpuFlags;
         }
+    }
+
+    public List<String> getEventSupportedMethods() {
+        return eventSupportedMethods;
+    }
+
+    public Boolean isJsonEvents() {
+        return jsonEvents;
+    }
+
+    public int getEventsThreadPoolSize(){
+        return this.eventsThreadPoolSize;
+    }
+
+    public int getJsonThreadPoolSize(){
+        return this.jsonThreadPoolSize;
     }
 }

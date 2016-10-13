@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
@@ -49,8 +50,10 @@ public class JsonRpcServer {
     private int jsonPort;
     private boolean encrypted;
     private String hostName;
-    private ExecutorService service = Executors.newFixedThreadPool(AppConfig.getInstance().getJsonHandlersThreadsPool(), new BasicThreadFactory.Builder()
-            .namingPattern("jsonHandlers-pool-%d")
+    private static final ConcurrentHashMap<String, ReactorClient> clientsMap = new ConcurrentHashMap<>();
+    private final String eventSupportedMethods = AppConfig.getInstance().getEventSupportedMethods().toString();
+    private ExecutorService service = Executors.newFixedThreadPool(AppConfig.getInstance().getJsonThreadPoolSize(), new BasicThreadFactory.Builder()
+            .namingPattern("jsonrpcserver-pool-%d")
             .daemon(true)
             .priority(Thread.MAX_PRIORITY)
             .build());
@@ -61,8 +64,19 @@ public class JsonRpcServer {
         this.encrypted = encrypted;
     }
 
-    public void start() {
+    public void setReactorsMap(String vmId, ReactorClient client){
+        clientsMap.put(vmId, client);
+    }
 
+    public static void removeClientByVmId(String vmId){
+        clientsMap.remove(vmId);
+    }
+
+    public static ReactorClient getClientByVmId(String vmId){
+        return clientsMap.get(vmId);
+    }
+
+    public void start() {
         try {
             String hostName = System.getProperty("fake.host");
 
@@ -120,6 +134,11 @@ public class JsonRpcServer {
             JsonRpcRequest request = null;
             try {
                 request = JsonRpcRequest.fromByteArray(message);
+
+                //store clients for events usage
+                if(eventSupportedMethods.contains(request.getMethod())){
+                    setReactorsMap(request.getParams().get("vmID").asText(), client);
+                }
 
                 ContextHolder.init();
                 if (client.getRetryPolicy().getIdentifier() != null) {

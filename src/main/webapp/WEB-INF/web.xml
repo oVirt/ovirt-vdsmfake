@@ -58,9 +58,26 @@
 		<param-name>logDir</param-name>
 		<param-value>/var/log/vdsmfake/xml</param-value>
 	</context-param>
+	<!-- enable \ disable jsonEvents  -->
 	<context-param>
-		<param-name>jsonHandlersThreadsPool</param-name>
+		<param-name>jsonEvents</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<!-- set size of json thread pool  -->
+	<context-param>
+		<param-name>jsonThreadPool</param-name>
 		<param-value>50</param-value>
+	</context-param>
+	<!-- set size of events thread pool  -->
+	<context-param>
+		<param-name>eventsThreadPool</param-name>
+		<param-value>10</param-value>
+	</context-param>
+	<!-- supported methods for events  -->
+	<context-param>
+		<!--TODO:// handle the supported methods properly-->
+		<param-name>eventSupportedMethods</param-name>
+		<param-value>VM.create,VM.destroy,VM.shutdown</param-value>
 	</context-param>
     <!-- target server for forwarded requests to VDSM can be overriden here: the proxy is activated if this address is set only -->
 	<!--<context-param>

@@ -15,14 +15,21 @@
  */
 package org.ovirt.vdsmfake.service;
 
-import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Collection;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.VM;
+import org.ovirt.vdsmfake.rpc.json.JsonRpcNotification;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;
@@ -518,10 +525,10 @@ public class VMService extends AbstractService {
 
         Map resultMap = map();
 
-        // add async task
-        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
-
         Map statusMap = map();
+
+        addTask(TaskType.SHUTDOWN_VM, 5000l, vm);
+
         statusMap.put("message", "Machine destroyed");
         statusMap.put("code", "0");
 
@@ -538,8 +545,7 @@ public class VMService extends AbstractService {
             vm.setStatus(VM.VMStatus.PoweringDown);
         }
 
-        // add asynch task
-        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.SHUTDOWN_VM, 5000l, vm));
+        addTask(TaskType.SHUTDOWN_VM, 5000l, vm);
 
         return resultMap;
     }
@@ -584,11 +590,6 @@ public class VMService extends AbstractService {
             // persist
             updateHost(host);
 
-            // add asynch tasks
-            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.START_VM, 2000l, vm));
-            // plan next status task
-            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.START_VM_AS_UP, 10000l, vm));
-
             final Map resultMap = getDoneStatus();
 
             vmParams.put("status", vm.getStatus().toString()); // WaitForLaunch
@@ -596,10 +597,27 @@ public class VMService extends AbstractService {
 
             log.debug("VM {} created on host {}", vmId, host.getName());
 
+            addTask(TaskType.START_VM, 2000l, vm);
+            addTask(TaskType.START_VM_AS_UP, 5000l, vm);
+
             return resultMap;
         } catch (Exception e) {
             log.error(ERROR, e);
             throw new RuntimeException(ERROR, e);
+        }
+    }
+
+    public void addTask(TaskType type, long delay, Object object) {
+        // support events, if enabled.
+        try {
+            if (AppConfig.getInstance().isJsonEvents()){
+                new JsonRpcNotification().fireEvents(type, delay, object);
+            } else {
+                //backward compatible.
+                TaskProcessor.getInstance().addTask(new TaskRequest(type, delay, object));
+            }
+        } catch (Exception e) {
+            log.error("wrapping task error:", e);
         }
     }
 

@@ -197,8 +197,8 @@ public class Utils extends AppConfig{
         }
     }
 
-    public static ArrayList splitString(String s){
-        return new ArrayList<String>(Arrays.asList(s.split(",")));
+    public static ArrayList<String> splitString(String s){
+        return new ArrayList(Arrays.asList(s.split(",")));
     }
 
     public static String ipv4toIpv6(String ip){
