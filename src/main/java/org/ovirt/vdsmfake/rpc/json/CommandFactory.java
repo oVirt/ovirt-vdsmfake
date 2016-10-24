@@ -10,6 +10,7 @@ import org.ovirt.vdsmfake.rpc.json.commands.GetStatsCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.GetVmListCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.HostDevListByCaps;
 import org.ovirt.vdsmfake.rpc.json.commands.HostGetStorageDomainsCommand;
+import org.ovirt.vdsmfake.rpc.json.commands.HostSetMomPolicyParamters;
 import org.ovirt.vdsmfake.rpc.json.commands.ImageDelete;
 import org.ovirt.vdsmfake.rpc.json.commands.JsonCommand;
 import org.ovirt.vdsmfake.rpc.json.commands.SpmGetStatusCommand;
@@ -71,6 +72,8 @@ public class CommandFactory {
             return new GetFullVmListCommand();
         case "Host.hostdevListByCaps":
             return new HostDevListByCaps();
+        case "Host.setMOMPolicyParameters":
+            return new HostSetMomPolicyParamters();
         case "VM.create":
             return new VmCreateCommand();
         case "VM.destroy":
@@ -130,7 +133,7 @@ public class CommandFactory {
         case "Volume.getInfo":
             return new VolumeGetInfoCommand();
         default:
-            // TODO: Support Host.setMOMPolicyParameters
+            // TODO: Support StorageDomain.getImages
             Exception e = new Exception();
             log.error("Unsupported method " + methodName, e);
             return new UnsupportedCommand();
