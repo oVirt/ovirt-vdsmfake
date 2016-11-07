@@ -15,8 +15,8 @@
 */
 package org.ovirt.vdsmfake.domain;
 
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.ovirt.vdsmfake.Utils;
 
@@ -52,9 +52,9 @@ public class Host extends BaseObject {
     SpmStatus spmStatus = SpmStatus.FREE;
     int spmLver = -1;
 
-    final Map<String, VM> runningVMsMap = new Hashtable<String, VM>();
-    final Map<String, String> propsMap = new Hashtable<String, String>();
-    final Map<String, Task> runningTasks = new Hashtable<String, Task>();
+    final Map<String, VM> runningVMsMap = new ConcurrentHashMap<>();
+    final Map<String, String> propsMap = new ConcurrentHashMap<>();
+    final Map<String, Task> runningTasks = new ConcurrentHashMap<>();
 
     public Map<String, VM> getRunningVMs() {
         return runningVMsMap;
