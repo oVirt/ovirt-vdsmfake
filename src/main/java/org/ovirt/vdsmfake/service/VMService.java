@@ -16,14 +16,13 @@
 package org.ovirt.vdsmfake.service;
 
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.VM;
-import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;
@@ -495,15 +494,9 @@ public class VMService extends AbstractService {
 
         // iterate vms
 
-        List statusList = new ArrayList();
-
-        for (VM vm : host.getRunningVMs().values()) {
-            VdsmManager vdsmManager = VdsmManager.getInstance();
-            if (!vdsmManager.allRunningVms.contains(vm.getId())){
-                vdsmManager.allRunningVms.add(vm.getId());
-            }
-            statusList.add(fillVmStatsMap(vm));
-        }
+        List statusList = host.getRunningVMs().values().stream()
+                .map(this::fillVmStatsMap)
+                .collect(Collectors.toList());
 
         resultMap.put("statsList", statusList);
 

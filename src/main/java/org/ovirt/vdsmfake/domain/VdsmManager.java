@@ -51,12 +51,7 @@ public class VdsmManager implements Serializable {
     final ConcurrentMap<String, DataCenter> dataCenterMap = new ConcurrentHashMap<String, DataCenter>();
     final ConcurrentMap<String, Host> hostMap = new ConcurrentHashMap<String, Host>(0);
     final ConcurrentMap<String, StorageDomain> storageDomainMap = new ConcurrentHashMap<String, StorageDomain>();
-    public final Vector allRunningVms = new Vector<String>(0);
     final ConcurrentMap<String, Host> spmMap = new ConcurrentHashMap<String, Host>();
-
-    public ConcurrentMap getSpmMap() {
-        return this.spmMap;
-    }
 
     public void setSpmMap(String spId, Host host) {
         this.spmMap.put(spId, host);
@@ -229,5 +224,11 @@ public class VdsmManager implements Serializable {
         }
 
         updateDataCenter(dataCenter);
+    }
+
+    public int getRunningVmsCount() {
+        return hostMap.values().stream()
+                .map(host -> host.getRunningVMs().size())
+                .reduce((x, y) -> x + y).orElse(0);
     }
 }
