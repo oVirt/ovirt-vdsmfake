@@ -73,7 +73,7 @@ public class XmlRpcFilter implements Filter {
                 output.append(" ==== Statistics ======").append(newline);
 
                 VdsmManager vdsmManager = VdsmManager.getInstance();
-                output.append("running hosts: ").append(vdsmManager.getHostMap().size()).append(newline);
+                output.append("running hosts: ").append(vdsmManager.getHostCount()).append(newline);
                 output.append("running vms: ").append(vdsmManager.getRunningVmsCount()).append(newline);
 
                 //print output

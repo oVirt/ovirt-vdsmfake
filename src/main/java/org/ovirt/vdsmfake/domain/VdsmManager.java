@@ -17,7 +17,6 @@ package org.ovirt.vdsmfake.domain;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -59,10 +58,6 @@ public class VdsmManager implements Serializable {
 
     public void removeSpmFromMap(String spId) {
         this.spmMap.remove(spId);
-    }
-
-    public Map<String, Host> getHostMap() {
-        return this.hostMap;
     }
 
     public Host getSpmHost(String spUUID){
@@ -230,5 +225,9 @@ public class VdsmManager implements Serializable {
         return hostMap.values().stream()
                 .map(host -> host.getRunningVMs().size())
                 .reduce((x, y) -> x + y).orElse(0);
+    }
+
+    public int getHostCount() {
+        return hostMap.size();
     }
 }
