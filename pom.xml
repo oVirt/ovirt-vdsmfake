@@ -128,7 +128,12 @@
 			<artifactId>servo-graphite</artifactId>
 			<version>0.10.1</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>1.46</version>
+		</dependency>
+    </dependencies>
 	<build>
 		<finalName>vdsmfake</finalName>
 		<plugins>

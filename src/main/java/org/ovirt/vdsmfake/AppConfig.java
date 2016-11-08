@@ -48,6 +48,7 @@ public class AppConfig {
     Boolean jsonEvents;
     int eventsThreadPoolSize;
     int jsonThreadPoolSize;
+    String certspath;
 
     final Set<String> notLoggedMethodSet = new HashSet<String>();
 
@@ -75,7 +76,7 @@ public class AppConfig {
         eventSupportedMethods = Utils.splitString(paramMap.get("eventSupportedMethods"));
         eventsThreadPoolSize = Integer.valueOf(paramMap.get("eventsThreadPoolSize"));
         jsonThreadPoolSize = Integer.valueOf(paramMap.get("jsonThreadPoolSize"));
-
+        certspath = paramMap.get("certspath");
 
         final String notLoggedMethods = paramMap.get("notLoggedMethods");
         // ...
@@ -248,5 +249,9 @@ public class AppConfig {
 
     public int getJsonThreadPoolSize(){
         return this.jsonThreadPoolSize;
+    }
+
+    public String getCertspath() {
+        return certspath;
     }
 }

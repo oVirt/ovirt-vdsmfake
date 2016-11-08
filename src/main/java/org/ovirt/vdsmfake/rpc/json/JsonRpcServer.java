@@ -89,8 +89,8 @@ public class JsonRpcServer {
             if (!encrypted) {
                 reactor = ReactorFactory.getReactor(null, ReactorType.STOMP);
             } else {
-                reactor = ReactorFactory.getReactor(new FakeVDSMSSLProvider(System.getProperty("fake.keystore"),
-                        System.getProperty("fake.truststore"), "changeit", null), ReactorType.STOMP);
+                reactor = ReactorFactory.getReactor(new VdsmProvider(AppConfig.getInstance().getCertspath(), log),
+                        ReactorType.STOMP);
             }
 
             final Future<ReactorListener> futureListener =

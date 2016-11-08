@@ -26,6 +26,42 @@ psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'true' WHERE option_na
 This disables SSL encryption and skips installation when adding VDSM hosts. Restart the engine after the values were
 set.
 
+### Work with SSl (as the default installation)
+# in general the following action will generate certs to vdsmfake.
+# Make sure you do this in a protected directory, as the key should be
+
+# run the following sh script in vdsmfake machine.
+```
+cer_req_name="vdsmfake"
+
+pkidir=/etc/pki/vdsmfake
+keys="$pkidir/keys"
+requests="$pkidir/requests"
+mkdir -p "$keys" "$requests"
+chmod 700 "$keys"
+
+key="$keys/$cer_req_name.key"
+req="$requests/$cer_req_name.req"
+
+openssl genrsa -out "$key" -passout "pass:$pass" -des3 2048
+openssl req -new -days 365 -key "$key" -out "$req" -passin "pass:$pass" -passout "pass:$pass" -batch -subj "/"
+
+scp $req <ovirt_user>@<ovirt_host>/<ovirt_dir>/etc/pki/ovirt-engine/requests/
+
+```
+
+# run the following on the ovirt engine machine.
+```
+cer_req_name="vdsmfake"
+
+# Whatever you want
+subject="/C=US/O=eng.lab.tlv.redhat.com/CN=something.eng.lab.tlv.redhat.com"
+"<ovirt_engine_dir>/bin/pki-enroll-request.sh --name=\"$cer_req_name\" --subject=\"$subject\""
+
+#The cert will be created in /etc/pki/ovirt-engine/certs/$cer_req_name.cer .
+
+```
+
 ### JSON-RPC (ovirt-engine >= 3.6)
 
 ```bash

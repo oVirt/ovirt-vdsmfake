@@ -108,6 +108,11 @@
 		<param-name>jsonHost</param-name>
 		<param-value>localhost</param-value>
 	</context-param>
+	<!--  certs path e.g /etc/pki/vdsm -->
+	<context-param>
+		<param-name>certspath</param-name>
+		<param-value>/etc/pki/vdsm</param-value>
+	</context-param>
 
 	<filter>
 		<filter-name>XmlRpcFilter</filter-name>
