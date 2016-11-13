@@ -44,7 +44,6 @@ public class AppConfig {
     String vmConfAndStatsUpdateIntervals;
     List<String> eventSupportedMethods;
     String targetServerUrl; // not set in web.xml
-    int jsonHandlersThreadsPool;
     ArchitectureType architectureType;
     Boolean jsonEvents;
     int eventsThreadPoolSize;
@@ -71,7 +70,6 @@ public class AppConfig {
         vdsmPort = paramMap.get("vdsmPort");
         vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
         vmConfAndStatsUpdateIntervals = paramMap.get("vmConfAndStatsUpdateIntervals");
-        jsonHandlersThreadsPool = Integer.valueOf(paramMap.get("jsonHandlersThreadsPool"));
         architectureType = ArchitectureType.valueOf(paramMap.get("architectureType").toUpperCase());
         jsonEvents = Boolean.valueOf(paramMap.get("jsonEvents"));
         eventSupportedMethods = Utils.splitString(paramMap.get("eventSupportedMethods"));
@@ -209,10 +207,6 @@ public class AppConfig {
 
     public ArrayList getMemLoadValues() {
         return memLoad;
-    }
-
-    public int getJsonHandlersThreadsPool() {
-        return jsonHandlersThreadsPool;
     }
 
     public ArchitectureType getArchitectureType() {

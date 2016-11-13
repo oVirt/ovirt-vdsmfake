@@ -65,12 +65,12 @@
 	</context-param>
 	<!-- set size of json thread pool  -->
 	<context-param>
-		<param-name>jsonThreadPool</param-name>
+		<param-name>jsonThreadPoolSize</param-name>
 		<param-value>50</param-value>
 	</context-param>
 	<!-- set size of events thread pool  -->
 	<context-param>
-		<param-name>eventsThreadPool</param-name>
+		<param-name>eventsThreadPoolSize</param-name>
 		<param-value>10</param-value>
 	</context-param>
 	<!-- supported methods for events  -->
