@@ -22,7 +22,7 @@ public abstract class JsonCommand {
     protected static final Logger log = LoggerFactory
             .getLogger(JsonCommand.class);
     private final ObjectMapper mapper = new ObjectMapper();
-    protected Api api = new Api();
+    protected Api api = Api.getInstance();
 
     public ResponseBuilder run(JsonNode params, ResponseBuilder builder) {
         Object result = null;

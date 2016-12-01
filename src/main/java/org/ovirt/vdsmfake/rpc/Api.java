@@ -38,6 +38,22 @@ public class Api extends AbstractService {
     final HostService hostService = HostService.getInstance();
     final TaskService taskService = TaskService.getInstance();
 
+    private static Api instance;
+
+    private Api() {
+    }
+
+    public static Api getInstance() {
+        if(instance == null){
+            synchronized (Api.class) {
+                if(instance == null){
+                    instance = new Api();
+                }
+            }
+        }
+        return instance;
+    }
+
     public Map list(String isFull, List<String> vmIds) {
         return vmService.list(Boolean.parseBoolean(isFull), vmIds);
     }
