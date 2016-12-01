@@ -748,7 +748,7 @@ public class Api extends AbstractService {
     }
 
     public Map HostDevListByCaps() {
-        return hostService.hostdevListByCaps();
+        return hostService.hostDevListByCaps();
     }
 
 }

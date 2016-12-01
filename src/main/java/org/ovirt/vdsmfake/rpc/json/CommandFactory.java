@@ -70,7 +70,7 @@ public class CommandFactory {
             return new HostGetStorageDomainsCommand();
         case "Host.getVMFullList":
             return new GetFullVmListCommand();
-        case "Host.hostdevListByCaps":
+        case "Host.hostDevListByCaps":
             return new HostDevListByCaps();
         case "Host.setMOMPolicyParameters":
             return new HostSetMomPolicyParameters();

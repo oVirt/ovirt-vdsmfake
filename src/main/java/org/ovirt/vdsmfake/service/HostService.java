@@ -18,6 +18,7 @@ package org.ovirt.vdsmfake.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;
@@ -671,47 +672,30 @@ public class HostService extends AbstractService {
         return resultMap;
     }
 
-    public Map hostdevListByCaps() {
-        //TODO: still not fully supported - in progress
-        final Host host = getActiveHost();
+    public Map<String, Map> hostDevListByCaps() {
 
-        try {
-            Map resultMap = getDoneStatus();
+        Map resultMap = getDoneStatus();
+        Map<String, Map> infoMap = map();
 
-            Map infoMap = map();
-            infoMap.put("computer", getCapability());
-            infoMap.put("pci_0000_00_1b_0", getHardware(0));
-            infoMap.put("pci_0000_00_1b_1", getHardware(1));
-            infoMap.put("pci_0000_00_1b_2", getHardware(2));
-            infoMap.put("pci_0000_00_1b_3", getHardware(3));
-            infoMap.put("pci_0000_00_1b_4", getHardware(4));
-            infoMap.put("pci_0000_00_1b_5", getHardware(5));
-            infoMap.put("pci_0000_00_1b_6", getHardware(6));
-            infoMap.put("pci_0000_00_1b_7", getHardware(7));
-            infoMap.put("pci_0000_00_1b_8", getHardware(8));
-            infoMap.put("pci_0000_00_1b_9", getHardware(9));
-            infoMap.put("pci_0000_00_1b_10", getHardware(10));
-            infoMap.put("pci_0000_00_1b_11", getHardware(11));
-            infoMap.put("pci_0000_00_1f_12", getHardware(12));
+        infoMap.put("computer", getCapability());
+        IntStream.range(0,12).forEach(i -> {
+            infoMap.put("pci_0000_00_1b_" + i, getHardware(i));
+        });
 
-            resultMap.put("info", infoMap);
-            return resultMap;
-        } catch (Exception e) {
-            throw error(e);
-        }
-
+        resultMap.put("info", infoMap);
+        return resultMap;
     }
 
-    Map getHardware(int slot){
-        Map resultMap = map();
+    private Map<String, Map> getHardware(int slot){
+        Map<String, Map> resultMap = map();
 
-        Map pciaddresses = map();
+        Map<String, Integer> pciaddresses = map();
         pciaddresses.put("bus", 0);
         pciaddresses.put("domain", 0);
         pciaddresses.put("function", 0);
         pciaddresses.put("slot", slot);
 
-        Map pciInfo = map();
+        Map<String, Object> pciInfo = map();
         pciInfo.put("address", pciaddresses);
         pciInfo.put("capability", "pci");
         pciInfo.put("parent", "computer");
@@ -725,10 +709,10 @@ public class HostService extends AbstractService {
         return resultMap;
     }
 
-    Map getCapability(){
-        Map resultMap = map();
+    private Map <String, Map> getCapability(){
+        Map<String, Map> resultMap = map();
 
-        Map system = map();
+        Map<String, String> system = map();
         system.put("capability", "system");
         system.put("product", "ProLiant DL160 G6");
 
