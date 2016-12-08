@@ -12,6 +12,7 @@
 		<jsonListenPort>54321</jsonListenPort>
 		<vdsmPort>54322</vdsmPort>
 		<jsonSecured>false</jsonSecured>
+		<version.checkstyle>6.8</version.checkstyle>
 	</properties>
 	<repositories>
 		<repository>
@@ -188,6 +189,33 @@
 						<contextPath>/</contextPath>
 					</webApp>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.17</version>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<configuration>
+							<consoleOutput>true</consoleOutput>
+							<includeTestSourceDirectory>true</includeTestSourceDirectory>
+							<configLocation>src/main/resources/checkstyle.xml</configLocation>
+							<encoding>UTF-8</encoding>
+							<failOnViolation>false</failOnViolation>
+						</configuration>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>${version.checkstyle}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
