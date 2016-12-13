@@ -2,45 +2,25 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'
     threshold="debug">
-    <appender name="SYSTEMOUT" class="org.apache.log4j.ConsoleAppender">
-        <param name="target" value="System.out" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %m %n" />
-        </layout>
-    </appender>
     <appender name="APP" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="${logDir}/app.log" />
         <param name="MaxFileSize" value="5MB" />
         <param name="Encoding" value="UTF-8" />
         <param name="MaxBackupIndex" value="1000" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%t] %-5p - %m %n" />
-        </layout>
-    </appender>
-    <appender name="COMMUNICATION" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="${logDir}/communication.log" />
-        <param name="MaxFileSize" value="5MB" />
-        <param name="Encoding" value="UTF-8" />
-        <param name="MaxBackupIndex" value="1000" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%t] %-5p - %m %n" />
+            <param name="ConversionPattern" value="[%p] %d [%t] %x %c %M - %m%n" />
         </layout>
     </appender>
     <logger name="org.ovirt" additivity="false">
         <level value="debug" />
         <appender-ref ref="APP" />
-        <appender-ref ref="SYSTEMOUT" />
     </logger>
-    <logger name="org.ovirt.vdsmfake.communication" additivity="false">
-        <level value="info" />
-        <appender-ref ref="COMMUNICATION" />
-    </logger>
-    <logger name="org.mortbay" additivity="false">
+    <logger name="org.ovirt.vdsm.jsonrpc" additivity="false">
         <level value="debug" />
         <appender-ref ref="APP" />
     </logger>
     <root>
-        <level value="fatal" />
-        <appender-ref ref="SYSTEMOUT" />
+        <level value="debug" />
+        <appender-ref ref="APP" />
     </root>
 </log4j:configuration>

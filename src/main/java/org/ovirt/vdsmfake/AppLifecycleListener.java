@@ -57,6 +57,9 @@ public class AppLifecycleListener implements ServletContextListener {
             final String key = paramNames.nextElement();
             paramMap.put(key, System.getProperty(key,event.getServletContext().getInitParameter(key)));
         }
+        // fill application global parameters
+        AppConfig.getInstance().init(paramMap);
+
         // Make sure that the logDir system property is always set for log4j configuration
         System.setProperty("logDir", paramMap.get("logDir"));
 
@@ -67,8 +70,6 @@ public class AppLifecycleListener implements ServletContextListener {
         if(architectureType != null){
             paramMap.put(ARCHITECTURE_TYPE, architectureType);
         }
-        // fill application global parameters
-        AppConfig.getInstance().init(paramMap);
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.init();
