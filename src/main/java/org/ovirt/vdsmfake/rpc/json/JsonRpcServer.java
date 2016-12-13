@@ -81,7 +81,7 @@ public class JsonRpcServer {
             String hostName = System.getProperty("fake.host");
 
             if (hostName == null) {
-                hostName = "localhost";
+                hostName = "::";
             }
             log.debug("Opening a Stomp server " + hostName + ":" + jsonPort);
             Reactor reactor;
@@ -98,6 +98,7 @@ public class JsonRpcServer {
 
                         @Override
                         public void onAcccept(final ReactorClient client) {
+                            log.info("Accepting connection from " + client.getHostname());
                             client.addEventListener(new MessageListener() {
                                 // you can provide your implementation of MessageListener
                                 @Override
@@ -155,9 +156,9 @@ public class JsonRpcServer {
 
                 HystrixCommand.Setter setter = setter(request.getMethod() + ".Prepare");
                 final JsonRpcRequest finalRequest = request;
-                final HystrixCommand<ResponseBuilder> preparationCommand = new HystrixCommand(setter) {
+                final HystrixCommand<ResponseBuilder> preparationCommand = new HystrixCommand<ResponseBuilder>(setter) {
 
-                    @Override protected Object run() throws Exception {
+                    @Override protected ResponseBuilder run() throws Exception {
                         ResponseBuilder builder = new ResponseBuilder(finalRequest.getId());
                         CommandFactory.createCommand(finalRequest.getMethod()).run(finalRequest.getParams(),
                                 builder);
@@ -167,7 +168,7 @@ public class JsonRpcServer {
                 final ResponseBuilder builder = preparationCommand.execute();
                 setter = setter(request.getMethod() + ".Send");
 
-                final HystrixCommand<Object> sendCommand = new HystrixCommand(setter) {
+                final HystrixCommand<Object> sendCommand = new HystrixCommand<Object>(setter) {
 
                     @Override protected Object run() throws Exception {
                         send(builder.build(), finalRequest.getMethod());
@@ -181,21 +182,21 @@ public class JsonRpcServer {
                 error.put("code", 100);
                 error.put("message", e.getMessage());
 
-                if (request != null) {
-                    send(new ResponseBuilder(request.getId()).withError(error).build(), request.getMethod());
-                }
+                send(new ResponseBuilder(request.getId()).withError(error).build(), request.getMethod());
             }
         }
 
         private void send(JsonRpcResponse response, String method) {
-            if (log.isInfoEnabled()) {
-                log.info("Request is " + method + " got response "
-                        + new String(response.toByteArray()));
+            if (log.isDebugEnabled()) {
+                log.debug("Request is " + method + " got response " + new String(response.toByteArray()));
             }
+
             try {
                 client.sendMessage(response.toByteArray());
             } catch (ClientConnectionException e) {
-                log.error("Failure in sending response", e);
+                // if error we are unable to talk it is better to propagate
+                log.error("Error in sending", e);
+                client.close();
             }
         }
     }

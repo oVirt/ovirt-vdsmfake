@@ -11,29 +11,30 @@ public enum ResultCodes {
     MACHINE_SHUTDOWN("Machine shutdown", 0),
     MIGRATION_STARTING("Starting Migration", 0),
     VM_NOT_FOUND("VM not found", 100),
+    UNSUPPORTED("UNsupported command", 100),
     ;
 
-    private Map mapValue;
+    private Map<String, Object> mapValue;
 
     public static final String CODE = "code";
     public static final String MESSAGE = "message";
     public static final String STATUS = "status";
 
     ResultCodes(String message, int code) {
-        Map inner = new HashMap(2);
+        Map<String, Object>  inner = new HashMap<>(2);
         inner.put(CODE, code);
         inner.put(MESSAGE, message);
 
-        Map outer = new HashMap(1);
+        Map<String, Object>  outer = new HashMap<>(1);
         outer.put(STATUS, inner);
         mapValue = Collections.unmodifiableMap(outer);
     }
 
-    public Map map() {
+    public Map<String, Object>  map() {
         return mapValue;
     }
 
-    public Map newMap() {
-        return new HashMap(mapValue);
+    public Map<String, Object>  newMap() {
+        return new HashMap<>(mapValue);
     }
 }

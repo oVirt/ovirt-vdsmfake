@@ -16,12 +16,18 @@
 package org.ovirt.vdsmfake.service;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.ContextHolder;
 import org.ovirt.vdsmfake.Utils;
-import org.ovirt.vdsmfake.domain.*;
+import org.ovirt.vdsmfake.domain.DataCenter;
+import org.ovirt.vdsmfake.domain.Host;
+import org.ovirt.vdsmfake.domain.StorageDomain;
+import org.ovirt.vdsmfake.domain.Task;
+import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +39,6 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractService{
 
-    final static String ERROR = "Error";
     public long constantDelay;
     public long randomDelay;
     protected Logger log = LoggerFactory.getLogger(AbstractService.class);
@@ -118,8 +123,9 @@ public abstract class AbstractService{
     }
 
     public RuntimeException error(Throwable t) {
-        log.error(ERROR, t);
-        return new RuntimeException(ERROR, t);
+        String message = t.getMessage() == null ? t.getClass().getName() : t.getMessage();
+        log.error(message, t);
+        return new RuntimeException(message, t);
     }
 
     public String getUuid() {
@@ -135,12 +141,9 @@ public abstract class AbstractService{
             host = getActiveHost();
             log.debug("host is null, task {} will be sync by any active host {}", task.getName(), host.getName());
         }
-        try {
-            host.getRunningTasks().put(task.getId(), task);
-            log.debug("sync task:{} to host:{}", task.getName(), host.getName());
-            TaskProcessor.getInstance().setTasksMap(host.getName(), task.getId());
-        }catch (Exception e){
-            log.error("something went wrong durring task sync {}", e);
-        }
+
+        host.getRunningTasks().put(task.getId(), task);
+        log.debug("sync task:{} to host:{}", task.getName(), host.getName());
+        TaskProcessor.getInstance().setTasksMap(host.getName(), task.getId());
     }
 }

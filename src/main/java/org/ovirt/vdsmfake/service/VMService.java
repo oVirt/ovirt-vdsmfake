@@ -602,8 +602,7 @@ public class VMService extends AbstractService {
 
             return resultMap;
         } catch (Exception e) {
-            log.error(ERROR, e);
-            throw new RuntimeException(ERROR, e);
+            throw error(e);
         }
     }
 

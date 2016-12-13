@@ -3,6 +3,7 @@ package org.ovirt.vdsmfake.rpc.json.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,11 @@ public abstract class JsonCommand {
 
         } catch (Exception e) {
             log.error("Can't run api call", e);
-            return builder.withError((Map<String, Object>) Collections.EMPTY_MAP);
+            Map<String, Object> error = new HashMap<>();
+            // General exception
+            error.put("code", 100);
+            error.put("message", e.getMessage());
+            return builder.withError(error);
         }
 
         if (result instanceof Map) {
@@ -53,6 +58,11 @@ public abstract class JsonCommand {
             builder = builder.withResult(tempList);
         } else {
             log.error("Unknown response data --> " + result, new Exception());
+            Map<String, Object> error = new HashMap<>();
+            // General exception
+            error.put("code", 100);
+            error.put("message", "Unknown response data");
+            builder.withError(error);
         }
 
         return builder;
