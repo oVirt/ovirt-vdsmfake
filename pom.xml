@@ -96,7 +96,7 @@
         <dependency>
 			<groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
 			<artifactId>vdsm-jsonrpc-java-client</artifactId>
-			<version>1.1.12</version>
+			<version>1.4.0</version>
         </dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
