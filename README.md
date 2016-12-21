@@ -21,6 +21,7 @@ psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_n
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'EncryptHostCommunication';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' where option_name = 'InstallVds';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'true' WHERE option_name = 'UseHostNameIdentifier';"
+psql $ENGINE_DB -C "UPDATE vdc_options set option_value = '0' WHERE option_name = 'HostPackagesUpdateTimeInHours';"
 ```
 
 This disables SSL encryption and skips installation when adding VDSM hosts. Restart the engine after the values were
@@ -61,6 +62,16 @@ subject="/C=US/O=eng.lab.tlv.redhat.com/CN=something.eng.lab.tlv.redhat.com"
 #The cert will be created in /etc/pki/ovirt-engine/certs/$cer_req_name.cer .
 
 ```
+
+#### When testing large environments it is possible that additional settings like:
+- quartz pool size
+  This setting can be changed in ovirt-engine.xml.in and the option name is org.quartz.threadPool.threadCount
+  After the change it is required to restart the engine
+
+- db connection pool size
+  This setting can be chanegd in ovirt-engine.conf and the option name is ENGINE_DB_MAX_CONNECTIONS
+  It requires additional changes in /var/lib/pgsql/data/postgresql.conf and the option name is max_connections
+  After above changes it is required to restart postgresql and the engine.
 
 ### JSON-RPC (ovirt-engine >= 3.6)
 
