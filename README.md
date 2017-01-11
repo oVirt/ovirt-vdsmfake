@@ -28,10 +28,10 @@ This disables SSL encryption and skips installation when adding VDSM hosts. Rest
 set.
 
 ### Work with SSl (as the default installation)
-# in general the following action will generate certs to vdsmfake.
-# Make sure you do this in a protected directory, as the key should be
+- In general the following action will generate certs to vdsmfake.
+- Make sure you do this in a protected directory, as the key should be in vdsm.
 
-# run the following sh script in vdsmfake machine.
+#### run the following sh script in vdsmfake machine.
 ```
 cer_req_name="vdsmfake"
 
@@ -51,7 +51,7 @@ scp $req <ovirt_user>@<ovirt_host>/<ovirt_dir>/etc/pki/ovirt-engine/requests/
 
 ```
 
-# run the following on the ovirt engine machine.
+#### run the following on the ovirt engine machine.
 ```
 cer_req_name="vdsmfake"
 
