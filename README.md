@@ -21,7 +21,7 @@ psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_n
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'EncryptHostCommunication';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' where option_name = 'InstallVds';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'true' WHERE option_name = 'UseHostNameIdentifier';"
-psql $ENGINE_DB -C "UPDATE vdc_options set option_value = '0' WHERE option_name = 'HostPackagesUpdateTimeInHours';"
+psql $ENGINE_DB -c "UPDATE vdc_options set option_value = '0' WHERE option_name = 'HostPackagesUpdateTimeInHours';"
 ```
 
 This disables SSL encryption and skips installation when adding VDSM hosts. Restart the engine after the values were
