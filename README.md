@@ -13,21 +13,26 @@ the location.
 ## Quick Start
 
 ### Prepare ovirt-engine
-
+This skips installation when adding VDSM hosts.
 ```bash
 sudo -i -u postgres
 export ENGINE_DB=dbname
-psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'SSLEnabled';"
-psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'EncryptHostCommunication';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' where option_name = 'InstallVds';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'true' WHERE option_name = 'UseHostNameIdentifier';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = '0' WHERE option_name = 'HostPackagesUpdateTimeInHours';"
 ```
 
-This disables SSL encryption and skips installation when adding VDSM hosts. Restart the engine after the values were
-set.
+#### Disable SSL (Not Default!)
+In case you need to disable SSL encryption, run the following queries (on engine):
+```
+psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'SSLEnabled';"
+psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'EncryptHostCommunication';"
 
-### Work with SSl (as the default installation)
+Restart the engine after the values were set.
+
+```
+
+#### Work with SSl (default installation)
 - In general the following action will generate certs to vdsmfake.
 - Make sure you do this in a protected directory, as the key should be in vdsm.
 
@@ -54,9 +59,10 @@ scp $req <ovirt_user>@<ovirt_host>/<ovirt_dir>/etc/pki/ovirt-engine/requests/
 #### run the following on the ovirt engine machine.
 ```
 cer_req_name="vdsmfake"
+domain=test.test.com
 
 # Whatever you want
-subject="/C=US/O=eng.lab.tlv.redhat.com/CN=something.eng.lab.tlv.redhat.com"
+subject="/C=US/O=$domain/CN=something.$domain"
 "<ovirt_engine_dir>/bin/pki-enroll-request.sh --name=\"$cer_req_name\" --subject=\"$subject\""
 
 #The cert will be created in /etc/pki/ovirt-engine/certs/$cer_req_name.cer .
