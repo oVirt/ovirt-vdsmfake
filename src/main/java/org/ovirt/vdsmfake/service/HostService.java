@@ -392,6 +392,7 @@ public class HostService extends AbstractService {
         resultList.add("3.6");
         resultList.add("4.0");
         resultList.add("4.1");
+        resultList.add("4.2");
 
         return resultList;
     }
@@ -407,7 +408,8 @@ public class HostService extends AbstractService {
         resultList.add("3.6");
         resultList.add("4.0");
         resultList.add("4.1");
-
+        resultList.add("4.2");
+     
         return resultList;
     }
 
