@@ -1,10 +1,16 @@
 package org.ovirt.vdsmfake.rpc.json;
 
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorClient;
+import org.ovirt.vdsm.jsonrpc.client.reactors.stomp.StompCommonClient;
+import org.ovirt.vdsm.jsonrpc.client.reactors.stomp.impl.Message;
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.domain.VM;
 import org.ovirt.vdsmfake.domain.VdsmManager;
@@ -12,52 +18,49 @@ import org.ovirt.vdsmfake.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
 
 public class JsonRpcNotification {
 
     private static final Logger log = LoggerFactory.getLogger(JsonRpcNotification.class);
-    private static final ExecutorService service = Executors.newFixedThreadPool(AppConfig.getInstance()
-            .getEventsThreadPoolSize(), new BasicThreadFactory.Builder()
-            .namingPattern("events-service-pool-%d")
-            .daemon(true)
-            .priority(Thread.MAX_PRIORITY)
-            .build());
-
+    private static final ScheduledExecutorService scheduledExecutorService =
+            Executors.newScheduledThreadPool(AppConfig.getInstance().getEventsThreadPoolSize());
 
     private String messageFormatter(String msg, String vmid) {
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("params", String.valueOf(System.nanoTime()));
-        objectNode.put("status", msg);
-        objectNode.put("hash", Integer.toString(vmid.hashCode()));
-        objectNode.put("jsonrpc","2.0");
-        objectNode.put("method", "|virt|VM_status|" + vmid);
-        return objectNode.toString();
+        ObjectNode vmDetailNode = new ObjectMapper().createObjectNode();
+        vmDetailNode.put("status", msg);
+        vmDetailNode.put("hash", Integer.toString(vmid.hashCode()));
+
+        ObjectNode paramsNode = new ObjectMapper().createObjectNode();
+        paramsNode.put(vmid.toString(), vmDetailNode);
+        paramsNode.put("notify_time", System.nanoTime());
+
+        ObjectNode node = new ObjectMapper().createObjectNode();
+        node.put("params", paramsNode);
+        node.put("jsonrpc","2.0");
+        node.put("method", "|virt|VM_status|" + vmid);
+        return node.toString();
     }
 
     private void sendNotification(String message, String vmId, boolean removeClient) throws ClientConnectionException {
         if (message == null){
             log.warn("empty message has arrived, ignore empty messages");
         }
-
-        //send
         send(messageFormatter(message, vmId), vmId, removeClient);
     }
 
     private void send(String message, String vmID, boolean removeClient) throws ClientConnectionException{
         ReactorClient client = null;
         try {
-            //get client
+            // get client
             client = JsonRpcServer.getClientByVmId(vmID);
 
-            //send message
-            client.sendMessage(message.getBytes());
+            // send message
+            ((StompCommonClient) client).send((new Message()).message()
+                    .withHeader("destination", "jms.queue.events")
+                    .withContent(message.getBytes())
+                    .build());
             log.debug("sending events message {}", message);
-
-        }catch (ClientConnectionException e) {
+        } catch (Exception e) {
             log.error("Host {}, failed to send event message {}", client.getHostname(), e);
         }
 
@@ -80,21 +83,24 @@ public class JsonRpcNotification {
         //TODO: merged duplicate code 'TaskRequest.process()'
         switch (taskType){
             case START_VM:
-                vmUpdateStatus(vm, VM.VMStatus.WaitForLaunch, delay, WaitForLaunch, service, false);
-                vmUpdateStatus(vm, VM.VMStatus.PoweringUp, delay, PoweringUp, service, false);
+                vmUpdateStatus(vm, VM.VMStatus.WaitForLaunch, delay, WaitForLaunch, false);
+                break;
+
+            case START_VM_POWERING_UP:
+                vmUpdateStatus(vm, VM.VMStatus.PoweringUp, delay, PoweringUp, false);
                 break;
 
             case START_VM_AS_UP:
-                vmUpdateStatus(vm, VM.VMStatus.Up, delay, Up, service, true); // last event for start vm flow
+                vmUpdateStatus(vm, VM.VMStatus.Up, delay, Up, true); // last event for start vm flow
                 break;
 
             case SHUTDOWN_VM:
-                vmUpdateStatus(vm, VM.VMStatus.PoweredDown, delay, PoweredDown, service, false);
+                vmUpdateStatus(vm, VM.VMStatus.PoweredDown, delay, PoweredDown, false);
                 // remove vm from vdsm.
                 if (vm != null) {
                     vm.getHost().getRunningVMs().remove(vm.getId());
                 }
-                vmUpdateStatus(vm, VM.VMStatus.Down, 0, Down, service, true); // last event for stop vm flow
+                vmUpdateStatus(vm, VM.VMStatus.Down, 0, Down, true); // last event for stop vm flow
                 break;
 
             default:
@@ -103,45 +109,28 @@ public class JsonRpcNotification {
         }
     }
 
-    private class EventHandler extends Thread {
-        private VM vm;
-        private VM.VMStatus status;
-        private long delay;
-        private String msg;
-        private boolean removeClient;
-
-        private EventHandler(final VM vm, final VM.VMStatus status, final long delay, final String msg,
-                             final boolean removeClient){
-            this.vm = vm;
-            this.status = status;
-            this.delay = delay;
-            this.msg = msg;
-            this.removeClient = removeClient;
-        }
-
-        public void run(){
+    // TODO: enlarge this method to support cross entities objects such as storage, hosts (currently BaseObject not
+    // implement status).
+    private void vmUpdateStatus(final VM vm, final VM.VMStatus status, final long delay, final String msg,
+            final boolean removeClient)
+            throws InterruptedException {
+        scheduledExecutorService.schedule(() -> {
             try {
-                TimeUnit.MILLISECONDS.sleep(delay); // simulate real life delays.
                 vm.setStatus(status);
                 sendNotification(msg, vm.getId(), removeClient);
                 log.info("VM {} set to {}", vm.getId(), msg);
 
                 // update host if required
-                if (isUpdateRequired(status)){
+                if (isUpdateRequired(status)) {
                     VdsmManager.getInstance().updateHost(vm.getHost());
                 }
-            }catch (Exception e){
-                log.error(e.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
-    }
-
-    //TODO: enlarge this method to support cross entities objects such as storage, hosts (currently BaseObject not implement status).
-    private void vmUpdateStatus(final VM vm, final VM.VMStatus status, final long delay, final String msg,
-                                final ExecutorService service,
-                                final boolean removeClient)
-            throws InterruptedException {
-        service.submit(new EventHandler(vm, status, delay, msg, removeClient));
+            return null;
+        },
+                delay,
+                TimeUnit.MILLISECONDS);
     }
 
     private boolean isUpdateRequired(VM.VMStatus status){

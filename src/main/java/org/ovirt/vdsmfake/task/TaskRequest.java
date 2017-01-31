@@ -58,6 +58,12 @@ public class TaskRequest {
             switch (taskType) {
             case START_VM:
                 vm = (VM) target;
+                vm.setStatus(VMStatus.WaitForLaunch);
+                log.info("VM {} set to Wait For Launch state.", vm.getId());
+                break;
+
+            case START_VM_POWERING_UP:
+                vm = (VM) target;
                 vm.setStatus(VMStatus.PoweringUp);
                 log.info("VM {} set to Powering Up state.", vm.getId());
                 break;

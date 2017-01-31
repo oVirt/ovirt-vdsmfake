@@ -22,6 +22,7 @@ package org.ovirt.vdsmfake.task;
 public enum TaskType {
     START_VM, // set as PoweringUp and plan next task START_VM_AS_UP
     START_VM_AS_UP,
+    START_VM_POWERING_UP,
     FINISH_MIGRATED_FROM_VM, // set as Down as plan next task FINISH_MIGRATED_FROM_VM_REMOVE_FROM_HOST
     FINISH_MIGRATED_FROM_VM_REMOVE_FROM_HOST,
     FINISH_MIGRATED_TO_VM,

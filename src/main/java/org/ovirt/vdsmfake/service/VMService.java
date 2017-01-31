@@ -598,7 +598,8 @@ public class VMService extends AbstractService {
             log.debug("VM {} created on host {}", vmId, host.getName());
 
             addTask(TaskType.START_VM, 2000l, vm);
-            addTask(TaskType.START_VM_AS_UP, 5000l, vm);
+            addTask(TaskType.START_VM_POWERING_UP, 3000l, vm);
+            addTask(TaskType.START_VM_AS_UP, 20000l, vm);
 
             return resultMap;
         } catch (Exception e) {
