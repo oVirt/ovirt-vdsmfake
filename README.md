@@ -202,7 +202,7 @@ entities inside of  `${project.basedir}/target/fakevdsm`.
 ### Monitoring
 
 To make it easy to see if performance test results for ovirt-engine are tainted
-by this application, all JSON requests are monitored.
+by this application, JSON requests can be monitored using `-Dvdsmfake.commandExecutor=hystrix`
 First, to see if the response preparations from vdsmfake are reasonable fast,
 they are monitored. These metrics have the postfix **.Prepare**.
 Second, to see how fast the data is transfered and accepted by ovirt-engine,
@@ -223,7 +223,7 @@ export interval in seconds can be specified. By default the export will happen
 every 15 seconds. For example
 
 ```bash
-mvn clean jetty:run -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
+mvn clean jetty:run -Dvdsmfake.commandExecutor=hystrix -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
 ```
 
 exports hystrix metrics every 20 seconds to the graphite database at

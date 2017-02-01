@@ -1,7 +1,5 @@
 package org.ovirt.vdsmfake.rpc.json;
 
-import static com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +26,6 @@ import org.ovirt.vdsmfake.ContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.contrib.servopublisher.HystrixServoMetricsPublisher;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.servo.publish.BasicMetricFilter;
@@ -50,6 +44,7 @@ public class JsonRpcServer {
     private int jsonPort;
     private boolean encrypted;
     private String hostName;
+    private CommandExecutor commandExecutor;
     private static final ConcurrentHashMap<String, ReactorClient> clientsMap = new ConcurrentHashMap<>();
     private final String eventSupportedMethods = AppConfig.getInstance().getEventSupportedMethods().toString();
     private ExecutorService service = Executors.newFixedThreadPool(AppConfig.getInstance().getJsonThreadPoolSize(), new BasicThreadFactory.Builder()
@@ -62,6 +57,13 @@ public class JsonRpcServer {
         this.hostName = hostName;
         this.jsonPort = jsonPort;
         this.encrypted = encrypted;
+        if (System.getProperty("vdsmfake.commandExecutor", "Default")
+                .equalsIgnoreCase("hystrix")) {
+            commandExecutor = new HystrixCommandExecutor();
+        } else {
+            commandExecutor = new DefaultCommandExecutor();
+        }
+
     }
 
     public void setReactorsMap(String vmId, ReactorClient client){
@@ -154,28 +156,8 @@ public class JsonRpcServer {
                     log.error("client identifier were not found, using hash");
                 }
 
-                HystrixCommand.Setter setter = setter(request.getMethod() + ".Prepare");
                 final JsonRpcRequest finalRequest = request;
-                final HystrixCommand<ResponseBuilder> preparationCommand = new HystrixCommand<ResponseBuilder>(setter) {
-
-                    @Override protected ResponseBuilder run() throws Exception {
-                        ResponseBuilder builder = new ResponseBuilder(finalRequest.getId());
-                        CommandFactory.createCommand(finalRequest.getMethod()).run(finalRequest.getParams(),
-                                builder);
-                        return builder;
-                    }
-                };
-                final ResponseBuilder builder = preparationCommand.execute();
-                setter = setter(request.getMethod() + ".Send");
-
-                final HystrixCommand<Object> sendCommand = new HystrixCommand<Object>(setter) {
-
-                    @Override protected Object run() throws Exception {
-                        send(builder.build(), finalRequest.getMethod());
-                        return null;
-                    }
-                };
-                sendCommand.execute();
+                commandExecutor.execute(finalRequest, (response) -> send(response, finalRequest.getMethod()));
             } catch (Throwable e) {
                 log.error("Failure in processing request", e);
                 Map<String, Object> error = new HashMap<>();
@@ -201,24 +183,10 @@ public class JsonRpcServer {
         }
     }
 
-    private HystrixCommand.Setter setter(final String key) {
-        return HystrixCommand.Setter.withGroupKey(
-                HystrixCommandGroupKey.Factory.asKey(key)
-        ).andCommandKey(
-                HystrixCommandKey.Factory.asKey(key)
-        ).andCommandPropertiesDefaults(
-                HystrixCommandProperties.Setter()
-                        .withExecutionIsolationStrategy(SEMAPHORE)
-                        .withExecutionTimeoutEnabled(false)
-                        .withCircuitBreakerEnabled(false)
-                        .withFallbackEnabled(false)
-                        .withMetricsRollingStatisticalWindowInMilliseconds(60000)
-                        .withMetricsRollingStatisticalWindowBuckets(60)
-                        .withExecutionIsolationSemaphoreMaxConcurrentRequests(300)
-        );
-    }
-
     public static void initMonitoring() {
+        if (!System.getProperty("vdsmfake.commandExecutor", "Default").equalsIgnoreCase("hystrix")) {
+            return;
+        }
         HystrixPlugins.getInstance().registerMetricsPublisher(HystrixServoMetricsPublisher.getInstance());
 
         // Minimal Servo configuration for publishing to Graphite

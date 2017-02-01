@@ -12,6 +12,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
 import org.ovirt.vdsm.jsonrpc.client.ResponseBuilder;
 import org.ovirt.vdsmfake.rpc.Api;
 import org.slf4j.Logger;
@@ -24,8 +25,9 @@ public abstract class JsonCommand {
     private final ObjectMapper mapper = new ObjectMapper();
     protected Api api = Api.getInstance();
 
-    public ResponseBuilder run(JsonNode params, ResponseBuilder builder) {
-        Object result = null;
+    public JsonRpcResponse run(JsonNode params, JsonNode requestId) {
+        Object result;
+        ResponseBuilder builder = new ResponseBuilder(requestId);
         try {
             Map apiResult = activateApi(params);
 
@@ -41,7 +43,7 @@ public abstract class JsonCommand {
             // General exception
             error.put("code", 100);
             error.put("message", e.getMessage());
-            return builder.withError(error);
+            return builder.withError(error).build();
         }
 
         if (result instanceof Map) {
@@ -65,7 +67,7 @@ public abstract class JsonCommand {
             builder.withError(error);
         }
 
-        return builder;
+        return builder.build();
     }
 
     abstract public String fieldName();
