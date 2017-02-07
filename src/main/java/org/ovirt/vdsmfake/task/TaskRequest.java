@@ -103,7 +103,7 @@ public class TaskRequest {
 
             case SHUTDOWN_VM:
                 vm = (VM) target;
-                vm.setStatus(VM.VMStatus.PoweredDown);
+                vm.setStatus(VMStatus.PoweringDown);
                 vm.getHost().getRunningVMs().remove(vm.getId());
                 // store
                 updateHost(vm.getHost());

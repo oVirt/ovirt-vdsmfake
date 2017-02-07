@@ -63,7 +63,6 @@ public class VM extends BaseObject {
         Down(0),
         Up(1),
         PoweringUp(2),
-        PoweredDown(3),
         Paused(4),
         MigratingFrom(5),
         MigratingTo(6),

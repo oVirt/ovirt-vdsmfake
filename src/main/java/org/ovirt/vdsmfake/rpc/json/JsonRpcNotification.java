@@ -73,10 +73,9 @@ public class JsonRpcNotification {
 
     public void fireEvents(TaskType taskType, long delay, Object entity) throws InterruptedException {
 
-        final String WaitForLaunch = "WaitForLaunch";
         final String PoweringUp = "Powering up";
         final String Up = "Up";
-        final String PoweredDown = "Powering down";
+        final String PoweringDown = "Powering down";
         final String Down = "Down";
 
         VM vm = (VM) entity;
@@ -84,7 +83,7 @@ public class JsonRpcNotification {
         //TODO: merged duplicate code 'TaskRequest.process()'
         switch (taskType){
             case START_VM:
-                vmUpdateStatus(vm, VM.VMStatus.WaitForLaunch, delay, WaitForLaunch, false);
+                vm.setStatus(VM.VMStatus.WaitForLaunch);
                 break;
 
             case START_VM_POWERING_UP:
@@ -96,7 +95,7 @@ public class JsonRpcNotification {
                 break;
 
             case SHUTDOWN_VM:
-                vmUpdateStatus(vm, VM.VMStatus.PoweredDown, delay, PoweredDown, false);
+                vmUpdateStatus(vm, VM.VMStatus.PoweringDown, delay, PoweringDown, false);
                 // remove vm from vdsm.
                 if (vm != null) {
                     vm.getHost().getRunningVMs().remove(vm.getId());
@@ -137,6 +136,6 @@ public class JsonRpcNotification {
     private boolean isUpdateRequired(VM.VMStatus status){
         //TODO: fill this list on going.
         // list of statuses which required vdsm update {up, prowerdown, paused}
-        return status == VM.VMStatus.Up ? true : status == VM.VMStatus.PoweredDown ? true : status == VM.VMStatus.Paused ? true : false;
+        return status == VM.VMStatus.Up ? true : status == VM.VMStatus.PoweringDown ? true : status == VM.VMStatus.Paused ? true : false;
     }
 }
