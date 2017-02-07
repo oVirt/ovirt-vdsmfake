@@ -25,27 +25,28 @@ public class JsonRpcNotification {
     private static final ScheduledExecutorService scheduledExecutorService =
             Executors.newScheduledThreadPool(AppConfig.getInstance().getEventsThreadPoolSize());
 
-    private String messageFormatter(String msg, String vmid) {
+    private String messageFormatter(String msg, String id, String method) {
         ObjectNode vmDetailNode = new ObjectMapper().createObjectNode();
         vmDetailNode.put("status", msg);
-        vmDetailNode.put("hash", Integer.toString(vmid.hashCode()));
+        vmDetailNode.put("hash", Integer.toString(id.hashCode()));
 
         ObjectNode paramsNode = new ObjectMapper().createObjectNode();
-        paramsNode.put(vmid.toString(), vmDetailNode);
+        paramsNode.put(id.toString(), vmDetailNode);
         paramsNode.put("notify_time", System.nanoTime());
 
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("params", paramsNode);
         node.put("jsonrpc","2.0");
-        node.put("method", "|virt|VM_status|" + vmid);
+        node.put("method", method);
         return node.toString();
     }
 
-    private void sendNotification(String message, String vmId, boolean removeClient) throws ClientConnectionException {
+    private void sendNotification(String message, String id, boolean removeClient, String method)
+            throws ClientConnectionException {
         if (message == null){
             log.warn("empty message has arrived, ignore empty messages");
         }
-        send(messageFormatter(message, vmId), vmId, removeClient);
+        send(messageFormatter(message, id, method), id, removeClient);
     }
 
     private void send(String message, String vmID, boolean removeClient) throws ClientConnectionException{
@@ -117,7 +118,7 @@ public class JsonRpcNotification {
         scheduledExecutorService.schedule(() -> {
             try {
                 vm.setStatus(status);
-                sendNotification(msg, vm.getId(), removeClient);
+                sendNotification(msg, vm.getId(), removeClient, "|virt|VM_status|" + vm.getId());
                 log.info("VM {} set to {}", vm.getId(), msg);
 
                 // update host if required
