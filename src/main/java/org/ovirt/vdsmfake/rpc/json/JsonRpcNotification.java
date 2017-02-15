@@ -133,9 +133,16 @@ public class JsonRpcNotification {
                 TimeUnit.MILLISECONDS);
     }
 
-    private boolean isUpdateRequired(VM.VMStatus status){
-        //TODO: fill this list on going.
-        // list of statuses which required vdsm update {up, prowerdown, paused}
-        return status == VM.VMStatus.Up ? true : status == VM.VMStatus.PoweringDown ? true : status == VM.VMStatus.Paused ? true : false;
+    private boolean isUpdateRequired(VM.VMStatus status) {
+        // TODO: fill this list on going.
+        // list of statuses which required vdsm update {up, poweringdown, paused}
+        switch (status) {
+        case Up:
+        case PoweringDown:
+        case Paused:
+            return true;
+        default:
+            return false;
+        }
     }
 }
