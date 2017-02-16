@@ -15,7 +15,6 @@
 */
 package org.ovirt.vdsmfake.servlet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
@@ -24,7 +23,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.common.TypeFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcController;
@@ -33,9 +31,6 @@ import org.apache.xmlrpc.serializer.StringSerializer;
 import org.apache.xmlrpc.serializer.TypeSerializer;
 import org.apache.xmlrpc.webserver.XmlRpcServletServer;
 import org.ovirt.vdsmfake.AppConfig;
-import org.ovirt.vdsmfake.HttpUtils;
-import org.ovirt.vdsmfake.RequestData;
-import org.ovirt.vdsmfake.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -68,35 +63,19 @@ public class XmlRpcServlet extends org.apache.xmlrpc.webserver.XmlRpcServlet {
     public void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException, ServletException {
         final AppConfig config = AppConfig.getInstance();
 
-        if (config.isProxyActive()) {
-            final RequestData requestData = new RequestData();
-            final ResponseData responseData = new ResponseData();
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        super.doPost(pRequest, pResponse);
 
-            IOUtils.copy(pRequest.getInputStream(), bos);
-            requestData.setXmlData(bos.toByteArray());
-
-            // call remote server
-            HttpUtils.forwardRequest(config.getTargetServerUrl(), requestData, responseData);
-
-            if (responseData.getXmlData() != null) {
-                IOUtils.write(responseData.getXmlData(), pResponse.getOutputStream());
-            }
-        } else {
-            super.doPost(pRequest, pResponse);
-
-            // wait if required in config
-            if (config.getConstantDelay() > 0 || config.getRandomDelay() > 0) {
-                try {
-                    long ts = config.getConstantDelay();
-                    if (config.getRandomDelay() > 0) {
-                        ts += RND.nextInt((int) config.getRandomDelay());
-                    }
-                    log.info("Sleeping for {} ms", ts);
-                    Thread.sleep(ts);
-
-                } catch (Exception e) {
+        // wait if required in config
+        if (config.getConstantDelay() > 0 || config.getRandomDelay() > 0) {
+            try {
+                long ts = config.getConstantDelay();
+                if (config.getRandomDelay() > 0) {
+                    ts += RND.nextInt((int) config.getRandomDelay());
                 }
+                log.info("Sleeping for {} ms", ts);
+                Thread.sleep(ts);
+
+            } catch (Exception e) {
             }
         }
     }

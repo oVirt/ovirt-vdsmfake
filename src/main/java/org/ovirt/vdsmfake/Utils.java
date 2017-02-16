@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class Utils extends AppConfig{
+public class Utils {
 
     final static Random RND = new Random();
     final static String DATE_FORMAT = "yyy-MM-dd'T'HH:mm:ss z"; // 2013-02-10T19:09:11 GMT
@@ -88,8 +88,9 @@ public class Utils extends AppConfig{
         return b.toString();
     }
 
-    public static String rangeParsser(ArrayList a){
-        return String.valueOf(RND.nextInt(Integer.valueOf(a.get(1).toString()) - Integer.valueOf(a.get(0).toString())) + Integer.valueOf(a.get(0).toString()));
+    public static String rangeParsser(List<String> values){
+        return String.valueOf(RND.nextInt(Integer.valueOf(values.get(1).toString()) - Integer.valueOf(values.get(0).toString())) + Integer.valueOf(
+                values.get(0).toString()));
     }
 
     public static String getCpuIdle(String idle){

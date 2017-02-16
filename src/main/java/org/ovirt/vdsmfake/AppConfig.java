@@ -16,7 +16,11 @@
 package org.ovirt.vdsmfake;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+
+import com.typesafe.config.ConfigBeanFactory;
+import com.typesafe.config.ConfigFactory;
 
 /**
  * App config data
@@ -26,82 +30,70 @@ import java.util.*;
  */
 public class AppConfig {
 
-    private static final AppConfig instance = new AppConfig();
+    private static final AppConfig instance = ConfigBeanFactory.create(ConfigFactory.load(), AppConfig.class);
 
-    long constantDelay;
-    long randomDelay;
-    long delayMinimum;
-    ArrayList<String> storageDelay;
-    ArrayList<String> networkLoad;
-    ArrayList<String> cpuLoadList;
-    ArrayList memLoad;
-    String networkBridgeName;
-    String cacheDir;
-    String logDir;
-    String forwardVdsmServer;
-    String vdsmPort;
-    String vmConfAndStatsConstants;
-    String vmConfAndStatsUpdateIntervals;
-    List<String> eventSupportedMethods;
-    String targetServerUrl; // not set in web.xml
-    ArchitectureType architectureType;
-    Boolean jsonEvents;
-    int eventsThreadPoolSize;
-    int jsonThreadPoolSize;
-    String certspath;
-
-    final Set<String> notLoggedMethodSet = new HashSet<String>();
+    private long constantDelay;
+    private long randomDelay;
+    private long delayMinimum;
+    private List<String> storageDelay;
+    private List<String> networkLoad;
+    private List<String> cpuLoad;
+    private List<String> memLoad;
+    private String networkBridgeName;
+    private String cacheDir;
+    private String logDir;
+    private String forwardVdsmServer;
+    private String vdsmPort;
+    private String vmConfAndStatsConstants;
+    private String vmConfAndStatsUpdateIntervals;
+    private List<String> eventSupportedMethods;
+    private String targetServerUrl;
+    private String architectureType;
+    private boolean jsonEvents;
+    private int eventsThreadPoolSize;
+    private int jsonThreadPoolSize;
+    private String certspath;
+    private List<String> notLoggedMethods;
+    private int jsonListenPort;
+    private boolean jsonSecured;
+    private String jsonHost;
 
     public static AppConfig getInstance() {
         return instance;
     }
 
-    public void init(Map<String, String> paramMap) {
-        constantDelay = Utils.getLong(paramMap.get("constantDelay"));
-        randomDelay = Utils.getLong(paramMap.get("randomDelay"));
-        networkLoad = Utils.splitString(paramMap.get("networkLoad"));
-        cpuLoadList = Utils.splitString(paramMap.get("cpuLoad"));
-        memLoad = Utils.splitString(paramMap.get("memLoad"));
-        storageDelay = Utils.splitString(paramMap.get("storageDelay"));
-        networkBridgeName = paramMap.get("networkBridgeName");
-        cacheDir = paramMap.get("cacheDir");
-        // Each run will store its logs separately
-        logDir = paramMap.get("logDir") + "/" + System.currentTimeMillis();
-        forwardVdsmServer = paramMap.get("forwardVdsmServer");
-        vdsmPort = paramMap.get("vdsmPort");
-        vmConfAndStatsConstants = paramMap.get("vmConfAndStatsConstants");
-        vmConfAndStatsUpdateIntervals = paramMap.get("vmConfAndStatsUpdateIntervals");
-        architectureType = ArchitectureType.valueOf(paramMap.get("architectureType").toUpperCase());
-        jsonEvents = Boolean.valueOf(paramMap.get("jsonEvents"));
-        eventSupportedMethods = Utils.splitString(paramMap.get("eventSupportedMethods"));
-        eventsThreadPoolSize = Integer.valueOf(paramMap.get("eventsThreadPoolSize"));
-        jsonThreadPoolSize = Integer.valueOf(paramMap.get("jsonThreadPoolSize"));
-        certspath = paramMap.get("certspath");
-
-        final String notLoggedMethods = paramMap.get("notLoggedMethods");
-        // ...
-
-        if (notLoggedMethods != null && notLoggedMethods.trim().length() > 0) {
-            final String[] methodNames = notLoggedMethods.split(",");
-            for (String methodName : methodNames) {
-                notLoggedMethodSet.add(methodName.trim());
-            }
-        }
-
+    public AppConfig() {
         makeDir(cacheDir);
         makeDir(logDir);
+    }
 
-        if (isProxyActive()) {
-            targetServerUrl = getForwardVdsmServer() + ":" + getVdsmPort() + "/";
+    private void makeDir(String dir) {
+        if (dir != null && dir.trim().length() > 0 && !new File(dir).exists()) {
+            new File(dir).mkdirs();
         }
     }
 
-    public String getVmConfAndStatsUpdateIntervals() {
-        return vmConfAndStatsUpdateIntervals;
-    }
+    public enum ArchitectureType {
+        X86_64(
+                "Intel(R) Xeon(R) CPU E5606 @ 2.13GHz",
+                "fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept,fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,model_Conroe,model_Penryn,model_Westmere,model_SandyBridge"),
+        PPC64("IBM POWER8", "powernv,model_POWER8");
 
-    public String getVmConfAndStatsConstants() {
-        return vmConfAndStatsConstants;
+        private String cpuModel;
+        private String cpuFlags;
+
+        ArchitectureType(String cpuModel, String cpuFlags) {
+            this.cpuModel = cpuModel;
+            this.cpuFlags = cpuFlags;
+        }
+
+        public String getCpuModel() {
+            return cpuModel;
+        }
+
+        public String getCpuFlags() {
+            return cpuFlags;
+        }
     }
 
     public long getConstantDelay() {
@@ -116,8 +108,48 @@ public class AppConfig {
         return randomDelay;
     }
 
+    public void setRandomDelay(long randomDelay) {
+        this.randomDelay = randomDelay;
+    }
+
     public long getDelayMinimum() {
-        return this.delayMinimum;
+        return delayMinimum;
+    }
+
+    public void setDelayMinimum(long delayMinimum) {
+        this.delayMinimum = delayMinimum;
+    }
+
+    public List<String> getStorageDelay() {
+        return storageDelay;
+    }
+
+    public void setStorageDelay(List<String> storageDelay) {
+        this.storageDelay = storageDelay;
+    }
+
+    public List<String> getNetworkLoad() {
+        return networkLoad;
+    }
+
+    public void setNetworkLoad(List<String> networkLoad) {
+        this.networkLoad = networkLoad;
+    }
+
+    public List<String> getCpuLoad() {
+        return cpuLoad;
+    }
+
+    public void setCpuLoad(List<String> cpuLoad) {
+        this.cpuLoad = cpuLoad;
+    }
+
+    public List<String> getMemLoad() {
+        return memLoad;
+    }
+
+    public void setMemLoad(List<String> memLoad) {
+        this.memLoad = memLoad;
     }
 
     public String getNetworkBridgeName() {
@@ -160,98 +192,107 @@ public class AppConfig {
         this.vdsmPort = vdsmPort;
     }
 
-    public boolean isMethodLoggingEnabled(String methodName) {
-        if (methodName == null) {
-            return false;
-        }
-
-        if (notLoggedMethodSet.isEmpty()) {
-            return true;
-        }
-
-        if (notLoggedMethodSet.contains("*")) {
-            return false;
-        }
-
-        return !notLoggedMethodSet.contains(methodName);
+    public String getVmConfAndStatsConstants() {
+        return vmConfAndStatsConstants;
     }
 
-    public boolean isProxyActive() {
-        return getForwardVdsmServer() != null && getForwardVdsmServer().trim().length() > 0;
+    public void setVmConfAndStatsConstants(String vmConfAndStatsConstants) {
+        this.vmConfAndStatsConstants = vmConfAndStatsConstants;
     }
 
-    public boolean isLogDirSet() {
-        return getLogDir() != null && getLogDir().trim().length() > 0;
+    public String getVmConfAndStatsUpdateIntervals() {
+        return vmConfAndStatsUpdateIntervals;
     }
 
-    public String getTargetServerUrl() {
-        return targetServerUrl;
-    }
-
-    private void makeDir(String dir) {
-        if (dir != null && dir.trim().length() > 0 && !new File(dir).exists()) {
-            new File(dir).mkdirs();
-        }
-    }
-
-    public ArrayList getStorageDelay() {
-        return storageDelay;
-    }
-
-    public ArrayList getCpuLoadValues(){
-        return cpuLoadList;
-    }
-
-    public ArrayList getNetworkLoadValues() {
-        return networkLoad;
-    }
-
-    public ArrayList getMemLoadValues() {
-        return memLoad;
-    }
-
-    public ArchitectureType getArchitectureType() {
-        return architectureType;
-    }
-
-    public enum  ArchitectureType {
-        X86_64("Intel(R) Xeon(R) CPU E5606 @ 2.13GHz","fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept,fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,model_Conroe,model_Penryn,model_Westmere,model_SandyBridge"),
-        PPC64("IBM POWER8","powernv,model_POWER8");
-
-        private String cpuModel;
-        private String cpuFlags;
-
-        private ArchitectureType(String cpuModel, String cpuFlags){
-            this.cpuModel = cpuModel;
-            this.cpuFlags = cpuFlags;
-        }
-
-        public String getCpuModel() {
-            return cpuModel;
-        }
-
-        public String getCpuFlags() {
-            return cpuFlags;
-        }
+    public void setVmConfAndStatsUpdateIntervals(String vmConfAndStatsUpdateIntervals) {
+        this.vmConfAndStatsUpdateIntervals = vmConfAndStatsUpdateIntervals;
     }
 
     public List<String> getEventSupportedMethods() {
         return eventSupportedMethods;
     }
 
-    public Boolean isJsonEvents() {
+    public void setEventSupportedMethods(List<String> eventSupportedMethods) {
+        this.eventSupportedMethods = eventSupportedMethods;
+    }
+
+    public String getTargetServerUrl() {
+        return targetServerUrl;
+    }
+
+    public void setTargetServerUrl(String targetServerUrl) {
+        this.targetServerUrl = targetServerUrl;
+    }
+
+    public ArchitectureType getArchitectureType() {
+        return ArchitectureType.valueOf(architectureType);
+    }
+
+    public void setArchitectureType(String architectureType) {
+        this.architectureType = architectureType;
+    }
+
+    public boolean isJsonEvents() {
         return jsonEvents;
     }
 
-    public int getEventsThreadPoolSize(){
-        return this.eventsThreadPoolSize;
+    public void setJsonEvents(boolean jsonEvents) {
+        this.jsonEvents = jsonEvents;
     }
 
-    public int getJsonThreadPoolSize(){
-        return this.jsonThreadPoolSize;
+    public int getEventsThreadPoolSize() {
+        return eventsThreadPoolSize;
+    }
+
+    public void setEventsThreadPoolSize(int eventsThreadPoolSize) {
+        this.eventsThreadPoolSize = eventsThreadPoolSize;
+    }
+
+    public int getJsonThreadPoolSize() {
+        return jsonThreadPoolSize;
+    }
+
+    public void setJsonThreadPoolSize(int jsonThreadPoolSize) {
+        this.jsonThreadPoolSize = jsonThreadPoolSize;
     }
 
     public String getCertspath() {
         return certspath;
+    }
+
+    public void setCertspath(String certspath) {
+        this.certspath = certspath;
+    }
+
+    public List<String> getNotLoggedMethods() {
+        return notLoggedMethods;
+    }
+
+    public void setNotLoggedMethods(List<String> notLoggedMethods) {
+        this.notLoggedMethods = notLoggedMethods;
+    }
+
+    public int getJsonListenPort() {
+        return jsonListenPort;
+    }
+
+    public void setJsonListenPort(int jsonListenPort) {
+        this.jsonListenPort = jsonListenPort;
+    }
+
+    public boolean isJsonSecured() {
+        return jsonSecured;
+    }
+
+    public void setJsonSecured(boolean jsonSecured) {
+        this.jsonSecured = jsonSecured;
+    }
+
+    public String getJsonHost() {
+        return jsonHost;
+    }
+
+    public void setJsonHost(String jsonHost) {
+        this.jsonHost = jsonHost;
     }
 }

@@ -15,10 +15,6 @@
 */
 package org.ovirt.vdsmfake;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -28,13 +24,8 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
 
 /**
  * Init/release data when application starts/ends
- *
- *
- *
  */
 public class AppLifecycleListener implements ServletContextListener {
-
-    public static final String ARCHITECTURE_TYPE = "architectureType";
 
     @Override
     public void contextDestroyed(ServletContextEvent event) {
@@ -49,41 +40,22 @@ public class AppLifecycleListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         System.out.println("Application initialized.");
 
-        final Map<String, String> paramMap = new HashMap<String, String>();
-
-        @SuppressWarnings("unchecked")
-        final Enumeration<String> paramNames = event.getServletContext().getInitParameterNames();
-        while(paramNames.hasMoreElements()) {
-            final String key = paramNames.nextElement();
-            paramMap.put(key, System.getProperty(key,event.getServletContext().getInitParameter(key)));
-        }
-        // fill application global parameters
-        AppConfig.getInstance().init(paramMap);
+        AppConfig.getInstance();
 
         // Make sure that the logDir system property is always set for log4j configuration
-        System.setProperty("logDir", paramMap.get("logDir"));
+        System.setProperty("logDir", AppConfig.getInstance().getLogDir());
 
         //Initialize log4j
         PropertyConfigurator.configure(getClass().getResource("/log4j.xml"));
 
-        String architectureType = System.getProperty(ARCHITECTURE_TYPE);
-        if(architectureType != null){
-            paramMap.put(ARCHITECTURE_TYPE, architectureType);
-        }
-
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.init();
 
-        // if json is configured - start the json listener
-        if (paramMap.containsKey("jsonListenPort")) {
-            int jsonPort = Integer.parseInt(paramMap.get("jsonListenPort"));
-            boolean encrypted = Boolean.parseBoolean(paramMap.get("jsonSecured"));
-            String hostName = paramMap.get("jsonHost");
-            JsonRpcServer.initMonitoring();
-            JsonRpcServer server = new JsonRpcServer(hostName, jsonPort, encrypted);
-            server.start();
-        }
-
+        int jsonPort = AppConfig.getInstance().getJsonListenPort();
+        boolean encrypted = AppConfig.getInstance().isJsonSecured();
+        String hostName = AppConfig.getInstance().getJsonHost();
+        JsonRpcServer.initMonitoring();
+        JsonRpcServer server = new JsonRpcServer(hostName, jsonPort, encrypted);
+        server.start();
     }
-
 }

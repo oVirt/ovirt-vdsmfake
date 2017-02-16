@@ -108,9 +108,6 @@ public class XmlRpcFilter implements Filter {
             final long tm = System.currentTimeMillis();
 
             // append namespace
-            if (!conf.isProxyActive()) {
-                el.setText(METHOD_CALL_NS + "." + el.getText());
-            }
 
             // write back the new XML data
             wrapper.setInputStreamData(XMLUtils.serializeDocument(doc));
@@ -120,7 +117,7 @@ public class XmlRpcFilter implements Filter {
             chain.doFilter(wrapper, responseWrapper);
 
             // write communication into files
-            if (conf.isLogDirSet() && conf.isMethodLoggingEnabled(methodName)) {
+            if (conf.getLogDir() != null && !conf.getNotLoggedMethods().contains(methodName)) {
                 int fIndex = logCounter.incrementAndGet();
 
                 if (communicationLog.isDebugEnabled()) {

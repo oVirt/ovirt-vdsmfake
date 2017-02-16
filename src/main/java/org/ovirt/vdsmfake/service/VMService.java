@@ -215,7 +215,7 @@ public class VMService extends AbstractService {
         int count = 0;
         for(Device device : nicDevices)
         {
-            ArrayList loadValues = AppConfig.getInstance().getNetworkLoadValues();
+            List<String> loadValues = AppConfig.getInstance().getNetworkLoad();
             Map netStats = map();
             String dName = "vnet" + count;
 
@@ -427,12 +427,12 @@ public class VMService extends AbstractService {
         vmStatMap.put("guestTimezone", getGuestTimeZone());
 
         //cpu
-        vmStatMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoadValues()));
-        vmStatMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoadValues()));
-        vmStatMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoadValues()));
+        vmStatMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoad()));
 
         //memory
-        vmStatMap.put("memUsage", Utils.rangeParsser(appConfig.getMemLoadValues()));
+        vmStatMap.put("memUsage", Utils.rangeParsser(appConfig.getMemLoad()));
 
 
         //network
