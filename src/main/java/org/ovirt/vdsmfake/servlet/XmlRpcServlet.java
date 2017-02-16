@@ -101,20 +101,6 @@ public class XmlRpcServlet extends org.apache.xmlrpc.webserver.XmlRpcServlet {
         }
     }
 
-//    @Override
-//    protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() throws XmlRpcException {
-//        // prepare mapping
-//        final PropertyHandlerMapping mapping = new PropertyHandlerMapping();
-//        mapping.setAuthenticationHandler(getAuthenticationHandler());
-//        mapping.setRequestProcessorFactoryFactory(getRequestProcessorFactoryFactory());
-//        mapping.setTypeConverterFactory(getTypeConverterFactory());
-//        mapping.setVoidMethodEnabled(false);
-//
-//        mapping.addHandler(XmlRpcFilter.METHOD_CALL_NS, Api.class);
-//
-//        return mapping;
-//    }
-
     @Override
     protected XmlRpcServletServer newXmlRpcServer(ServletConfig pConfig) throws XmlRpcException {
         XmlRpcServletServer server = super.newXmlRpcServer(pConfig);
