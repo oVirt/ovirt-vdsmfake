@@ -10,7 +10,6 @@
 	<properties>
 		<slf4j.version>1.5.11</slf4j.version>
 		<jsonListenPort>54321</jsonListenPort>
-		<vdsmPort>54322</vdsmPort>
 		<jsonSecured>false</jsonSecured>
 		<version.checkstyle>6.8</version.checkstyle>
 	</properties>
@@ -88,12 +87,7 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlrpc</groupId>
-			<artifactId>xmlrpc-server</artifactId>
-			<version>3.1.3</version>
-		</dependency>
-        <dependency>
+    <dependency>
 			<groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
 			<artifactId>vdsm-jsonrpc-java-client</artifactId>
 			<version>1.4.0</version>
@@ -193,7 +187,7 @@
 					</systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<httpConnector>
-						<port>${vdsmPort}</port>
+						<port>54322</port>
 					</httpConnector>
 					<webApp>
 						<contextPath>/</contextPath>

@@ -3,45 +3,26 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-	<display-name>VDSM Fake Web Application</display-name>
-
-	<filter>
-		<filter-name>XmlRpcFilter</filter-name>
-		<filter-class>org.ovirt.vdsmfake.servlet.XmlRpcFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>XmlRpcFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	<display-name>VDSM Fake</display-name>
 	<listener>
 		<listener-class>org.ovirt.vdsmfake.AppLifecycleListener</listener-class>
 	</listener>
+	<servlet>
+		<servlet-name>Main</servlet-name>
+		<servlet-class>org.ovirt.vdsmfake.servlet.VdsmFake</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Main</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
  <servlet>
-		<display-name>HystrixMetricsStreamServlet</display-name>
 		<servlet-name>HystrixMetricsStreamServlet</servlet-name>
 		<servlet-class>com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet</servlet-class>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>HystrixMetricsStreamServlet</servlet-name>
 		<url-pattern>/hystrix.stream</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>XmlRpcServlet</servlet-name>
-		<servlet-class>org.ovirt.vdsmfake.servlet.XmlRpcServlet</servlet-class>
-		<init-param>
-			<param-name>enabledForExtensions</param-name>
-			<param-value>true</param-value>
-			<description>
-				Sets, whether the servlet supports vendor extensions for XML-RPC.
-			</description>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>XmlRpcServlet</servlet-name>
-		<url-pattern>/*</url-pattern>
-	</servlet-mapping>
-
 	<session-config>
 		<session-timeout>2</session-timeout>
 	</session-config>

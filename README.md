@@ -5,7 +5,6 @@ The aim is to get marginal performance characteristics of oVirt Engine JEE appli
 
 ## Technology
 The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of host IP address it is needed to specify fake host name.
-Apache XML-RPC library is a core technology for the Engine and VDSM communication.
 Many configured entities must be persisted after their creation. Simple Java object serialization is used for this
 purpose. They are stored in `/var/log/fakevdsm/cache` by default. Set the system porperty `${cacheDir}` to customize
 the location.
@@ -87,17 +86,6 @@ cd ovirt-vdsmfake
 mvn jetty:run
 ```
 
-### XML-RPC (ovirt-engine < 3.6)
-
-```bash
-git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
-cd ovirt-vdsmfake
-mvn jetty:run -DjsonListenPort=54322 -DvdsmPort=54321
-```
-
-Here we are flipping the XML-RPC and the JSON-RPC ports, so that the engine will find the XML-RPC server on the default
-vdsm port `54321`.
-
 ### Docker
 
 ```bash
@@ -137,11 +125,9 @@ for i in `seq 0 10`; do add_host admin@internal:mypwd test$i; done
 ```
 
 ## Functionality
-The application runs in 2 modes:
-* simulation
-* proxy to real VDSM
+* simulation of vdsm API
 
-All XML/Json requests/responses are optionally logged into the default path `/var/log/vakevdsm/`. Set the
+All Json requests/responses are optionally logged into the default path `/var/log/vakevdsm/`. Set the
 system property ${logDir} to customize the location. Log4j logs into this directory too.
 
 ## Supported methods

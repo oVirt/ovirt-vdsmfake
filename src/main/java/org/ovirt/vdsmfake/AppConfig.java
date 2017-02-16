@@ -17,7 +17,6 @@ package org.ovirt.vdsmfake;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import com.typesafe.config.ConfigBeanFactory;
 import com.typesafe.config.ConfigFactory;
@@ -43,7 +42,6 @@ public class AppConfig {
     private String cacheDir;
     private String logDir;
     private String forwardVdsmServer;
-    private String vdsmPort;
     private String vmConfAndStatsConstants;
     private String vmConfAndStatsUpdateIntervals;
     private List<String> eventSupportedMethods;
@@ -176,52 +174,12 @@ public class AppConfig {
         this.logDir = logDir;
     }
 
-    public String getForwardVdsmServer() {
-        return forwardVdsmServer;
-    }
-
-    public void setForwardVdsmServer(String forwardVdsmServer) {
-        this.forwardVdsmServer = forwardVdsmServer;
-    }
-
-    public String getVdsmPort() {
-        return vdsmPort;
-    }
-
-    public void setVdsmPort(String vdsmPort) {
-        this.vdsmPort = vdsmPort;
-    }
-
-    public String getVmConfAndStatsConstants() {
-        return vmConfAndStatsConstants;
-    }
-
-    public void setVmConfAndStatsConstants(String vmConfAndStatsConstants) {
-        this.vmConfAndStatsConstants = vmConfAndStatsConstants;
-    }
-
-    public String getVmConfAndStatsUpdateIntervals() {
-        return vmConfAndStatsUpdateIntervals;
-    }
-
-    public void setVmConfAndStatsUpdateIntervals(String vmConfAndStatsUpdateIntervals) {
-        this.vmConfAndStatsUpdateIntervals = vmConfAndStatsUpdateIntervals;
-    }
-
     public List<String> getEventSupportedMethods() {
         return eventSupportedMethods;
     }
 
     public void setEventSupportedMethods(List<String> eventSupportedMethods) {
         this.eventSupportedMethods = eventSupportedMethods;
-    }
-
-    public String getTargetServerUrl() {
-        return targetServerUrl;
-    }
-
-    public void setTargetServerUrl(String targetServerUrl) {
-        this.targetServerUrl = targetServerUrl;
     }
 
     public ArchitectureType getArchitectureType() {
