@@ -492,7 +492,7 @@ public class VMService extends AbstractService {
             memstats.put("swap_in", "0");
             memstats.put(
                     "mem_free",
-                    Integer.toString(vm.getMemSize() - Integer.valueOf(vmStatMap.get("memUsage").toString()))
+                    Integer.toString(vm.getMemSize() - Integer.parseInt(vmStatMap.get("memUsage").toString()))
             );
             memstats.put("pageflt", "131");
             memstats.put("mem_total", Integer.toString(vm.getMemSize()));

@@ -77,12 +77,12 @@ public class Utils {
 
     public static String rangeParsser(List<String> values){
         return String.valueOf(
-                RND.nextInt(Integer.valueOf(values.get(1).toString()) - Integer.valueOf(values.get(0).toString()))
-                        + Integer.valueOf(values.get(0).toString()));
+                RND.nextInt(Integer.parseInt(values.get(1)) - Integer.parseInt(values.get(0)))
+                        + Integer.parseInt(values.get(0)));
     }
 
     public static String getCpuIdle(String idle){
-        return String.valueOf(100 - Integer.valueOf(idle));
+        return Integer.toString(100 - Integer.parseInt(idle));
     }
 
 

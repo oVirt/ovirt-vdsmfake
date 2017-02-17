@@ -557,7 +557,7 @@ public class StorageService extends AbstractService {
 
             Map resultMap = getOKStatus();
 
-            String cTime =  Integer.valueOf((int) (System.currentTimeMillis() / 1000.0)).toString();
+            String cTime =  Long.toString(System.currentTimeMillis() / 1000);
 
             Map infoMap = map();
             infoMap.put("status", "OK");
