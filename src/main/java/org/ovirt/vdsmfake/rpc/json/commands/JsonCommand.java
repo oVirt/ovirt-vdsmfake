@@ -70,9 +70,9 @@ public abstract class JsonCommand {
         return builder.build();
     }
 
-    abstract public String fieldName();
+    abstract String fieldName();
 
-    abstract protected Map activateApi(JsonNode params) throws JsonParseException, JsonMappingException, IOException;
+    abstract Map activateApi(JsonNode params) throws JsonParseException, JsonMappingException, IOException;
 
     protected List toList(JsonNode jsonNode) throws JsonParseException, JsonMappingException,
             IOException {
