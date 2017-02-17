@@ -40,10 +40,10 @@ import org.ovirt.vdsmfake.task.TaskType;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class VMService extends AbstractService {
 
-    final static VMService instance = new VMService();
+    private static final VMService INSTANCE = new VMService();
 
     public static VMService getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public VMService() {
@@ -65,7 +65,12 @@ public class VMService extends AbstractService {
 
         return resultMap;
     }
-    private final static List fullListMapKeys = Arrays.asList("username fqdn acpiEnable emulatedMachine pid transparentHugePages keyboardLayout displayPort displaySecurePort timeOffset cpuType pauseCode nicModel smartcardEnable kvmEnable pitReinjection smp vmType displayIp clientIp smpCoresPerSocket nice".split(" "));
+
+    private static final List fullListMapKeys = Arrays.asList(
+            ("username fqdn acpiEnable emulatedMachine pid transparentHugePages keyboardLayout"
+                    + " displayPort displaySecurePort timeOffset cpuType pauseCode nicModel"
+                    + " smartcardEnable kvmEnable pitReinjection smp vmType displayIp clientIp smpCoresPerSocket nice")
+                    .split(" "));
     public Map list(boolean fullStatus, List vmList) {
         final Host host = getActiveHost();
 
@@ -142,24 +147,32 @@ public class VMService extends AbstractService {
         targetHost.getRunningVMs().put(targetVM.getId(), targetVM);
 
         // add asynch task
-        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_FROM_VM, 10000l, vm));
-        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_TO_VM, 10000l, targetVM));
+        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_FROM_VM, 10000L, vm));
+        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_TO_VM, 10000L, targetVM));
         // plan next status task
-        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_MIGRATED_FROM_VM_REMOVE_FROM_HOST, 20000l, vm));
+        TaskProcessor.getInstance()
+                .addTask(new TaskRequest(TaskType.FINISH_MIGRATED_FROM_VM_REMOVE_FROM_HOST, 20000L, vm));
 
         Map<String, Object> resultMap = map();
 
         Map statusMap = map();
         statusMap.put("message", success ? "Migration process starting" : "VM not found");
-        statusMap.put("code", (success ? "0" : "100"));
+        statusMap.put("code", success ? "0" : "100");
 
         resultMap.put("status", statusMap);
 
-        log.info("Migrating VM {} from host: {} to: {}", new Object[] { vm.getId(), vm.getHost().getName(), targetHost.getName() });
+        log.info("Migrating VM {} from host: {} to: {}",
+                new Object[] { vm.getId(), vm.getHost().getName(), targetHost.getName() });
 
         return resultMap;
     }
-    private final static List VmStatsKeys = Arrays.asList("username fqdn memUage balloonInfo username acpiEnable pid displayIp displayPort session displaySecurePort timeOffset hash pauseCode kvmEnable monitorResponse statsAge elapsedTime vmType cpuSys appsList guestIPs".split(" "));
+
+    private final List VmStatsKeys = Arrays.asList(
+            ("username fqdn memUage balloonInfo username acpiEnable pid displayIp displayPort session "
+                    + "displaySecurePort timeOffset hash pauseCode kvmEnable monitorResponse statsAge"
+                    + " elapsedTime vmType cpuSys appsList guestIPs")
+                    .split(" "));
+
     public Map getVmStats(String uuid) {
 
         final Host host = getActiveHost();
@@ -213,8 +226,7 @@ public class VMService extends AbstractService {
 
         Map resultMap = map();
         int count = 0;
-        for(Device device : nicDevices)
-        {
+        for(Device device : nicDevices) {
             List<String> loadValues = AppConfig.getInstance().getNetworkLoad();
             Map netStats = map();
             String dName = "vnet" + count;
@@ -334,8 +346,7 @@ public class VMService extends AbstractService {
         return getExtractedStatsAndHash(keys, vmIds, false);
     }
 
-    private Map getRuntimeStatsHashesForVm(VM vm, Map stats)
-    {
+    private Map getRuntimeStatsHashesForVm(VM vm, Map stats) {
         Map hashes = map();
         Object hash = "0";
         if( stats.containsKey("hash") ) {
@@ -348,43 +359,47 @@ public class VMService extends AbstractService {
         return hashes;
     }
 
-    private final static List VmRuntimeStatsKeys = Arrays.asList("cpuSys cpuUser memUsage elapsedTime status statsAge".split(" "));
+    private final List VmRuntimeStatsKeys = Arrays.asList(
+            "cpuSys cpuUser memUsage elapsedTime status statsAge".split(" "));
     public Map getAllVmRuntimeStats() {
         Map resultMap = getDoneStatus();
         resultMap.put("runtimeStats", getExtractedStatsAndHash(VmRuntimeStatsKeys, null, true));
         return resultMap;
     }
 
-    private final static List VmDeviceStatsKeys = Arrays.asList("network disks disksUsage balloonInfo memoryStats".split(" "));
+    private final List VmDeviceStatsKeys = Arrays.asList(
+            "network disks disksUsage balloonInfo memoryStats".split(" "));
     public Map getAllVmDeviceStats() {
         Map resultMap = getDoneStatus();
         resultMap.put("deviceStats", getExtractedStats(VmDeviceStatsKeys, null));
         return resultMap;
     }
 
-    private final static List VmStatusKeys = Arrays.asList("timeOffset monitorResponse clientIp lastLogin username session guestIps".split(" "));
+    private final List VmStatusKeys = Arrays.asList(
+            "timeOffset monitorResponse clientIp lastLogin username session guestIps".split(" "));
     public Map getVmStatus(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("vmStatus", getExtractedStats(VmStatusKeys, vmIds));
         return resultMap;
     }
 
-    private final static List VmConfInfoKeys = Arrays.asList("acpiEnable vmType guestName guestOS kvmEnable pauseCode displayIp displayPort displaySecurePort pid".split(" "));
+    private final List VmConfInfoKeys = Arrays.asList(
+            "acpiEnable vmType guestName guestOS kvmEnable pauseCode displayIp displayPort displaySecurePort pid"
+                    .split(" "));
     public Map getVmConfInfo(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("vmConfInfo", getExtractedStats(VmConfInfoKeys, vmIds));
         return resultMap;
     }
 
-    private final static List VmGuestDetailsKeys = Arrays.asList("appsList netIfaces".split(" "));
+    private final List VmGuestDetailsKeys = Arrays.asList("appsList netIfaces".split(" "));
     public Map getVmGuestDetails(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("guestDetails", getExtractedStats(VmGuestDetailsKeys, vmIds));
         return resultMap;
     }
 
-    private Map fillVmStatsMap(VM vm)
-    {
+    private Map fillVmStatsMap(VM vm) {
         AppConfig appConfig = AppConfig.getInstance();
         Map vmStatMap = VMInfoService.getInstance().getFromKeys(vm, VmStatsKeys);
         vmStatMap.put("status", vm.getStatus().toString());
@@ -475,7 +490,10 @@ public class VMService extends AbstractService {
             memstats.put("swap_usage", "0");
             memstats.put("swap_total", "0");
             memstats.put("swap_in", "0");
-            memstats.put("mem_free", Integer.toString(vm.getMemSize() - Integer.valueOf(vmStatMap.get("memUsage").toString())));
+            memstats.put(
+                    "mem_free",
+                    Integer.toString(vm.getMemSize() - Integer.valueOf(vmStatMap.get("memUsage").toString()))
+            );
             memstats.put("pageflt", "131");
             memstats.put("mem_total", Integer.toString(vm.getMemSize()));
             memstats.put("mem_unused", memstats.get("mem_free"));
@@ -527,7 +545,7 @@ public class VMService extends AbstractService {
 
         Map statusMap = map();
 
-        addTask(TaskType.SHUTDOWN_VM, 5000l, vm);
+        addTask(TaskType.SHUTDOWN_VM, 5000L, vm);
 
         statusMap.put("message", "Machine destroyed");
         statusMap.put("code", "0");
@@ -545,7 +563,7 @@ public class VMService extends AbstractService {
             vm.setStatus(VM.VMStatus.PoweringDown);
         }
 
-        addTask(TaskType.SHUTDOWN_VM, 5000l, vm);
+        addTask(TaskType.SHUTDOWN_VM, 5000L, vm);
 
         return resultMap;
     }
@@ -597,9 +615,9 @@ public class VMService extends AbstractService {
 
             log.debug("VM {} created on host {}", vmId, host.getName());
 
-            addTask(TaskType.START_VM, 2000l, vm);
-            addTask(TaskType.START_VM_POWERING_UP, 3000l, vm);
-            addTask(TaskType.START_VM_AS_UP, 20000l, vm);
+            addTask(TaskType.START_VM, 2000L, vm);
+            addTask(TaskType.START_VM_POWERING_UP, 3000L, vm);
+            addTask(TaskType.START_VM_AS_UP, 20000L, vm);
 
             return resultMap;
         } catch (Exception e) {
@@ -623,7 +641,7 @@ public class VMService extends AbstractService {
 
     private Map<String, String> getGuestOsInto(){
         Map<String, String> resultMap = map();
-        resultMap.put("kernel","2.6.32-642.el6.x86_64");
+        resultMap.put("kernel", "2.6.32-642.el6.x86_64");
         resultMap.put("type", "linux");
         resultMap.put("version", "6.7");
         resultMap.put("arch", "x86_64");
@@ -634,7 +652,7 @@ public class VMService extends AbstractService {
 
     private Map<String, String> getGuestTimeZone(){
         Map<String, String> resultMap = map();
-        resultMap.put("zone","Israel");
+        resultMap.put("zone", "Israel");
         resultMap.put("offset", "120");
         return resultMap;
     }

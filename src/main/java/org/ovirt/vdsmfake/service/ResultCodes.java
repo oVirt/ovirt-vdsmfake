@@ -11,8 +11,7 @@ public enum ResultCodes {
     MACHINE_SHUTDOWN("Machine shutdown", 0),
     MIGRATION_STARTING("Starting Migration", 0),
     VM_NOT_FOUND("VM not found", 100),
-    UNSUPPORTED("UNsupported command", 100),
-    ;
+    UNSUPPORTED("UNsupported command", 100);
 
     private Map<String, Object> mapValue;
 

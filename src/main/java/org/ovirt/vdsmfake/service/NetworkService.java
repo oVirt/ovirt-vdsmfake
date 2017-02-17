@@ -21,10 +21,10 @@ package org.ovirt.vdsmfake.service;
  */
 public class NetworkService extends AbstractService {
 
-    final static NetworkService instance = new NetworkService();
+    private static final NetworkService INSTANCE = new NetworkService();
 
     public static NetworkService getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public NetworkService() {

@@ -39,7 +39,7 @@ public class JsonRpcServer {
     private static final Logger log = LoggerFactory
             .getLogger(JsonRpcServer.class);
 
-    private final static int TIMEOUT = 5000;
+    private static final int TIMEOUT = 5000;
     private static ReactorListener listener;
     private int jsonPort;
     private boolean encrypted;
@@ -47,7 +47,9 @@ public class JsonRpcServer {
     private CommandExecutor commandExecutor;
     private static final ConcurrentHashMap<String, ReactorClient> clientsMap = new ConcurrentHashMap<>();
     private final String eventSupportedMethods = AppConfig.getInstance().getEventSupportedMethods().toString();
-    private ExecutorService service = Executors.newFixedThreadPool(AppConfig.getInstance().getJsonThreadPoolSize(), new BasicThreadFactory.Builder()
+    private ExecutorService service = Executors.newFixedThreadPool(
+            AppConfig.getInstance().getJsonThreadPoolSize(),
+            new BasicThreadFactory.Builder()
             .namingPattern("jsonrpcserver-pool-%d")
             .daemon(true)
             .priority(Thread.MAX_PRIORITY)

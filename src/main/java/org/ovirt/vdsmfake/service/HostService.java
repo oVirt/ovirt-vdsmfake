@@ -37,10 +37,10 @@ public class HostService extends AbstractService {
     private static final int TOTAL_MEMORY_SIZE = 7976;
     private static final int NUMBER_OF_NUMA_NODES = 2;
 
-    final static HostService instance = new HostService();
+    private static final HostService INSTANCE = new HostService();
 
     public static HostService getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public HostService() {
@@ -67,7 +67,7 @@ public class HostService extends AbstractService {
             infoMap.put("supportedProtocols", getSupportedProtocolsList());
             infoMap.put("networks", getNetworksMap(host));
             infoMap.put("bridges", getBridgesMap(host));
-            infoMap.put("uuid", host.getUuid() + "_80:" + host.getMacAddress()); // 018CE76D-8EFE-D511-B30D-80C16E727330_80:c1:6e:6c:51:54
+            infoMap.put("uuid", host.getUuid() + "_80:" + host.getMacAddress());
             infoMap.put("lastClientIface", AppConfig.getInstance().getNetworkBridgeName());
             infoMap.put("nics", getNicsMap(host));
             infoMap.put("numaNodeDistance", getNumaNodeDistanceMap());
@@ -679,9 +679,7 @@ public class HostService extends AbstractService {
         Map<String, Map> infoMap = map();
 
         infoMap.put("computer", getCapability());
-        IntStream.range(0,12).forEach(i -> {
-            infoMap.put("pci_0000_00_1b_" + i, getHardware(i));
-        });
+        IntStream.range(0, 12).forEach(i -> infoMap.put("pci_0000_00_1b_" + i, getHardware(i)));
 
         resultMap.put("info", infoMap);
         return resultMap;

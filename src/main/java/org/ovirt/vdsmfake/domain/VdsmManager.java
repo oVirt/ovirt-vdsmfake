@@ -88,9 +88,8 @@ public class VdsmManager implements Serializable {
             return null;
         }
 
-        final BaseObject baseObject =
-                (BaseObject) PersistUtils.load(new File(AppConfig.getInstance().getCacheDir(), clazz.getSimpleName() + "_"
-                        + id));
+        final BaseObject baseObject = (BaseObject) PersistUtils
+                        .load(new File(AppConfig.getInstance().getCacheDir(), clazz.getSimpleName() + "_" + id));
         baseObject.setLastUpdate(f.lastModified());
         return baseObject;
     }

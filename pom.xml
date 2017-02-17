@@ -207,7 +207,7 @@
 							<configLocation>src/main/resources/checkstyle.xml</configLocation>
 							<suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
 							<encoding>UTF-8</encoding>
-							<failOnViolation>false</failOnViolation>
+							<failOnViolation>true</failOnViolation>
 						</configuration>
 						<goals>
 							<goal>check</goal>

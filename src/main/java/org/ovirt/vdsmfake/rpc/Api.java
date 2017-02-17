@@ -251,8 +251,7 @@ public class Api extends AbstractService {
     }
 
     public Map createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
-            int storageType, String storageFormatType)
-    {
+            int storageType, String storageFormatType) {
         return storageService.createStorageDomain(domainType, sdUUID, domainName, arg, storageType, storageFormatType);
     }
 
@@ -747,7 +746,7 @@ public class Api extends AbstractService {
         return getOKStatusNotImplemented();
     }
 
-    public Map HostDevListByCaps() {
+    public Map hostDevListByCaps() {
         return hostService.hostDevListByCaps();
     }
 

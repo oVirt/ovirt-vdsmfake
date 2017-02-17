@@ -33,7 +33,7 @@ import org.ovirt.vdsmfake.task.TaskType;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class StorageService extends AbstractService {
 
-    final static StorageService instance = new StorageService();
+    private static StorageService instance = new StorageService();
 
     public static StorageService getInstance() {
         return instance;
@@ -44,15 +44,9 @@ public class StorageService extends AbstractService {
 
     /**
      * Connect data center to the host.
-     *
-     * @param spUUID
-     * @param hostID
-     * @param scsiKey
-     * @param msdUUID
-     * @param masterVersion
-     * @return
      */
-    public Map connectStoragePool(String spUUID, Integer hostID, String scsiKey, String msdUUID, Integer masterVersion) {
+    public Map connectStoragePool(
+            String spUUID, Integer hostID, String scsiKey, String msdUUID, Integer masterVersion) {
         final DataCenter dataCenter = getDataCenterById(spUUID);
 
         // save to model
@@ -103,7 +97,8 @@ public class StorageService extends AbstractService {
 //                String password = (String) storageDomainMap.get("password");
 //                String user = (String) storageDomainMap.get("user");
 
-                log.info("Adding storage domain, spUUID: {} id: {}, connection: {}", new Object[] { spUUID, id, connection });
+                log.info("Adding storage domain, spUUID: {} id: {}, connection: {}",
+                        new Object[] { spUUID, id, connection });
 
                 final StorageDomain storageDomain = getStorageDomainById(id);
                 storageDomain.setConnection(connection);
@@ -189,7 +184,8 @@ public class StorageService extends AbstractService {
             setMasterDomain(spUUID, masterDom);
 
             log.info("Storage pool {} created, master domain: {}, total domains: {}",
-                    new Object[] { spUUID, dataCenter.getMasterStorageDomainId(), dataCenter.getStorageDomainMap().size() });
+                    new Object[] { spUUID, dataCenter.getMasterStorageDomainId(),
+                            dataCenter.getStorageDomainMap().size() });
 
             // send ok
             return getOKStatus();
@@ -198,7 +194,13 @@ public class StorageService extends AbstractService {
         }
     }
 
-    public Map createStorageDomain(Integer storageType, String sdUUID, String domainName, String typeSpecificArg, Integer domClass, String storageFormatType) {
+    public Map createStorageDomain(
+            Integer storageType,
+            String sdUUID,
+            String domainName,
+            String typeSpecificArg,
+            Integer domClass,
+            String storageFormatType) {
         log.info("Storage domain sdUUID: {}, name: {} created.", sdUUID, domainName);
 
         StorageDomain storageDomain = getStorageDomainById(sdUUID);
@@ -267,7 +269,8 @@ public class StorageService extends AbstractService {
                     storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
                     updateStorageDomain(storageDomain);
                 }
-                //TODO: name of storage domain not sent, API talk with id no naming relations, might be problematic. storageDomain.setName("sd_fake")
+                // TODO: name of storage domain not sent, API talk with id no naming relations, might be problematic.
+                // storageDomain.setName("sd_fake")
 
                 b.append(storageDomain.getId()).append(":").append(storageDomain.getDomainStatus().getName());
 
@@ -285,7 +288,6 @@ public class StorageService extends AbstractService {
             }
 
             infoMap.put("domains", b.toString());
-            // 67070f56-027f-4ece-958d-e226639b622b:Active,4a6a6ed3-13f9-4481-8c03-8d217f6baef6:Active,553c2cb4-54d1-4c30-b2c2-6cb41a03518d:Active
 
             infoMap.put("pool_status", dataCenter.getPoolStatus()); // connected
             infoMap.put("isoprefix",
@@ -463,7 +465,7 @@ public class StorageService extends AbstractService {
         getActiveHost().getRunningTasks().put(task.getId(), task);
         TaskProcessor.getInstance().setTasksMap(host.getName(), task.getId());
 
-        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_START_SPM, 10000l, task));
+        TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_START_SPM, 10000L, task));
 
         VdsmManager.getInstance().setSpmMap(spUUID, host);
 
@@ -538,7 +540,7 @@ public class StorageService extends AbstractService {
 
             syncTask(VdsmManager.getInstance().getSpmHost(spUUID), task);
 
-            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_CREATE_VOLUME, 3000l, task));
+            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_CREATE_VOLUME, 3000L, task));
 
             return resultMap;
         } catch (Exception e) {
@@ -639,7 +641,8 @@ public class StorageService extends AbstractService {
                     continue;
                 }
 
-                if (domainType != 0 && StorageDomain.DomainClass.getByCode(domainType) != storageDomain.getDomainClass()) {
+                if (domainType != 0
+                        && StorageDomain.DomainClass.getByCode(domainType) != storageDomain.getDomainClass()) {
                     continue;
                 }
 
@@ -677,7 +680,7 @@ public class StorageService extends AbstractService {
 
             syncTask(null, task);
 
-            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_REMOVE_VOLUME, 5000l, task));
+            TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_REMOVE_VOLUME, 5000L, task));
 
             return resultMap;
         } catch (Exception e) {

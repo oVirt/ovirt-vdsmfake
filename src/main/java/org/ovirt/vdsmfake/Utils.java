@@ -32,9 +32,10 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Utils {
 
-    final static Random RND = new Random();
-    final static String DATE_FORMAT = "yyy-MM-dd'T'HH:mm:ss z"; // 2013-02-10T19:09:11 GMT
-    final static char[] MAC_VALS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final Random RND = new Random();
+    private static final String DATE_FORMAT = "yyy-MM-dd'T'HH:mm:ss z"; // 2013-02-10T19:09:11 GMT
+    private static final char[] MAC_VALS =
+            {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private static boolean randomDelay;
     private static Long appConfigDelay;
     private static int appConfigDelay_asInit;
@@ -75,8 +76,9 @@ public class Utils {
     }
 
     public static String rangeParsser(List<String> values){
-        return String.valueOf(RND.nextInt(Integer.valueOf(values.get(1).toString()) - Integer.valueOf(values.get(0).toString())) + Integer.valueOf(
-                values.get(0).toString()));
+        return String.valueOf(
+                RND.nextInt(Integer.valueOf(values.get(1).toString()) - Integer.valueOf(values.get(0).toString()))
+                        + Integer.valueOf(values.get(0).toString()));
     }
 
     public static String getCpuIdle(String idle){

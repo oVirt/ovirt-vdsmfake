@@ -14,7 +14,7 @@ public class HostDevListByCaps extends JsonCommand {
 
     @Override
     protected Map activateApi(JsonNode params) {
-        return api.HostDevListByCaps();
+        return api.hostDevListByCaps();
     }
 
 }

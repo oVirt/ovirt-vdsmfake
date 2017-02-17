@@ -35,7 +35,7 @@ public class JsonRpcNotification {
 
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("params", paramsNode);
-        node.put("jsonrpc","2.0");
+        node.put("jsonrpc", "2.0");
         node.put("method", method);
         return node.toString();
     }

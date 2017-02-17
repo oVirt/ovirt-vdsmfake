@@ -52,13 +52,11 @@ public class VM extends BaseObject {
         lastRandomNumberUpdate = new HashMap<String, Long>();
     }
 
-    public Map<String, String> getRandomNumberStore()
-    {
+    public Map<String, String> getRandomNumberStore() {
         return randomNumberStore;
     }
 
-    public Map<String, Long> getLastRandomNumberUpdate()
-    {
+    public Map<String, Long> getLastRandomNumberUpdate() {
         return lastRandomNumberUpdate;
     }
 

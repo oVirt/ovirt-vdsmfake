@@ -74,7 +74,12 @@ public class AppConfig {
     public enum ArchitectureType {
         X86_64(
                 "Intel(R) Xeon(R) CPU E5606 @ 2.13GHz",
-                "fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept,fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,model_Conroe,model_Penryn,model_Westmere,model_SandyBridge"),
+                "fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,sep,mtrr,pge,mca,cmov,pat,pse36,clflush,mmx,fxsr,sse,"
+                        + "sse2,ss,syscall,nx,pdpe1gb,rdtscp,lm,constant_tsc,rep_good,nopl,eagerfpu,pni,"
+                        + "pclmulqdq,vmx,ssse3,fma,cx16,pcid,sse4_1,sse4_2,x2apic,movbe,popcnt,tsc_deadline_timer,"
+                        + "aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept"
+                        + ",fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,"
+                        + "model_Conroe,model_Penryn,model_Westmere,model_SandyBridge"),
         PPC64("IBM POWER8", "powernv,model_POWER8");
 
         private String cpuModel;

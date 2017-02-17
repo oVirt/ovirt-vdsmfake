@@ -28,10 +28,10 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class TaskService extends AbstractService {
 
-    final static TaskService instance = new TaskService();
+    private static final  TaskService INSTANCE = new TaskService();
 
     public static TaskService getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public TaskService() {

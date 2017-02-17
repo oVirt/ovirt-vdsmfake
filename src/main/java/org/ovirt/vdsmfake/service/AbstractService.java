@@ -66,7 +66,7 @@ public abstract class AbstractService{
         return getStatusMap("OK", 0);
     }
 
-    public Map<String,Integer>  getDoneStatus() {
+    public Map<String, Integer> getDoneStatus() {
         return getStatusMap("Done", 0);
     }
 

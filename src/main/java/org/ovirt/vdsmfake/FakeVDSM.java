@@ -4,7 +4,7 @@ import org.ovirt.vdsmfake.rpc.json.JsonRpcServer;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 
 public class FakeVDSM {
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         AppConfig.getInstance().setNetworkBridgeName("ovirtmgmt");
         AppConfig.getInstance().setCacheDir("/var/log/vdsmfake/cache");
         AppConfig.getInstance().setConstantDelay(0);
