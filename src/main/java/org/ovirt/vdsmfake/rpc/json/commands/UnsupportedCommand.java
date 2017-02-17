@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
-import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
 import org.ovirt.vdsm.jsonrpc.client.ResponseBuilder;
 import org.ovirt.vdsmfake.service.ResultCodes;
 

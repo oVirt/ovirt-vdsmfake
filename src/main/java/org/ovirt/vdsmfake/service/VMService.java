@@ -15,14 +15,14 @@
  */
 package org.ovirt.vdsmfake.service;
 
-import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;

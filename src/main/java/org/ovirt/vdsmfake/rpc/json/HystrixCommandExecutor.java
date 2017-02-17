@@ -1,5 +1,7 @@
 package org.ovirt.vdsmfake.rpc.json;
 
+import static com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE;
+
 import java.util.function.Consumer;
 
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
@@ -9,8 +11,6 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
-
-import static com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE;
 
 public class HystrixCommandExecutor implements CommandExecutor {
 

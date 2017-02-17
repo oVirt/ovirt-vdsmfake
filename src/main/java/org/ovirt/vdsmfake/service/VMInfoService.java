@@ -1,8 +1,13 @@
 package org.ovirt.vdsmfake.service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.vdsmfake.domain.VM;
 import org.yaml.snakeyaml.Yaml;
-import java.util.*;
 
 /**
  * Author: Vinzenz Feenstra

@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.DataCenter;
+import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
-import org.ovirt.vdsmfake.domain.Volume;
+import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
 import org.ovirt.vdsmfake.domain.Task;
 import org.ovirt.vdsmfake.domain.VdsmManager;
-import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
+import org.ovirt.vdsmfake.domain.Volume;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;

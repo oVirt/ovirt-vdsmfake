@@ -15,8 +15,12 @@
  */
 package org.ovirt.vdsmfake.domain;
 
-import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device.DeviceType;

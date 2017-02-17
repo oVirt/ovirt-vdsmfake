@@ -16,7 +16,6 @@
 package org.ovirt.vdsmfake.service;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.ovirt.vdsmfake.domain.Task;

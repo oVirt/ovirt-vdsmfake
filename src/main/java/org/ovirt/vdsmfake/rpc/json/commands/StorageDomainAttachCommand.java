@@ -1,12 +1,11 @@
 package org.ovirt.vdsmfake.rpc.json.commands;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.ovirt.vdsmfake.domain.StorageDomain;
-
-import java.io.IOException;
-import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public class StorageDomainAttachCommand extends JsonCommand {
