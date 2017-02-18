@@ -113,7 +113,7 @@ public class JsonRpcServer {
 
             listener = futureListener.get(TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            log.error("Failure to start json server socket", e);
+            throw new RuntimeException("Failed to start json server socket", e);
         }
     }
 
