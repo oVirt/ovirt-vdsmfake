@@ -40,7 +40,7 @@ public class JsonRpcServer {
             .getLogger(JsonRpcServer.class);
 
     private static final int TIMEOUT = 5000;
-    private static ReactorListener listener;
+    private ReactorListener listener;
     private int jsonPort;
     private boolean encrypted;
     private String hostName;
@@ -119,10 +119,6 @@ public class JsonRpcServer {
         } catch (Exception e) {
             throw new RuntimeException("Failed to start json server socket", e);
         }
-    }
-
-    public static void shutdown() {
-        listener.close();
     }
 
     private class MessageHandler implements Runnable {

@@ -33,7 +33,6 @@ public class AppLifecycleListener implements ServletContextListener {
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.destroy();
-        JsonRpcServer.shutdown();
     }
 
     @Override
