@@ -18,7 +18,7 @@ public class VMInfoService extends AbstractService {
 
     private static final VMInfoService INSTANCE = new VMInfoService();
 
-    private Map values = map();
+    private Map<String, String> values = map();
     private Map<String, Long> randomValueTimeouts = new HashMap<String, Long>();
 
     public static VMInfoService getInstance() {
@@ -29,15 +29,9 @@ public class VMInfoService extends AbstractService {
         Yaml y = new Yaml();
         Map m = (Map) y.load(VMInfoService.class.getResourceAsStream("VMInfoService.yaml"));
         values = (Map) m.get("value-constants");
-        for (Object e : values.keySet()) {
-            if (values.get(e) == null) {
-                values.put(e, "");
-            }
-        }
+        values.forEach((k, v) -> values.computeIfAbsent(k, t -> ""));
         LinkedHashMap timing = (LinkedHashMap) m.get("update-intervals");
-        for (Object e : timing.keySet()) {
-            randomValueTimeouts.put((String) e, (long) (((Integer) timing.get(e)) * 1000));
-        }
+        timing.forEach((k, v) -> randomValueTimeouts.put((String) k, ((Long) v) * 1000));
     }
 
     private long getRandomNumberTimeout(String name) {
