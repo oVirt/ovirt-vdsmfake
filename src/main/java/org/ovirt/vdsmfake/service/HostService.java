@@ -57,7 +57,8 @@ public class HostService extends AbstractService {
             infoMap.put("autoNumaBalancing", "1");
             infoMap.put("packages2", getPackages2Map());
 
-            AppConfig.ArchitectureType architecture = AppConfig.getInstance().getArchitectureType();
+            AppConfig.ArchitectureType architecture =
+                    AppConfig.ArchitectureType.valueOf(AppConfig.getInstance().getArchitectureType());
             infoMap.put("cpuModel", architecture.getCpuModel());
             infoMap.put("cpuFlags", architecture.getCpuFlags());
 

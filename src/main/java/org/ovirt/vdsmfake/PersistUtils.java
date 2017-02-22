@@ -55,17 +55,13 @@ public class PersistUtils {
     }
 
     public static Object load(File f) {
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new FileInputStream(f));
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
             final BaseObject baseObject = (BaseObject) ois.readObject();
             baseObject.setLastUpdate(f.lastModified());
             return baseObject;
         } catch (Exception e) {
             log.error("Cannot save object", e);
             throw new RuntimeException("Cannot load object", e);
-        } finally {
-            IOUtils.closeQuietly(ois);
         }
     }
 }

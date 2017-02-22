@@ -18,7 +18,6 @@ package org.ovirt.vdsmfake;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.ovirt.vdsmfake.rpc.json.JsonRpcServer;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 
@@ -38,14 +37,6 @@ public class AppLifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         System.out.println("Application initialized.");
-
-        AppConfig.getInstance();
-
-        // Make sure that the logDir system property is always set for log4j configuration
-        System.setProperty("logDir", AppConfig.getInstance().getLogDir());
-
-        //Initialize log4j
-        PropertyConfigurator.configure(getClass().getResource("/log4j.xml"));
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.init();

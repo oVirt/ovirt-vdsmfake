@@ -80,7 +80,8 @@ public class AppConfig {
                         + "aes,xsave,avx,f16c,rdrand,hypervisor,lahf_lm,abm,tpr_shadow,vnmi,flexpriority,ept"
                         + ",fsgsbase,bmi1,avx2,smep,bmi2,erms,invpcid,xsaveopt,model_Haswell-noTSX,model_Nehalem,"
                         + "model_Conroe,model_Penryn,model_Westmere,model_SandyBridge"),
-        PPC64("IBM POWER8", "powernv,model_POWER8");
+        PPC64(
+                "IBM POWER8", "powernv,model_POWER8");
 
         private String cpuModel;
         private String cpuFlags;
@@ -187,9 +188,8 @@ public class AppConfig {
         this.eventSupportedMethods = eventSupportedMethods;
     }
 
-    public ArchitectureType getArchitectureType() {
-        return architectureType != null ? ArchitectureType.valueOf(architectureType) :
-                ArchitectureType.X86_64;
+    public String getArchitectureType() {
+        return architectureType;
     }
 
     public void setArchitectureType(String architectureType) {
