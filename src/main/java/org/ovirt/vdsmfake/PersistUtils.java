@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.ovirt.vdsmfake.domain.BaseObject;
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.slf4j.Logger;
@@ -41,15 +40,12 @@ public class PersistUtils {
         if (baseObject instanceof DataCenter && baseObject.getName().contains("?")){
             baseObject.setName(baseObject.getId());
         }
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(new FileOutputStream(f));
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
             oos.writeObject(baseObject);
         } catch (Exception e) {
             log.error("Cannot save object", e);
             throw new RuntimeException("Cannot save object", e);
         } finally {
-            IOUtils.closeQuietly(oos);
             baseObject.setLastUpdate(f.lastModified());
         }
     }

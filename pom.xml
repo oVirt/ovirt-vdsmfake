@@ -43,43 +43,11 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.12</version>
-        </dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.12</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.10.0</version>
-		</dependency>
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
-			<version>1.1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
-		</dependency>
-		<!-- LOGGING DEPENDENCIES - LOG4J -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -90,18 +58,6 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>runtime</scope>
-		</dependency>
-		<!-- since we want the jcl over slf4j, we need to bump up the version of
-			slf4j-api that wicket brings in -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
 		</dependency>
     <dependency>
 			<groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
@@ -212,26 +168,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.0</version>
-				<executions>
-					<execution>
-						<id>tomcat-run</id>
-						<goals>
-							<goal>exec-war-only</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<path>/</path>
-							<enableNaming>false</enableNaming>
-							<finalName>standalone.jar</finalName>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		    <!-- Use just: mvn jetty:run -->
-			<plugin>
 				<inherited>true</inherited>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -239,34 +175,6 @@
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.3.7.v20160115</version>
-				<configuration>
-					<systemProperties>
-						<systemProperty>
-							<name>cacheDir</name>
-							<value>${project.basedir}/target/vdsmfake/</value>
-						</systemProperty>
-						<systemProperty>
-							<name>logDir</name>
-							<value>${project.basedir}/target/vdsmfake/</value>
-						</systemProperty>
-						<systemProperty>
-							<name>archaius.dynamicPropertyFactory.registerConfigWithJMX</name>
-							<value>true</value>
-						</systemProperty>
-					</systemProperties>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<httpConnector>
-						<port>54322</port>
-					</httpConnector>
-					<webApp>
-						<contextPath>/</contextPath>
-					</webApp>
 				</configuration>
 			</plugin>
 			<plugin>
