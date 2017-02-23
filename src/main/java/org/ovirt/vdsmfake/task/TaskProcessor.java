@@ -24,9 +24,14 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class TaskProcessor extends TimerTask {
 
     private static final Logger log = LoggerFactory.getLogger(TaskProcessor.class);
@@ -58,11 +63,13 @@ public class TaskProcessor extends TimerTask {
         return instance;
     }
 
+    @PostConstruct
     public void init() {
         timer = new Timer();
         timer.scheduleAtFixedRate(this, 0, 2000); // every 2 seconds
     }
 
+    @PreDestroy
     public void destroy() {
         if (timer != null) {
             timer.cancel();

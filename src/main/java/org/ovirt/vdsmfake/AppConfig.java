@@ -18,15 +18,12 @@ package org.ovirt.vdsmfake;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Singleton;
+
 import com.typesafe.config.ConfigBeanFactory;
 import com.typesafe.config.ConfigFactory;
 
-/**
- * App config data
- *
- *
- *
- */
+@Singleton
 public class AppConfig {
 
     private static final AppConfig instance = ConfigBeanFactory.create(ConfigFactory.load(), AppConfig.class);

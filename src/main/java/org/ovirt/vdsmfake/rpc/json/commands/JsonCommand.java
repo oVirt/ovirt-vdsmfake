@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -14,6 +16,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
 import org.ovirt.vdsm.jsonrpc.client.ResponseBuilder;
+import org.ovirt.vdsmfake.AppLifecycleListener;
 import org.ovirt.vdsmfake.rpc.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +26,7 @@ public abstract class JsonCommand {
     protected static final Logger log = LoggerFactory
             .getLogger(JsonCommand.class);
     private final ObjectMapper mapper = new ObjectMapper();
-    protected Api api = Api.getInstance();
+    protected Api api = CDI.current().select(Api.class, AppLifecycleListener.DefaultLiteral.INSTANCE).get();
 
     public JsonRpcResponse run(JsonNode params, JsonNode requestId) {
         Object result;

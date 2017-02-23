@@ -18,24 +18,13 @@ package org.ovirt.vdsmfake.service;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.domain.Task;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 
-/**
- *
- *
- */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@Singleton
 public class TaskService extends AbstractService {
-
-    private static final  TaskService INSTANCE = new TaskService();
-
-    public static TaskService getInstance() {
-        return INSTANCE;
-    }
-
-    public TaskService() {
-    }
 
     public Map getTaskStatus(String taskUUID) {
         final Task task = getActiveHost().getRunningTasks().get(taskUUID);

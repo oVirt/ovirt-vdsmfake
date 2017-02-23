@@ -21,6 +21,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.domain.BaseObject;
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.slf4j.Logger;
@@ -28,10 +30,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Serialize objects from/to file cache.
- *
- *
- *
  */
+@Singleton
 public class PersistUtils {
 
     private static final Logger log = LoggerFactory.getLogger(PersistUtils.class);

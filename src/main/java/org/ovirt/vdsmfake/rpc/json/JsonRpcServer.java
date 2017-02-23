@@ -10,6 +10,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
@@ -35,6 +38,7 @@ import com.netflix.servo.publish.PollRunnable;
 import com.netflix.servo.publish.PollScheduler;
 import com.netflix.servo.publish.graphite.GraphiteMetricObserver;
 
+@Singleton
 public class JsonRpcServer {
     private static final Logger log = LoggerFactory
             .getLogger(JsonRpcServer.class);
@@ -44,6 +48,7 @@ public class JsonRpcServer {
     private int jsonPort;
     private boolean encrypted;
     private String hostName;
+    @Inject
     private CommandExecutor commandExecutor;
     private static final ConcurrentHashMap<String, ReactorClient> clientsMap = new ConcurrentHashMap<>();
     private final String eventSupportedMethods = AppConfig.getInstance().getEventSupportedMethods().toString();
@@ -55,16 +60,11 @@ public class JsonRpcServer {
             .priority(Thread.MAX_PRIORITY)
             .build());
 
-    public JsonRpcServer(String hostName, int jsonPort, boolean encrypted) {
-        this.hostName = hostName;
-        this.jsonPort = jsonPort;
-        this.encrypted = encrypted;
-        if (System.getProperty("vdsmfake.commandExecutor", "Default")
-                .equalsIgnoreCase("hystrix")) {
-            commandExecutor = new HystrixCommandExecutor();
-        } else {
-            commandExecutor = new DefaultCommandExecutor();
-        }
+    private JsonRpcServer() {
+        hostName = AppConfig.getInstance().getJsonHost();
+        jsonPort = AppConfig.getInstance().getJsonListenPort();
+        encrypted = AppConfig.getInstance().isJsonSecured();
+
 
     }
 

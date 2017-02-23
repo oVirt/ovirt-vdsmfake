@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.DataCenter;
@@ -27,24 +29,11 @@ import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
 import org.ovirt.vdsmfake.domain.VM;
 
-/**
- *
- *
- */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@Singleton
 public class HostService extends AbstractService {
 
     private static final int TOTAL_MEMORY_SIZE = 7976;
     private static final int NUMBER_OF_NUMA_NODES = 2;
-
-    private static final HostService INSTANCE = new HostService();
-
-    public static HostService getInstance() {
-        return INSTANCE;
-    }
-
-    public HostService() {
-    }
 
     public Map getVdsCapabilities() {
         final Host host = getActiveHost();

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
@@ -30,7 +32,7 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@Singleton
 public class StorageService extends AbstractService {
 
     private static StorageService instance = new StorageService();

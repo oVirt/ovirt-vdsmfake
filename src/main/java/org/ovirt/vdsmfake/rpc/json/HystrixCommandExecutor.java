@@ -4,6 +4,9 @@ import static com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStr
 
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
 
@@ -12,9 +15,11 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 
+@Singleton @Hystrix
 public class HystrixCommandExecutor implements CommandExecutor {
 
-    private CommandExecutor defaultCommandExecutor = new DefaultCommandExecutor();
+    @Inject @DefaultExecutor
+    private CommandExecutor defaultCommandExecutor;
 
     @Override
     public JsonRpcResponse process(JsonRpcRequest request) {

@@ -4,6 +4,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Singleton;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
@@ -17,7 +19,7 @@ import org.ovirt.vdsmfake.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@Singleton
 public class JsonRpcNotification {
 
     private static final Logger log = LoggerFactory.getLogger(JsonRpcNotification.class);

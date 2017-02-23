@@ -18,41 +18,26 @@ package org.ovirt.vdsmfake.rpc;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.service.AbstractService;
 import org.ovirt.vdsmfake.service.HostService;
-import org.ovirt.vdsmfake.service.NetworkService;
 import org.ovirt.vdsmfake.service.StorageService;
 import org.ovirt.vdsmfake.service.TaskService;
 import org.ovirt.vdsmfake.service.VMService;
 
-/**
- *
- *
- */
-@SuppressWarnings({ "rawtypes" })
+@Singleton
 public class Api extends AbstractService {
 
-    final StorageService storageService = StorageService.getInstance();
-    final VMService vmService = VMService.getInstance();
-    final NetworkService networkService = NetworkService.getInstance();
-    final HostService hostService = HostService.getInstance();
-    final TaskService taskService = TaskService.getInstance();
-
-    private static Api instance;
-
-    private Api() {
-    }
-
-    public static Api getInstance() {
-        if(instance == null){
-            synchronized (Api.class) {
-                if(instance == null){
-                    instance = new Api();
-                }
-            }
-        }
-        return instance;
-    }
+    @Inject
+    private StorageService storageService;
+    @Inject
+    private VMService vmService;
+    @Inject
+    private HostService hostService;
+    @Inject
+    private TaskService taskService;
 
     public Map list(String isFull, List<String> vmIds) {
         return vmService.list(Boolean.parseBoolean(isFull), vmIds);

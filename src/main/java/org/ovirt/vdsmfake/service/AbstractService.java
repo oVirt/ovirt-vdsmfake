@@ -32,15 +32,8 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- *
- */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractService{
 
-    public long constantDelay;
-    public long randomDelay;
     protected Logger log = LoggerFactory.getLogger(AbstractService.class);
 
 

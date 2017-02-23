@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device;
@@ -33,21 +36,12 @@ import org.ovirt.vdsmfake.rpc.json.JsonRpcNotification;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 import org.ovirt.vdsmfake.task.TaskRequest;
 import org.ovirt.vdsmfake.task.TaskType;
-/**
- *
- *
- */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+
+@Singleton
 public class VMService extends AbstractService {
 
-    private static final VMService INSTANCE = new VMService();
-
-    public static VMService getInstance() {
-        return INSTANCE;
-    }
-
-    public VMService() {
-    }
+    @Inject
+    private JsonRpcNotification jsonRpcNotification;
 
     public Map list() {
         final Host host = getActiveHost();
@@ -71,6 +65,7 @@ public class VMService extends AbstractService {
                     + " displayPort displaySecurePort timeOffset cpuType pauseCode nicModel"
                     + " smartcardEnable kvmEnable pitReinjection smp vmType displayIp clientIp smpCoresPerSocket nice")
                     .split(" "));
+
     public Map list(boolean fullStatus, List vmList) {
         final Host host = getActiveHost();
 
@@ -88,15 +83,14 @@ public class VMService extends AbstractService {
                 vmMap.put("status", vm.getStatus().toString()); // Up
                 vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
                 Map customMap = vm.getCustomMap();
-                if( customMap != null ) {
+                if (customMap != null) {
                     vmMap.put("custom", vm.getCustomMap());
                 }
                 vmMap.put("devices", vm.getDeviceList());
                 vmMap.put("memSize", vm.getMemSize());
                 vmMap.put("vmName", vm.getName()); // Fedora17_test1
                 vmMap.put("display", vm.getDisplayType());
-            }
-            else {
+            } else {
                 vmMap = map();
                 vmMap.put("status", vm.getStatus().toString()); // Up
                 vmMap.put("vmId", vm.getId()); // 4c36aca1-577f-4533-987d-a8288faab149
@@ -110,12 +104,11 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
-
     public Map migrate(Map request) {
         // String method = (String) request.get("method"); // online
-        String dst = (String)request.get("dst"); // 10.34.63.178:54321
+        String dst = (String) request.get("dst"); // 10.34.63.178:54321
         // String src = (String)request.get("src"); // 10.34.63.177
-        String vmId = (String)request.get("vmId"); // 79567083-9889-4bcc-90e3-291885b0da7f
+        String vmId = (String) request.get("vmId"); // 79567083-9889-4bcc-90e3-291885b0da7f
 
         boolean success = true;
 
@@ -134,7 +127,7 @@ public class VMService extends AbstractService {
 
         // get target server
         int idx = dst.indexOf(':');
-        if(idx != -1) {
+        if (idx != -1) {
             targetServerName = dst.substring(0, idx);
         }
 
@@ -180,7 +173,7 @@ public class VMService extends AbstractService {
         List statusList = new ArrayList();
 
         VM vm = host.getRunningVMs().get(uuid);
-        if (vm != null){
+        if (vm != null) {
             statusList.add(fillVmStatsMap(vm));
         }
 
@@ -191,11 +184,11 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
-    List<Map<String, Object>> getNetworkInterfaces(VM vm){
+    List<Map<String, Object>> getNetworkInterfaces(VM vm) {
 
         Map<String, Object> resultMap = new HashMap();
-        List<String> inet6Addresses =  new ArrayList<>();
-        List<String> inet4Addresses =  new ArrayList<>();
+        List<String> inet6Addresses = new ArrayList<>();
+        List<String> inet4Addresses = new ArrayList<>();
         List<Map<String, Object>> nets = new ArrayList<>();
 
         resultMap.put("name", "eth0");
@@ -219,14 +212,14 @@ public class VMService extends AbstractService {
         List<Device> nicDevices = vm.getDevicesByType(Device.DeviceType.NIC);
 
         String macAddress = vm.getMacAddress();
-        if( macAddress.equals(VM.NONE_STRING) ) {
+        if (macAddress.equals(VM.NONE_STRING)) {
             log.debug("no mac address for vm {}", vm.getId());
             return map();
         }
 
         Map resultMap = map();
         int count = 0;
-        for(Device device : nicDevices) {
+        for (Device device : nicDevices) {
             List<String> loadValues = AppConfig.getInstance().getNetworkLoad();
             Map netStats = map();
             String dName = "vnet" + count;
@@ -238,9 +231,9 @@ public class VMService extends AbstractService {
             netStats.put("txDropped", "0");
             netStats.put("txRate", Utils.rangeParsser(loadValues));
             netStats.put("rxErrors", "0");
-            netStats.put("rxRate",  Utils.rangeParsser(loadValues));
-            netStats.put("tx",  Utils.rangeParsser(loadValues));
-            netStats.put("rx",  Utils.rangeParsser(loadValues));
+            netStats.put("rxRate", Utils.rangeParsser(loadValues));
+            netStats.put("tx", Utils.rangeParsser(loadValues));
+            netStats.put("rx", Utils.rangeParsser(loadValues));
             netStats.put("rxDropped", "0");
             netStats.put("speed", "1000");
             netStats.put("sampleTime", "4318787.08");
@@ -260,8 +253,8 @@ public class VMService extends AbstractService {
         LinkedList<String> values = new LinkedList<String>();
         values.addAll(values_);
 
-        for(Device disk : diskDevices) {
-            if( values.isEmpty() ) {
+        for (Device disk : diskDevices) {
+            if (values.isEmpty()) {
                 break;
             }
             Map diskMap = map();
@@ -285,14 +278,14 @@ public class VMService extends AbstractService {
 
         final Host host = getActiveHost();
 
-        if( vmIds == null || vmIds.isEmpty() ) {
+        if (vmIds == null || vmIds.isEmpty()) {
             return host.getRunningVMs().values();
         }
 
         ArrayList<VM> vmList = new ArrayList<VM>();
-        for( Object id : vmIds ) {
-            if( host.getRunningVMs().containsKey(id) ) {
-                vmList.add( host.getRunningVMs().get(id) );
+        for (Object id : vmIds) {
+            if (host.getRunningVMs().containsKey(id)) {
+                vmList.add(host.getRunningVMs().get(id));
             }
         }
 
@@ -300,12 +293,12 @@ public class VMService extends AbstractService {
     }
 
     private Map extractKeysFromVmAndHash(VM vm, List keys, Map stats) {
-        if( stats == null ) {
+        if (stats == null) {
             stats = fillVmStatsMap(vm);
         }
         Map result = map();
-        for( Object key : keys ) {
-            if( stats.containsKey(key) ) {
+        for (Object key : keys) {
+            if (stats.containsKey(key)) {
                 result.put(key, stats.get(key));
             }
         }
@@ -314,12 +307,12 @@ public class VMService extends AbstractService {
     }
 
     private Map extractKeysFromVm(VM vm, List keys, Map stats) {
-        if( stats == null ) {
+        if (stats == null) {
             stats = fillVmStatsMap(vm);
         }
         Map result = map();
-        for( Object key : keys ) {
-            if( stats.containsKey(key) ) {
+        for (Object key : keys) {
+            if (stats.containsKey(key)) {
                 result.put(key, stats.get(key));
             }
         }
@@ -331,10 +324,9 @@ public class VMService extends AbstractService {
         Map result = map();
         for (VM vm : getVmListFromIds(vmIds)) {
             Map stats = null;
-            if( hashes ) {
+            if (hashes) {
                 stats = extractKeysFromVmAndHash(vm, keys, fillVmStatsMap(vm));
-            }
-            else {
+            } else {
                 stats = extractKeysFromVm(vm, keys, fillVmStatsMap(vm));
             }
             result.put(vm.getId(), stats);
@@ -349,7 +341,7 @@ public class VMService extends AbstractService {
     private Map getRuntimeStatsHashesForVm(VM vm, Map stats) {
         Map hashes = map();
         Object hash = "0";
-        if( stats.containsKey("hash") ) {
+        if (stats.containsKey("hash")) {
             hash = stats.get("hash");
         }
         hashes.put("config", hash);
@@ -361,6 +353,7 @@ public class VMService extends AbstractService {
 
     private final List VmRuntimeStatsKeys = Arrays.asList(
             "cpuSys cpuUser memUsage elapsedTime status statsAge".split(" "));
+
     public Map getAllVmRuntimeStats() {
         Map resultMap = getDoneStatus();
         resultMap.put("runtimeStats", getExtractedStatsAndHash(VmRuntimeStatsKeys, null, true));
@@ -369,6 +362,7 @@ public class VMService extends AbstractService {
 
     private final List VmDeviceStatsKeys = Arrays.asList(
             "network disks disksUsage balloonInfo memoryStats".split(" "));
+
     public Map getAllVmDeviceStats() {
         Map resultMap = getDoneStatus();
         resultMap.put("deviceStats", getExtractedStats(VmDeviceStatsKeys, null));
@@ -377,6 +371,7 @@ public class VMService extends AbstractService {
 
     private final List VmStatusKeys = Arrays.asList(
             "timeOffset monitorResponse clientIp lastLogin username session guestIps".split(" "));
+
     public Map getVmStatus(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("vmStatus", getExtractedStats(VmStatusKeys, vmIds));
@@ -386,6 +381,7 @@ public class VMService extends AbstractService {
     private final List VmConfInfoKeys = Arrays.asList(
             "acpiEnable vmType guestName guestOS kvmEnable pauseCode displayIp displayPort displaySecurePort pid"
                     .split(" "));
+
     public Map getVmConfInfo(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("vmConfInfo", getExtractedStats(VmConfInfoKeys, vmIds));
@@ -393,6 +389,7 @@ public class VMService extends AbstractService {
     }
 
     private final List VmGuestDetailsKeys = Arrays.asList("appsList netIfaces".split(" "));
+
     public Map getVmGuestDetails(List vmIds) {
         Map resultMap = getDoneStatus();
         resultMap.put("guestDetails", getExtractedStats(VmGuestDetailsKeys, vmIds));
@@ -405,7 +402,7 @@ public class VMService extends AbstractService {
         vmStatMap.put("status", vm.getStatus().toString());
 
         // ip validation if no exist set ip, for vms which already registered in the setup
-        if (vm.getIp() == null || vm.getIp().equals("0.0.0.0") || vm.getIp().isEmpty() || vm.getIp().equals("?")){
+        if (vm.getIp() == null || vm.getIp().equals("0.0.0.0") || vm.getIp().isEmpty() || vm.getIp().equals("?")) {
             vm.setIp(Utils.ipGenerator());
         }
 
@@ -449,20 +446,18 @@ public class VMService extends AbstractService {
         //memory
         vmStatMap.put("memUsage", Utils.rangeParsser(appConfig.getMemLoad()));
 
-
         //network
         vmStatMap.put("netIfaces", getNetworkInterfaces(vm));
         Map network = getNetworkStatsMap(vm);
-        if( !network.isEmpty() ) {
+        if (!network.isEmpty()) {
             vmStatMap.put("network", network);
         }
 
         Map disks = getVMDisksMap(vm);
-        if( !disks.isEmpty() ) {
+        if (!disks.isEmpty()) {
             vmStatMap.put("disks", disks);
         }
         vmStatMap.put("elapsedTime", vm.getElapsedTimeInSeconds());
-
 
         vmStatMap.put("vcpuCount", "1");
         vmStatMap.put("clientIp", "");
@@ -582,14 +577,12 @@ public class VMService extends AbstractService {
             vm.setHost(host);
             vm.setIp(Utils.ipGenerator());
 
-
             Integer memSize = 0;
             Object boxedMemSize = vmParams.get("memSize");
-            if(boxedMemSize instanceof String) {
+            if (boxedMemSize instanceof String) {
                 memSize = Integer.parseInt((String) boxedMemSize);
-            }
-            else {
-                memSize = (Integer)boxedMemSize;
+            } else {
+                memSize = (Integer) boxedMemSize;
             }
             vm.setMemSize(memSize);
 
@@ -628,8 +621,8 @@ public class VMService extends AbstractService {
     public void addTask(TaskType type, long delay, Object object) {
         // support events, if enabled.
         try {
-            if (AppConfig.getInstance().isJsonEvents()){
-                new JsonRpcNotification().fireEvents(type, delay, object);
+            if (AppConfig.getInstance().isJsonEvents()) {
+                jsonRpcNotification.fireEvents(type, delay, object);
             } else {
                 //backward compatible.
                 TaskProcessor.getInstance().addTask(new TaskRequest(type, delay, object));
@@ -639,7 +632,7 @@ public class VMService extends AbstractService {
         }
     }
 
-    private Map<String, String> getGuestOsInto(){
+    private Map<String, String> getGuestOsInto() {
         Map<String, String> resultMap = map();
         resultMap.put("kernel", "2.6.32-642.el6.x86_64");
         resultMap.put("type", "linux");
@@ -650,7 +643,7 @@ public class VMService extends AbstractService {
         return resultMap;
     }
 
-    private Map<String, String> getGuestTimeZone(){
+    private Map<String, String> getGuestTimeZone() {
         Map<String, String> resultMap = map();
         resultMap.put("zone", "Israel");
         resultMap.put("offset", "120");

@@ -15,9 +15,17 @@
 */
 package org.ovirt.vdsmfake;
 
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.ovirt.vdsmfake.rpc.json.CommandExecutor;
+import org.ovirt.vdsmfake.rpc.json.DefaultExecutor;
+import org.ovirt.vdsmfake.rpc.json.Hystrix;
 import org.ovirt.vdsmfake.rpc.json.JsonRpcServer;
 import org.ovirt.vdsmfake.task.TaskProcessor;
 
@@ -25,6 +33,15 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
  * Init/release data when application starts/ends
  */
 public class AppLifecycleListener implements ServletContextListener {
+
+    @Inject
+    private Instance<JsonRpcServer> jsonRpcServerInstance;
+    @Inject
+    private Instance<CommandExecutor> commandExecutors;
+
+    public static class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
+        public static final DefaultLiteral INSTANCE = new DefaultLiteral();
+    }
 
     @Override
     public void contextDestroyed(ServletContextEvent event) {
@@ -40,12 +57,19 @@ public class AppLifecycleListener implements ServletContextListener {
 
         final TaskProcessor taskProcessor = TaskProcessor.getInstance();
         taskProcessor.init();
+        jsonRpcServerInstance.get().initMonitoring();
+        jsonRpcServerInstance.get().start();
+    }
 
-        int jsonPort = AppConfig.getInstance().getJsonListenPort();
-        boolean encrypted = AppConfig.getInstance().isJsonSecured();
-        String hostName = AppConfig.getInstance().getJsonHost();
-        JsonRpcServer.initMonitoring();
-        JsonRpcServer server = new JsonRpcServer(hostName, jsonPort, encrypted);
-        server.start();
+    @Produces
+    public CommandExecutor commandExecutorProducer(
+            @DefaultExecutor CommandExecutor defaultExector,
+            @Hystrix CommandExecutor hystrixExecutor) {
+        if (System.getProperty("vdsmfake.commandExecutor", "Default")
+                .equalsIgnoreCase("hystrix")) {
+            return hystrixExecutor;
+        } else {
+            return defaultExector;
+        }
     }
 }
