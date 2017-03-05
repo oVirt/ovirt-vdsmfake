@@ -88,10 +88,11 @@ mvn jetty:run
 
 ### Docker
 
+Official containers will be published by jenkins.ovirt.org soon. Meanwhile:
+
 ```bash
-git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
-docker build -t vdsmfake .
-docker run --rm -p 8080:8080 -p54321:54321 vdsmfake
+docker build -t vdsmfake github.com/ovirt/ovirt-vdsmfake
+docker run --rm -p54322:54322 -p54321:54321 vdsmfake
 ```
 
 ### Create fake host names

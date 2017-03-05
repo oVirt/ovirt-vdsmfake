@@ -1,21 +1,25 @@
-FROM fedora:23
-
-ENV VERSION master
+FROM centos:latest
 
 MAINTAINER "Roman Mohr" <rmohr@redhat.com>
+MAINTAINER "Roy Golan" <rgolan@redhat.com>
 
-RUN dnf -y install java-1.8.0-openjdk-headless && dnf clean all
+RUN yum install -y \
+    centos-release-scl \
+    java-1.8.0-openjdk-headless \
+    java-1.8.0-openjdk-devel && \
+    yum clean all
 
-RUN dnf --best --allowerasing -y install java-1.8.0-openjdk-devel maven tar nss && \
-    curl -LO https://github.com/oVirt/ovirt-vdsmfake/archive/$VERSION.tar.gz#/ovirt-vdsmfake-$VERSION.tar.gz && \
-    tar xf ovirt-vdsmfake-$VERSION.tar.gz && cd ovirt-vdsmfake-$VERSION && \
-    mvn clean package && cp target/standalone.jar /vdsmfake.jar && \
-    mkdir -p /var/cache/vdsmfake && mkdir -p /var/log/vdsmfake  && cd .. && \
-    rm -rf ~/.m2 && \
-    dnf -y remove java-1.8.0-openjdk-devel maven tar && dnf clean all
+# Wildfly swarm needs mvn >= 3.2.1
+RUN yum install -y rh-maven33 && \
+    yum clean all
 
-COPY src/main/resources/log4j-stdout.xml /log4j-stdout.xml
+COPY . /usr/src/ovirt-vdsmfake/
 
-ENTRYPOINT ["/usr/bin/java", "-jar", "/vdsmfake.jar", "-Dlog4j.configuration=file:/log4j-stdout.xml", "-DcacheDir=/var/cache/vdsmfake", "-Dfake.host=0.0.0.0" ]
+RUN cd /usr/src/ovirt-vdsmfake && \
+    scl enable rh-maven33 "mvn clean package" && \
+    scl enable rh-maven33 "mvn wildfly-swarm:package" && \
+    cp target/vdsmfake-swarm.jar /opt && \
+    mkdir -p /var/cache/vdsmfake /var/log/vdsmfake
 
-EXPOSE 54321
+EXPOSE 54321 54322
+ENTRYPOINT [ "/usr/bin/java", "-jar", "/opt/vdsmfake-swarm.jar", "-DlogDir=/var/log/vdsmfake/", "-DcacheDir=/var/cache/vdsmfake", "-Dfake.host=0.0.0.0", "-DPS1=_" ]
