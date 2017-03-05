@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.vdsmfake.domain.DataCenter;
@@ -36,6 +37,9 @@ import org.ovirt.vdsmfake.task.TaskType;
 public class StorageService extends AbstractService {
 
     private static StorageService instance = new StorageService();
+
+    @Inject
+    private VdsmManager vdsmManager;
 
     public static StorageService getInstance() {
         return instance;
@@ -469,7 +473,7 @@ public class StorageService extends AbstractService {
 
         TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_START_SPM, 10000L, task));
 
-        VdsmManager.getInstance().setSpmMap(spUUID, host);
+        vdsmManager.setSpmMap(spUUID, host);
 
         return resultMap;
     }
@@ -484,7 +488,7 @@ public class StorageService extends AbstractService {
 
         Map resultMap = getOKStatus();
 
-        VdsmManager.getInstance().removeSpmFromMap(spUUID);
+        vdsmManager.removeSpmFromMap(spUUID);
 
         return resultMap;
     }
@@ -540,7 +544,7 @@ public class StorageService extends AbstractService {
 
             resultMap.put("uuid", task.getId());
 
-            syncTask(VdsmManager.getInstance().getSpmHost(spUUID), task);
+            syncTask(vdsmManager.getSpmHost(spUUID), task);
 
             TaskProcessor.getInstance().addTask(new TaskRequest(TaskType.FINISH_CREATE_VOLUME, 3000L, task));
 

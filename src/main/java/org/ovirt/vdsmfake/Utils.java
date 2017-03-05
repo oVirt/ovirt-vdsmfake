@@ -23,6 +23,8 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
@@ -144,7 +146,8 @@ public class Utils {
         }
         else {
             //get delay from xml and cache it.
-            AppConfig config = AppConfig.getInstance();
+            AppConfig config =
+                    CDI.current().select(AppConfig.class, AppLifecycleListener.DefaultLiteral.INSTANCE).get();
             //get minimum
             if (config.getDelayMinimum() > minimum){
                 minimum = (int) config.getDelayMinimum();

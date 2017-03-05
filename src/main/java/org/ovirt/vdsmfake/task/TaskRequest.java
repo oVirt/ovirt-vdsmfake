@@ -15,6 +15,9 @@
 */
 package org.ovirt.vdsmfake.task;
 
+import javax.enterprise.inject.spi.CDI;
+
+import org.ovirt.vdsmfake.AppLifecycleListener;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.Task;
 import org.ovirt.vdsmfake.domain.VM;
@@ -23,10 +26,6 @@ import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- *
- */
 public class TaskRequest {
     private static final Logger log = LoggerFactory.getLogger(TaskRequest.class);
 
@@ -142,6 +141,9 @@ public class TaskRequest {
     }
 
     private void updateHost(Host host) {
-        VdsmManager.getInstance().updateHost(host);
+        CDI.current()
+                .select(VdsmManager.class, AppLifecycleListener.DefaultLiteral.INSTANCE)
+                .get()
+                .updateHost(host);
     }
 }

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.vdsmfake.AppConfig;
@@ -31,6 +32,9 @@ import org.ovirt.vdsmfake.domain.VM;
 
 @Singleton
 public class HostService extends AbstractService {
+
+    @Inject
+    private AppConfig appConfig;
 
     private static final int TOTAL_MEMORY_SIZE = 7976;
     private static final int NUMBER_OF_NUMA_NODES = 2;
@@ -47,7 +51,7 @@ public class HostService extends AbstractService {
             infoMap.put("packages2", getPackages2Map());
 
             AppConfig.ArchitectureType architecture =
-                    AppConfig.ArchitectureType.valueOf(AppConfig.getInstance().getArchitectureType());
+                    AppConfig.ArchitectureType.valueOf(appConfig.getArchitectureType());
             infoMap.put("cpuModel", architecture.getCpuModel());
             infoMap.put("cpuFlags", architecture.getCpuFlags());
 
@@ -58,7 +62,7 @@ public class HostService extends AbstractService {
             infoMap.put("networks", getNetworksMap(host));
             infoMap.put("bridges", getBridgesMap(host));
             infoMap.put("uuid", host.getUuid() + "_80:" + host.getMacAddress());
-            infoMap.put("lastClientIface", AppConfig.getInstance().getNetworkBridgeName());
+            infoMap.put("lastClientIface", appConfig.getNetworkBridgeName());
             infoMap.put("nics", getNicsMap(host));
             infoMap.put("numaNodeDistance", getNumaNodeDistanceMap());
             infoMap.put("numaNodes", getNumaNodesMap());
@@ -186,13 +190,13 @@ public class HostService extends AbstractService {
         Map resultMap = map();
 
         Map ovirtmgmtMap = map();
-        resultMap.put(AppConfig.getInstance().getNetworkBridgeName(), ovirtmgmtMap);
+        resultMap.put(appConfig.getNetworkBridgeName(), ovirtmgmtMap);
 
-        ovirtmgmtMap.put("iface", AppConfig.getInstance().getNetworkBridgeName());
+        ovirtmgmtMap.put("iface", appConfig.getNetworkBridgeName());
         ovirtmgmtMap.put("addr", host.getIpAddress()); // 10.34.63.177
 
         Map cfgMap = map();
-        cfgMap.put("DEVICE", AppConfig.getInstance().getNetworkBridgeName());
+        cfgMap.put("DEVICE", appConfig.getNetworkBridgeName());
         cfgMap.put("DELAY", "0");
         cfgMap.put("BOOTPROTO", "dhcp");
         cfgMap.put("TYPE", "Ethernet");
@@ -217,7 +221,7 @@ public class HostService extends AbstractService {
         Map resultMap = map();
 
         Map ovirtmgmtMap = map();
-        resultMap.put(AppConfig.getInstance().getNetworkBridgeName(), ovirtmgmtMap);
+        resultMap.put(appConfig.getNetworkBridgeName(), ovirtmgmtMap);
 
         ovirtmgmtMap.put("addr", host.getIpAddress()); // 10.34.63.177
         ovirtmgmtMap.put("mtu", "1500");
@@ -226,7 +230,7 @@ public class HostService extends AbstractService {
         ovirtmgmtMap.put("gateway", host.getIpAddress("GATEWAY")); // 10.34.63.254
 
         Map cfgMap = map();
-        cfgMap.put("DEVICE", AppConfig.getInstance().getNetworkBridgeName());
+        cfgMap.put("DEVICE", appConfig.getNetworkBridgeName());
         cfgMap.put("DELAY", "0");
         cfgMap.put("BOOTPROTO", "dhcp");
         cfgMap.put("TYPE", "Ethernet");
@@ -251,7 +255,7 @@ public class HostService extends AbstractService {
         resultMap.put("em2", em2Map);
 
         Map cfg1Map = map();
-        cfg1Map.put("BRIDGE", AppConfig.getInstance().getNetworkBridgeName());
+        cfg1Map.put("BRIDGE", appConfig.getNetworkBridgeName());
         cfg1Map.put("DEVICE", "em1");
         cfg1Map.put("UUID", host.getUuid("EM1")); // 1c7b3a5a-500f-41ec-ae03-bb619aeb4081
         cfg1Map.put("NETBOOT", "yes");
@@ -270,7 +274,7 @@ public class HostService extends AbstractService {
         em1Map.put("speed", Integer.valueOf(1000));
 
         Map cfg2Map = map();
-        cfg2Map.put("BRIDGE", AppConfig.getInstance().getNetworkBridgeName());
+        cfg2Map.put("BRIDGE", appConfig.getNetworkBridgeName());
         cfg2Map.put("DEVICE", "em2");
         cfg2Map.put("UUID", host.getUuid("EM2")); // 011c667a-5c74-4882-9b62-35da3021cf8
         cfg2Map.put("NETBOOT", "yes");
@@ -479,7 +483,6 @@ public class HostService extends AbstractService {
     }
 
     public Map getVdsStats() {
-        AppConfig appConfig = AppConfig.getInstance();
         final Host host = getActiveHost();
 
         try {
@@ -606,7 +609,6 @@ public class HostService extends AbstractService {
     }
 
     Map getNetworkStatMap(String hostMacAdd) {
-        AppConfig appConfig = AppConfig.getInstance();
         if (hostMacAdd == null) {
             hostMacAdd = "";
         }

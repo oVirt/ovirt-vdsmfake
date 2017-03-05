@@ -15,12 +15,13 @@
 */
 package org.ovirt.vdsmfake.domain;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.ovirt.vdsmfake.AppConfig;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.vdsmfake.PersistUtils;
 import org.ovirt.vdsmfake.domain.StorageDomain.DomainRole;
 import org.slf4j.Logger;
@@ -28,24 +29,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Singleton instance of all environment objects accessible from all hosts.
- *
- *
- *
  */
+@Singleton
 public class VdsmManager implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(VdsmManager.class);
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1241089276242324962L;
 
-    private static final VdsmManager instance = new VdsmManager();
-
-    public static VdsmManager getInstance() {
-        return instance;
-    }
+    @Inject
+    private PersistUtils persistUtils;
 
     final ConcurrentMap<String, DataCenter> dataCenterMap = new ConcurrentHashMap<String, DataCenter>();
     final ConcurrentMap<String, Host> hostMap = new ConcurrentHashMap<String, Host>(0);
@@ -67,31 +59,15 @@ public class VdsmManager implements Serializable {
     //TODO: caching and stored cached files needs a rework, when the app started, and when stored the files
 
     void storeObject(BaseObject baseObject) {
-        final File f =
-                new File(AppConfig.getInstance().getCacheDir(), baseObject.getClass().getSimpleName() + "_"
-                        + baseObject.getId());
-        PersistUtils.store(baseObject, f);
+        persistUtils.store(baseObject);
     }
 
     void removeObject(BaseObject baseObject) {
-        final File f =
-                new File(AppConfig.getInstance().getCacheDir(), baseObject.getClass().getSimpleName() + "_"
-                        + baseObject.getId());
-        if (f.exists()) {
-            f.delete();
-        }
+        persistUtils.remove(baseObject);
     }
 
     Object loadObject(Class<?> clazz, String id) {
-        final File f = new File(AppConfig.getInstance().getCacheDir(), clazz.getSimpleName() + "_" + id);
-        if (!f.exists()) {
-            return null;
-        }
-
-        final BaseObject baseObject = (BaseObject) PersistUtils
-                        .load(new File(AppConfig.getInstance().getCacheDir(), clazz.getSimpleName() + "_" + id));
-        baseObject.setLastUpdate(f.lastModified());
-        return baseObject;
+        return persistUtils.load(clazz, id);
     }
 
     public Host getHostByName(String serverName) {

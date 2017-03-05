@@ -15,49 +15,32 @@
 */
 package org.ovirt.vdsmfake;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.infinispan.Cache;
 import org.ovirt.vdsmfake.domain.BaseObject;
 import org.ovirt.vdsmfake.domain.DataCenter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * Serialize objects from/to file cache.
- */
 @Singleton
 public class PersistUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(PersistUtils.class);
+    @Inject
+    private Cache<String, BaseObject> cache;
 
-    public static void store(BaseObject baseObject, File f) {
+    public void store(BaseObject baseObject) {
         if (baseObject instanceof DataCenter && baseObject.getName().contains("?")){
             baseObject.setName(baseObject.getId());
         }
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f))) {
-            oos.writeObject(baseObject);
-        } catch (Exception e) {
-            log.error("Cannot save object", e);
-            throw new RuntimeException("Cannot save object", e);
-        } finally {
-            baseObject.setLastUpdate(f.lastModified());
-        }
+        cache.put(baseObject.getClass().getSimpleName() + baseObject.getId(), baseObject);
     }
 
-    public static Object load(File f) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-            final BaseObject baseObject = (BaseObject) ois.readObject();
-            baseObject.setLastUpdate(f.lastModified());
-            return baseObject;
-        } catch (Exception e) {
-            log.error("Cannot save object", e);
-            throw new RuntimeException("Cannot load object", e);
-        }
+    public Object load(Class<?> clazz, String id) {
+        return cache.get(clazz.getSimpleName() + id);
     }
+
+    public void remove(BaseObject baseObject) {
+        cache.remove(baseObject.getClass().getSimpleName() + baseObject.getId());
+    }
+
 }

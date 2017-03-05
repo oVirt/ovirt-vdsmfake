@@ -18,15 +18,10 @@ package org.ovirt.vdsmfake;
 import java.io.File;
 import java.util.List;
 
-import javax.inject.Singleton;
+import javax.enterprise.inject.Alternative;
 
-import com.typesafe.config.ConfigBeanFactory;
-import com.typesafe.config.ConfigFactory;
-
-@Singleton
+@Alternative
 public class AppConfig {
-
-    private static final AppConfig instance = ConfigBeanFactory.create(ConfigFactory.load(), AppConfig.class);
 
     private long constantDelay;
     private long randomDelay;
@@ -52,10 +47,6 @@ public class AppConfig {
     private int jsonListenPort;
     private boolean jsonSecured;
     private String jsonHost;
-
-    public static AppConfig getInstance() {
-        return instance;
-    }
 
     public AppConfig() {
         makeDir(cacheDir);

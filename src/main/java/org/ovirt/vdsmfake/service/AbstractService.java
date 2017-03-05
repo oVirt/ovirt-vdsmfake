@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.vdsmfake.ContextHolder;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.DataCenter;
@@ -36,6 +38,8 @@ public abstract class AbstractService{
 
     protected Logger log = LoggerFactory.getLogger(AbstractService.class);
 
+    @Inject
+    private VdsmManager vdsmManager;
 
     public static Map getStatusMap(String message, int code) {
 
@@ -73,46 +77,46 @@ public abstract class AbstractService{
 
     public Host getActiveHost() {
         final String serverName = ContextHolder.getServerName();
-        final Host host = VdsmManager.getInstance().getHostByName(serverName);
+        final Host host = vdsmManager.getHostByName(serverName);
         return host;
     }
 
     public Host getActiveHostByName(String serverName) {
-        return VdsmManager.getInstance().getHostByName(serverName);
+        return vdsmManager.getHostByName(serverName);
     }
 
     public void updateHost(Host host) {
-        VdsmManager.getInstance().updateHost(host);
+        vdsmManager.updateHost(host);
     }
 
     public DataCenter getDataCenterById(String id) {
         // bind a copy of data center to the host
-        final DataCenter dataCenter = VdsmManager.getInstance().getDataCenterById(id);
+        final DataCenter dataCenter = vdsmManager.getDataCenterById(id);
         return dataCenter;
     }
 
     public void updateDataCenter(DataCenter dataCenter) {
-        VdsmManager.getInstance().updateDataCenter(dataCenter);
+        vdsmManager.updateDataCenter(dataCenter);
     }
 
     public Host getHostByName(String name) {
-        return VdsmManager.getInstance().getHostByName(name);
+        return vdsmManager.getHostByName(name);
     }
 
     public StorageDomain getStorageDomainById(String id) {
-        return VdsmManager.getInstance().getStorageDomainById(id);
+        return vdsmManager.getStorageDomainById(id);
     }
 
     public void removeStorageDomain(StorageDomain storageDomain) {
-        VdsmManager.getInstance().removeStorageDomain(storageDomain);
+        vdsmManager.removeStorageDomain(storageDomain);
     }
 
     public void updateStorageDomain(StorageDomain storageDomain) {
-        VdsmManager.getInstance().updateStorageDomain(storageDomain);
+        vdsmManager.updateStorageDomain(storageDomain);
     }
 
     public void setMasterDomain(String spUuid, String masterSdUuid) {
-        VdsmManager.getInstance().setMasterDomain(spUuid, masterSdUuid);
+        vdsmManager.setMasterDomain(spUuid, masterSdUuid);
     }
 
     public RuntimeException error(Throwable t) {

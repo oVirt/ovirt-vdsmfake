@@ -40,31 +40,35 @@ import com.netflix.servo.publish.graphite.GraphiteMetricObserver;
 
 @Singleton
 public class JsonRpcServer {
-    private static final Logger log = LoggerFactory
-            .getLogger(JsonRpcServer.class);
-
+    private static final Logger log = LoggerFactory.getLogger(JsonRpcServer.class);
     private static final int TIMEOUT = 5000;
+
+    @Inject
+    private CommandExecutor commandExecutor;
+
     private ReactorListener listener;
     private int jsonPort;
     private boolean encrypted;
     private String hostName;
-    @Inject
-    private CommandExecutor commandExecutor;
     private static final ConcurrentHashMap<String, ReactorClient> clientsMap = new ConcurrentHashMap<>();
-    private final String eventSupportedMethods = AppConfig.getInstance().getEventSupportedMethods().toString();
-    private ExecutorService service = Executors.newFixedThreadPool(
-            AppConfig.getInstance().getJsonThreadPoolSize(),
-            new BasicThreadFactory.Builder()
-            .namingPattern("jsonrpcserver-pool-%d")
-            .daemon(true)
-            .priority(Thread.MAX_PRIORITY)
-            .build());
+    private String eventSupportedMethods;
+    private ExecutorService service;
+    private AppConfig appConfig;
 
-    private JsonRpcServer() {
-        hostName = AppConfig.getInstance().getJsonHost();
-        jsonPort = AppConfig.getInstance().getJsonListenPort();
-        encrypted = AppConfig.getInstance().isJsonSecured();
-
+    @Inject
+    private JsonRpcServer(AppConfig appConfig) {
+        this.appConfig = appConfig;
+        hostName = appConfig.getJsonHost();
+        jsonPort = appConfig.getJsonListenPort();
+        encrypted = appConfig.isJsonSecured();
+        eventSupportedMethods = appConfig.getEventSupportedMethods().toString();
+        service = Executors.newFixedThreadPool(
+                appConfig.getJsonThreadPoolSize(),
+                new BasicThreadFactory.Builder()
+                        .namingPattern("jsonrpcserver-pool-%d")
+                        .daemon(true)
+                        .priority(Thread.MAX_PRIORITY)
+                        .build());
 
     }
 
@@ -93,7 +97,7 @@ public class JsonRpcServer {
             if (!encrypted) {
                 reactor = ReactorFactory.getReactor(null, ReactorType.STOMP);
             } else {
-                reactor = ReactorFactory.getReactor(new VdsmProvider(AppConfig.getInstance().getCertspath(), log),
+                reactor = ReactorFactory.getReactor(new VdsmProvider(appConfig.getCertspath(), log),
                         ReactorType.STOMP);
             }
 

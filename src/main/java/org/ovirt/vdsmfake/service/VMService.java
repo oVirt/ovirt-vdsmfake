@@ -41,6 +41,8 @@ import org.ovirt.vdsmfake.task.TaskType;
 public class VMService extends AbstractService {
 
     @Inject
+    private AppConfig appConfig;
+    @Inject
     private JsonRpcNotification jsonRpcNotification;
 
     public Map list() {
@@ -220,7 +222,7 @@ public class VMService extends AbstractService {
         Map resultMap = map();
         int count = 0;
         for (Device device : nicDevices) {
-            List<String> loadValues = AppConfig.getInstance().getNetworkLoad();
+            List<String> loadValues = appConfig.getNetworkLoad();
             Map netStats = map();
             String dName = "vnet" + count;
 
@@ -397,7 +399,6 @@ public class VMService extends AbstractService {
     }
 
     private Map fillVmStatsMap(VM vm) {
-        AppConfig appConfig = AppConfig.getInstance();
         Map vmStatMap = VMInfoService.getInstance().getFromKeys(vm, VmStatsKeys);
         vmStatMap.put("status", vm.getStatus().toString());
 
@@ -621,7 +622,7 @@ public class VMService extends AbstractService {
     public void addTask(TaskType type, long delay, Object object) {
         // support events, if enabled.
         try {
-            if (AppConfig.getInstance().isJsonEvents()) {
+            if (appConfig.isJsonEvents()) {
                 jsonRpcNotification.fireEvents(type, delay, object);
             } else {
                 //backward compatible.

@@ -4,6 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,8 +24,16 @@ import org.slf4j.LoggerFactory;
 public class JsonRpcNotification {
 
     private static final Logger log = LoggerFactory.getLogger(JsonRpcNotification.class);
-    private static final ScheduledExecutorService scheduledExecutorService =
-            Executors.newScheduledThreadPool(AppConfig.getInstance().getEventsThreadPoolSize());
+
+    @Inject
+    private VdsmManager vdsmManager;
+
+    private ScheduledExecutorService scheduledExecutorService;
+
+    @Inject
+    private JsonRpcNotification(AppConfig appConfig) {
+        scheduledExecutorService = Executors.newScheduledThreadPool(appConfig.getEventsThreadPoolSize());
+    }
 
     private String messageFormatter(String msg, String id, String method) {
         ObjectNode vmDetailNode = new ObjectMapper().createObjectNode();
@@ -123,7 +132,7 @@ public class JsonRpcNotification {
 
                 // update host if required
                 if (isUpdateRequired(status)) {
-                    VdsmManager.getInstance().updateHost(vm.getHost());
+                    vdsmManager.updateHost(vm.getHost());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

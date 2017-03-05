@@ -35,6 +35,8 @@ import org.ovirt.vdsmfake.task.TaskProcessor;
 public class AppLifecycleListener implements ServletContextListener {
 
     @Inject
+    private AppConfig appConfig;
+    @Inject
     private Instance<JsonRpcServer> jsonRpcServerInstance;
     @Inject
     private Instance<CommandExecutor> commandExecutors;
