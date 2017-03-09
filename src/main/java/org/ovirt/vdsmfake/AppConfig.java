@@ -188,7 +188,8 @@ public class AppConfig {
     }
 
     public ArchitectureType getArchitectureType() {
-        return ArchitectureType.valueOf(architectureType);
+        return architectureType != null ? ArchitectureType.valueOf(architectureType) :
+                ArchitectureType.X86_64;
     }
 
     public void setArchitectureType(String architectureType) {
