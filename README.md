@@ -1,7 +1,7 @@
 Table of Contents
 =================
 
-  * [Introduction](#introduction)
+    * [Introduction](#introduction)
     * [Technology](#technology)
     * [Quick Start](#quick-start)
       * [Prepare ovirt-engine](#prepare-ovirt-engine)
@@ -18,8 +18,11 @@ Table of Contents
     * [Changing the simulated host architecture](#changing-the-simulated-host-architecture)
     * [Project](#project)
       * [Monitoring](#monitoring)
+    * [Configuration](#configuration)
+      * [Vdsmfake Configuration](#vdsmfake-configuration)
+      * [Wildfly Swarm Configutaion](#wildfly-swarm-configuration)
 
-# Introduction
+## Introduction
 VDSM is a daemon component written in Python required by oVirt-Engine (Virtualization Manager), which runs on Linux hosts and manages and monitors the host's storage, memory and networks as well as virtual machine creation/control, statistics gathering, etc.
 '''VDSM Fake''' is a support application framework for oVirt Engine project. It is a Java web application, built using wildfly-swarm, to simulate selected tasks of real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with very limited set of hardware resources.
 The aim is to get marginal performance characteristics of oVirt Engine JEE application (JBoss) and its repository database (PostgreSQL), but also network throughput, etc.
@@ -132,7 +135,7 @@ docker load -i vdsmfake-container-image.tar
 2. Build your own
 ```bash
 docker build -t vdsmfake github.com/ovirt/ovirt-vdsmfake
-docker run --rm -p54322:54322 -p54321:54321 vdsmfake
+docker run --rm -p8081:8081 -p54321:54321 vdsmfake
 ```
 
 [jenkins_job]: http://jenkins.ovirt.org/job/ovirt-vdsmfake_master_build-artifacts-on-demand-el7-x86_64/lastSuccessfulBuild/
@@ -167,8 +170,8 @@ function add_host {
 for i in `seq 0 10`; do add_host admin@internal:mypwd test$i; done
 ```
 
-All Json requests/responses are optionally logged into the default path `/var/log/vakevdsm/`. Set the
-system property ${logDir} to customize the location. Log4j logs into this directory too.
+All Json requests/responses are optionally logged into the default path `$user.dir/vdsmfake.log`. Set the
+Refer to [Wildfly Swarm Configuration].
 
 ## Supported methods
 * create hosts
@@ -194,8 +197,8 @@ VDSM Fake is a Maven project.
 
 
 Also:
-* *logs* - under the current directory `vdsmfake.log` - change by passing -DlogDir=/path/
-* persistence - simulated entities are kept under objectStore in binary format - change with `-DcacheDir=/path/``
+* *logs* - refer to [Wildfly Swarm Configuraion specifics](#wildfly-swarm-configuration)
+* persistence - refer to [Vdsmfake Configuaraion](#vdsmfake-configuration)
 
 
 ### Monitoring
@@ -208,7 +211,7 @@ Second, to see how fast the data is transfered and accepted by ovirt-engine,
 the send time is monitored. Metrics representing the send time have the postfix
 **.Send**.
 
-Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream.
+Hystrix Metrics can be accessed on http://localhost:8081/hystrix.stream.
 
 Further all metrics are exposed in 'com.netflix.servo' in JMX. They only become
 visible **after** the first hystrix command was executed.
@@ -239,3 +242,56 @@ metrics prefix is `vdsmfake`.
 This application uses Netflix Servo for the export.
 [Here](http://www.nurkiewicz.com/2015/02/storing-months-of-historical-metrics.html)
 is a nice post about how to do the same thing with Dropwizard.
+
+## Configuration
+
+### Vdsmfake Configuration
+
+The various simulation classes and verbs uses the application.conf shipped with the project.
+
+Order of precedence:
+
+- System property
+- definition in `src/main/resources/application.conf`
+
+`application.conf` format is in [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md)
+ which is a nice, clean, and powerful super set of JSON
+
+| property              | Type                     | Description                           |
+|-----------------------|--------------------------|---------------------------------------|
+| networkBridgeName     | String                   | The default network bridge name       |
+| constantDelay         | long                     |                                       |
+| randomDelay           | long                     |                                       |
+| storageDelay          | Tuple (list of 2 values) |                                       |
+| networkLoad           | Tuple (list of 2 values) |                                       |
+| cpuLoad               | Tuple (list of 2 values) |                                       |
+| memLoad               | Tuple (list of 2 values) |                                       |
+| architectureType      | String                   | Simulate X85_64 or PPC                |
+| cacheDir              | String                   | Where to store the simulation objects |
+| jsonEvents            | boolean                  | Enable sending events through jsonrpc |
+| jsonThreadPoolSize    |                          |                                       |
+| eventsThreadPoolSize  |                          |                                       |
+| eventSupportedMethods |                          |                                       |
+| notLoggedMethods      |                          |                                       |
+| jsonListenPort        |                          |                                       |
+| jsonSecured           |                          |                                       |
+| jsonHost              |                          |                                       |
+| certspath             |                          |                                       |
+| delayMinimum          |                          |                                       |
+| emulatedMachines      | List                     | List of supported emulated machine    |
+
+### Wildfly Swarm Configuration
+
+Order of precedence:
+
+- System property
+- definition in `src/main/resources/project-defaults.yml`
+
+[A reference to swarm configuration](https://reference.wildfly-swarm.io/configuration.html.)
+
+Example of important ones:
+
+| property                                   | Type                     | Description                           |
+|--------------------------------------------|--------------------------|---------------------------------------|
+| swarm.http.port                            | int                      | http listening port - default 8081    |
+| swarm.logging.file-handlers.FILE.file.path | String                   | main log file                         |

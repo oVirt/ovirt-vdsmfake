@@ -21,5 +21,5 @@ RUN cd /usr/src/ovirt-vdsmfake && \
     cp target/vdsmfake-swarm.jar /opt && \
     mkdir -p /var/cache/vdsmfake /var/log/vdsmfake
 
-EXPOSE 54321 54322
-ENTRYPOINT [ "/usr/bin/java", "-jar", "/opt/vdsmfake-swarm.jar", "-DlogDir=/var/log/vdsmfake/", "-DcacheDir=/var/cache/vdsmfake", "-Dfake.host=0.0.0.0", "-DPS1=_" ]
+EXPOSE 54321 8081
+ENTRYPOINT [ "/usr/bin/java", "-jar", "/opt/vdsmfake-swarm.jar", "-Dswarm.logging.file-handlers.FILE.file.path=/var/log/vdsmfake/vdsmfake.log", "-DcacheDir=/var/cache/vdsmfake", "-Dfake.host=0.0.0.0", "-DPS1=_" ]

@@ -32,7 +32,6 @@ public class AppConfig {
     private List<String> memLoad;
     private String networkBridgeName;
     private String cacheDir;
-    private String logDir;
     private String forwardVdsmServer;
     private String vmConfAndStatsConstants;
     private String vmConfAndStatsUpdateIntervals;
@@ -51,7 +50,6 @@ public class AppConfig {
 
     public AppConfig() {
         makeDir(cacheDir);
-        makeDir(logDir);
     }
 
     private void makeDir(String dir) {
@@ -167,14 +165,6 @@ public class AppConfig {
 
     public void setCacheDir(String cacheDir) {
         this.cacheDir = cacheDir;
-    }
-
-    public String getLogDir() {
-        return logDir;
-    }
-
-    public void setLogDir(String logDir) {
-        this.logDir = logDir;
     }
 
     public List<String> getEventSupportedMethods() {

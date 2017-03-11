@@ -1,0 +1,18 @@
+swarm:
+  http:
+    port: 8081
+  logging:
+    file-handlers:
+      FILE:
+        file:
+          path: ${user.dir}/vdsmfake.log
+        append: true
+        enabled: true
+        autoflush: true
+        level: ALL
+    root-logger:
+      handlers:
+        - FILE
+        - CONSOLE
+      level: info
+      category: org.ovirt
