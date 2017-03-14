@@ -512,7 +512,7 @@ public class HostService extends AbstractService {
             String memUsedPercent = Utils.rangeParsser(appConfig.getMemLoad());
             infoMap.put("memUsed", memUsedPercent);
 
-            double memUsedInMB = TOTAL_MEMORY_SIZE - (Double.valueOf(memUsedPercent) / 100);
+            double memUsedInMB = TOTAL_MEMORY_SIZE * (Double.valueOf(memUsedPercent) / 100);
             int memFree = (int) (TOTAL_MEMORY_SIZE - memUsedInMB);
             infoMap.put("memFree", Integer.toString(memFree));
 
