@@ -8,7 +8,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.ovirt.vdsmfake.domain.StorageDomain;
 
-@SuppressWarnings("rawtypes")
+@Verb("StorageDomain.create")
 public class StorageDomainCreateCommand extends JsonCommand {
 
     @Override

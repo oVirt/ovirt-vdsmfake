@@ -10,7 +10,7 @@ import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
 import org.ovirt.vdsm.jsonrpc.client.ResponseBuilder;
 import org.ovirt.vdsmfake.service.ResultCodes;
 
-@SuppressWarnings({ "rawtypes" })
+@Verb("Host.setMOMPolicyParameters")
 public class HostSetMomPolicyParameters extends JsonCommand {
 
     @Override

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings("rawtypes")
+@Verb("StoragePool.disconnect")
 public class StoragePoolDisconnectCommand extends JsonCommand {
 
     @Override

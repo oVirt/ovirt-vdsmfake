@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings("rawtypes")
+@Verb("Host.getHardwareInfo")
 public class GetHardwareInfoCommmand extends JsonCommand {
 
     @Override

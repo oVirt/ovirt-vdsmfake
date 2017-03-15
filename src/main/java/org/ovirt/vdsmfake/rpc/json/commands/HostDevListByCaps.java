@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings("rawtypes")
+@Verb("Host.hostdevListByCaps")
 public class HostDevListByCaps extends JsonCommand {
 
     @Override

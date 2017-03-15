@@ -7,7 +7,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-@SuppressWarnings("rawtypes")
+@Verb("Task.revert")
 public class TaskRevertCommand extends JsonCommand {
 
     @Override

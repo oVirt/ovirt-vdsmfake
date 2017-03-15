@@ -8,6 +8,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 @SuppressWarnings("rawtypes")
+@Verb("Host.getStorageDomains")
 public class HostGetStorageDomainsCommand extends JsonCommand {
 
     @Override

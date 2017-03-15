@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings({ "rawtypes" })
+@Verb("Host.getVMList")
 public class GetVmListCommand extends JsonCommand {
 
     @Override

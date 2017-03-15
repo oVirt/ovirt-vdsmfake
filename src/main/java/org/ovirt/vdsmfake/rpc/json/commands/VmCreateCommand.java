@@ -8,7 +8,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-@SuppressWarnings("rawtypes")
+@Verb("VM.create")
 public class VmCreateCommand extends JsonCommand {
 
     @Override

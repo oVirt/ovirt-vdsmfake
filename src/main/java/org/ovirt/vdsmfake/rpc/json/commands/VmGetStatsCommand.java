@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings("rawtypes")
+@Verb("VM.getStats")
 public class VmGetStatsCommand extends JsonCommand {
 
     @Override

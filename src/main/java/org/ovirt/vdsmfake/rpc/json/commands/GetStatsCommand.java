@@ -5,6 +5,7 @@ import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 
 @SuppressWarnings("rawtypes")
+@Verb("Host.getStats")
 public class GetStatsCommand extends JsonCommand {
 
     @Override

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings({ "rawtypes" })
+@Verb("Image.delete")
 public class ImageDelete extends JsonCommand {
 
     @Override

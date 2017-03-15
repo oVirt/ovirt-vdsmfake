@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@SuppressWarnings({ "rawtypes" })
+@Verb("Volume.create")
 public class VolumeCreateCommand extends JsonCommand {
 
     @Override

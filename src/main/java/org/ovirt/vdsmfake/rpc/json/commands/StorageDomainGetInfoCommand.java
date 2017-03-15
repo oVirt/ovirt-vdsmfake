@@ -7,7 +7,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-@SuppressWarnings("rawtypes")
+@Verb("StorageDomain.getInfo")
 public class StorageDomainGetInfoCommand extends JsonCommand {
 
     @Override
