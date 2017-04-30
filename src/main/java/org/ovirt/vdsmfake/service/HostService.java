@@ -84,7 +84,7 @@ public class HostService extends AbstractService {
             infoMap.put("guestOverhead", "65");
             infoMap.put("management_ip", ""); // null
             infoMap.put("cpuThreads", "4");
-            infoMap.put("emulatedMachines", getEmulatedMachinesList());
+            infoMap.put("emulatedMachines", appConfig.getEmulatedMachines());
             infoMap.put("operatingSystem", getOperatingSystemMap());
             infoMap.put("lastClient", "10.36.6.76");
             infoMap.put("rngSources", Arrays.asList(new String[]{"RANDOM"}));
@@ -424,35 +424,6 @@ public class HostService extends AbstractService {
         }
 
         return resultMap;
-    }
-
-    public List getEmulatedMachinesList() {
-        List resultList = lst();
-        resultList.add("pc-0.10");
-        resultList.add("pc-0.11");
-        resultList.add("pc-0.12");
-        resultList.add("pc-0.13");
-        resultList.add("pc-0.14");
-        resultList.add("pc-0.15");
-        resultList.add("pc-1.0");
-        resultList.add("pc-1.0");
-        resultList.add("pc-i440fx-2.1");
-        resultList.add("pseries-rhel7.2.0");
-        resultList.add("pc-i440fx-rhel7.2.0");
-        resultList.add("pc-i440fx-rhel7.3.0");
-        resultList.add("rhel6.4.0");
-        resultList.add("rhel6.5.0");
-        resultList.add("rhel6.6.0");
-        resultList.add("rhel6.7.0");
-        resultList.add("rhel6.8.0");
-        resultList.add("rhel6.9.0");
-        resultList.add("rhel7.0.0");
-        resultList.add("rhel7.2.0");
-        resultList.add("rhel7.5.0");
-        resultList.add("pc");
-        resultList.add("isapc");
-
-        return resultList;
     }
 
     public Map getOperatingSystemMap() {

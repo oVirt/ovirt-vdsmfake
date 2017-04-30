@@ -47,6 +47,7 @@ public class AppConfig {
     private int jsonListenPort;
     private boolean jsonSecured;
     private String jsonHost;
+    private List<String> emulatedMachines;
 
     public AppConfig() {
         makeDir(cacheDir);
@@ -57,6 +58,14 @@ public class AppConfig {
         if (dir != null && dir.trim().length() > 0 && !new File(dir).exists()) {
             new File(dir).mkdirs();
         }
+    }
+
+    public List<String> getEmulatedMachines() {
+        return emulatedMachines;
+    }
+
+    public void setEmulatedMachines(List<String> emulatedMachines) {
+        this.emulatedMachines = emulatedMachines;
     }
 
     public enum ArchitectureType {
