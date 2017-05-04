@@ -1,1 +1,2 @@
-build-artifacts.sh
+#!/bin/sh -x
+mvn clean test
