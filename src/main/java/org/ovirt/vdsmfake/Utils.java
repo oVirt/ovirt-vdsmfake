@@ -45,11 +45,11 @@ public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    public static String getUuid() {
+    public String getUuid() {
         return UUID.randomUUID().toString();
     }
 
-    public static String getMacAddress() {
+    public String getMacAddress() {
         // 80:C1:6E:6C:51:54
         StringBuilder b = new StringBuilder();
         for (int i = 1; i <= 17; i++) {
@@ -63,13 +63,13 @@ public class Utils {
         return b.toString();
     }
 
-    public static String getDateTimeGMT() {
+    public String getDateTimeGMT() {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         return sdf.format(new Date());
     }
 
-    public static String getRandomNum(int length) {
+    public String getRandomNum(int length) {
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < length; i++) {
             b.append(RND.nextInt(10));
@@ -77,13 +77,13 @@ public class Utils {
         return b.toString();
     }
 
-    public static String rangeParsser(List<String> values){
+    public String rangeParsser(List<String> values){
         return String.valueOf(
                 RND.nextInt(Integer.parseInt(values.get(1)) - Integer.parseInt(values.get(0)))
                         + Integer.parseInt(values.get(0)));
     }
 
-    public static String getCpuIdle(String idle){
+    public String getCpuIdle(String idle){
         return Integer.toString(100 - Integer.parseInt(idle));
     }
 
@@ -95,12 +95,12 @@ public class Utils {
         return String.valueOf(RND.nextInt(high - min) + min);
     }
 
-    public static String ipGenerator() {
+    public String ipGenerator() {
         return RND.nextInt(256) + "." + RND.nextInt(256) + "." + RND.nextInt(256) + "." + RND.nextInt(256);
     }
 
     //Default
-    public static void getLatency(){
+    public void getLatency(){
         try{
             getLatency((long) minimum);
         }catch (Exception e){
@@ -108,7 +108,7 @@ public class Utils {
         }
     }
 
-    public static void getLatency(Long latency) {
+    public void getLatency(Long latency) {
         //run latency
         Long innerLatency;
         if (latency != (long) minimum) {
