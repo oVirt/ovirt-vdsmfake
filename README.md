@@ -1,12 +1,33 @@
-## Introduction
+Table of Contents
+=================
+
+  * [Introduction](#introduction)
+    * [Technology](#technology)
+    * [Quick Start](#quick-start)
+      * [Prepare ovirt-engine](#prepare-ovirt-engine)
+        * [Disable SSL (Not Default!)](#disable-ssl-not-default)
+        * [Work with SSl (default installation)](#work-with-ssl-default-installation)
+        * [Large setups tweaks:](#large-setups-tweaks)
+    * [Run the project](#run-the-project)
+      * [From source (mvn)](#from-source-mvn)
+      * [Standalone](#standalone)
+      * [Container](#container)
+      * [Create fake host names](#create-fake-host-names)
+      * [Add the fake hosts](#add-the-fake-hosts)
+    * [Supported methods](#supported-methods)
+    * [Changing the simulated host architecture](#changing-the-simulated-host-architecture)
+    * [Project](#project)
+      * [Monitoring](#monitoring)
+
+# Introduction
 VDSM is a daemon component written in Python required by oVirt-Engine (Virtualization Manager), which runs on Linux hosts and manages and monitors the host's storage, memory and networks as well as virtual machine creation/control, statistics gathering, etc.
-'''VDSM Fake''' is a support application framework for oVirt Engine project. It is a Java web application which enables to simulate selected tasks of real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with very limited set of hardware resources.
+'''VDSM Fake''' is a support application framework for oVirt Engine project. It is a Java web application, built using wildfly-swarm, to simulate selected tasks of real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with very limited set of hardware resources.
 The aim is to get marginal performance characteristics of oVirt Engine JEE application (JBoss) and its repository database (PostgreSQL), but also network throughput, etc.
 
 ## Technology
 The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of host IP address it is needed to specify fake host name.
 Many configured entities must be persisted after their creation. Simple Java object serialization is used for this
-purpose. They are stored in `/var/log/fakevdsm/cache` by default. Set the system porperty `${cacheDir}` to customize
+purpose. They are stored in `/var/log/fakevdsm/cache` by default. Set the system property `${cacheDir}` to customize
 the location.
 
 ## Quick Start
@@ -23,7 +44,7 @@ psql $ENGINE_DB -c "UPDATE vdc_options set option_value = '0' WHERE option_name 
 
 #### Disable SSL (Not Default!)
 In case you need to disable SSL encryption, run the following queries (on engine):
-```
+```bash
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'SSLEnabled';"
 psql $ENGINE_DB -c "UPDATE vdc_options set option_value = 'false' WHERE option_name = 'EncryptHostCommunication';"
 
@@ -35,8 +56,8 @@ Restart the engine after the values were set.
 - In general the following action will generate certs to vdsmfake.
 - Make sure you do this in a protected directory, as the key should be in vdsm.
 
-#### run the following sh script in vdsmfake machine.
-```
+On vdsmfake machine:
+```bash
 cer_req_name="vdsmfake"
 
 pkidir=/etc/pki/vdsmfake
@@ -55,8 +76,8 @@ scp $req <ovirt_user>@<ovirt_host>/<ovirt_dir>/etc/pki/ovirt-engine/requests/
 
 ```
 
-#### run the following on the ovirt engine machine.
-```
+On ovirt-engine machine.
+```bash
 cer_req_name="vdsmfake"
 domain=test.test.com
 
@@ -65,10 +86,9 @@ subject="/C=US/O=$domain/CN=something.$domain"
 "<ovirt_engine_dir>/bin/pki-enroll-request.sh --name=\"$cer_req_name\" --subject=\"$subject\""
 
 #The cert will be created in /etc/pki/ovirt-engine/certs/$cer_req_name.cer .
-
 ```
 
-#### When testing large environments it is possible that additional settings like:
+#### Large setups tweaks:
 - quartz pool size
   This setting can be changed in ovirt-engine.xml.in and the option name is org.quartz.threadPool.threadCount
   After the change it is required to restart the engine
@@ -78,22 +98,44 @@ subject="/C=US/O=$domain/CN=something.$domain"
   It requires additional changes in /var/lib/pgsql/data/postgresql.conf and the option name is max_connections
   After above changes it is required to restart postgresql and the engine.
 
-### JSON-RPC (ovirt-engine >= 3.6)
+## Run the project
 
+Pick your method:
+1. From source (mvn)
+2. Standalone
+3. Container
+
+### From source (mvn)
+
+```mvn wildfly-swarm:run```
+
+### Standalone
+
+The *__wildfly-plugin__* can generate a standalone uber-jar that includes wildfly and the vdsmfake in it(see wildfly-swarm)
+Create the uber-jar and run it:
 ```bash
-git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
-cd ovirt-vdsmfake
-mvn jetty:run
+mvn wildfly-swarm:package
+java -jar target/vdsmfake-swarm.jar
 ```
 
-### Docker
+### Container
 
-Official containers will be published by jenkins.ovirt.org soon. Meanwhile:
+Official containers are created by jenkins.ovirt.org after each merge. Those containers will be pushed to docker.io
+registry soon. Again few optons to run from container:
 
+1. Use oVirt CI container produced by [jenkins job][jenkins_job]
+```bash
+wget http://jenkins.ovirt.org/job/ovirt-vdsmfake_master_build-artifacts-el7-x86_64/lastSuccessfulBuild/artifact/exported-artifacts/vdsmfake-container-image.tar
+docker load -i vdsmfake-container-image.tar
+```
+
+2. Build your own
 ```bash
 docker build -t vdsmfake github.com/ovirt/ovirt-vdsmfake
 docker run --rm -p54322:54322 -p54321:54321 vdsmfake
 ```
+
+[jenkins_job]: http://jenkins.ovirt.org/job/ovirt-vdsmfake_master_build-artifacts-on-demand-el7-x86_64/lastSuccessfulBuild/
 
 ### Create fake host names
 
@@ -125,9 +167,6 @@ function add_host {
 for i in `seq 0 10`; do add_host admin@internal:mypwd test$i; done
 ```
 
-## Functionality
-* simulation of vdsm API
-
 All Json requests/responses are optionally logged into the default path `/var/log/vakevdsm/`. Set the
 system property ${logDir} to customize the location. Log4j logs into this directory too.
 
@@ -142,49 +181,22 @@ system property ${logDir} to customize the location. Log4j logs into this direct
 VDSM fake can be used to simulate two architectures: ppc64 or x86_64.
 To do so set the system property ${architectureType} to one of the following values: ppc64 or x86_64.
 ```bash
-mvn jetty:run -DarchitectureType=ppc64
+mvn wildfly-swarm:run -DarchitectureType=ppc64
 ```
 This property is optional. The default architecture type is x86_64 and is set in web.xml.
 If no architecture type is provided the default architecture will be used.
 
 ## Project
-VDSM Fake is a Maven configured project. Source code:
-* git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git
+VDSM Fake is a Maven project.
+* Clone it `git clone git://gerrit.ovirt.org/ovirt-vdsmfake.git`
+* Hack it and `mvn wildfly-swarm:run` is enough to see the changes.
+* Report [issues here](https://github.com/oVirt/ovirt-vdsmfake/issues)
 
-## Run the project
 
-### Standalone
+Also:
+* *logs* - under the current directory `vdsmfake.log` - change by passing -DlogDir=/path/
+* persistence - simulated entities are kept under objectStore in binary format - change with `-DcacheDir=/path/``
 
-The *maven-tomcat7-plugin* can generate a standalone war file for you which
-will unclude a Tomcat7 server.  First create the *standalone.jar* file:
-
-```bash
-mvn package
-```
-
-Then run the application:
-
-```bash
-java -jar target/standalone.jar -DcacheDir=target/fakevdsm/cache -DlogDir=target/fakevdsm/log
-```
-
-### WAR
-
-Run `mvn package` and copy the file *target/vdsmfake.war* into the deployment
-folder of your favourite application server.
-
-Default values for *cacheDir* and *logDir* are:
-* /var/log/vdsmfake/cache
-* /var/log/vdsmfake/log
-
-### Development
-
-Executing `mvn jetty:run` is enough. You can find the logs and the cached
-entities inside of  `${project.basedir}/target/fakevdsm`.
-
-## Maven commands
-* Generate WAR and standalone archive: mvn package
-* Run sample web server: mvn jetty:run
 
 ### Monitoring
 
@@ -196,9 +208,7 @@ Second, to see how fast the data is transfered and accepted by ovirt-engine,
 the send time is monitored. Metrics representing the send time have the postfix
 **.Send**.
 
-Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream with
-Jetty and on http://localhost:8080/hystrix.stream in the standalone version
-with Tomcat.
+Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream.
 
 Further all metrics are exposed in 'com.netflix.servo' in JMX. They only become
 visible **after** the first hystrix command was executed.
@@ -210,7 +220,7 @@ export interval in seconds can be specified. By default the export will happen
 every 15 seconds. For example
 
 ```bash
-mvn clean jetty:run -Dvdsmfake.commandExecutor=hystrix -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
+mvn clean wildfly-swarm:run -Dvdsmfake.commandExecutor=hystrix -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
 ```
 
 exports hystrix metrics every 20 seconds to the graphite database at
@@ -224,7 +234,7 @@ docker run -d -p 8070:80 -p 2003:2003 -p 8125:8125/udp -p 8126:8126 \
 ```
 
 Graphite will listen on `localhost:2003` and Grafana at `localhost:8070`. The
-metrics prefix is `vdsmfake`. 
+metrics prefix is `vdsmfake`.
 
 This application uses Netflix Servo for the export.
 [Here](http://www.nurkiewicz.com/2015/02/storing-months-of-historical-metrics.html)
