@@ -40,8 +40,6 @@ public abstract class AbstractService{
 
     @Inject
     private VdsmManager vdsmManager;
-    @Inject
-    private Utils utils;
 
     public static Map getStatusMap(String message, int code) {
 
@@ -128,11 +126,11 @@ public abstract class AbstractService{
     }
 
     public String getUuid() {
-        return utils.getUuid();
+        return Utils.getUuid();
     }
 
     public String getRandomNum(int length) {
-        return utils.getRandomNum(length);
+        return Utils.getRandomNum(length);
     }
 
     public void syncTask(Host host, Task task){

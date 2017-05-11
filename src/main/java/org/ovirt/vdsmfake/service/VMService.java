@@ -44,8 +44,6 @@ public class VMService extends AbstractService {
     private AppConfig appConfig;
     @Inject
     private JsonRpcNotification jsonRpcNotification;
-    @Inject
-    private Utils utils;
 
     public Map list() {
         final Host host = getActiveHost();
@@ -183,7 +181,7 @@ public class VMService extends AbstractService {
 
         resultMap.put("statsList", statusList);
 
-        utils.getLatency();
+        Utils.getLatency();
 
         return resultMap;
     }
@@ -233,11 +231,11 @@ public class VMService extends AbstractService {
             netStats.put("macAddr", device.getMacAddr());
             netStats.put("name", dName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", utils.rangeParsser(loadValues));
+            netStats.put("txRate", Utils.rangeParsser(loadValues));
             netStats.put("rxErrors", "0");
-            netStats.put("rxRate", utils.rangeParsser(loadValues));
-            netStats.put("tx", utils.rangeParsser(loadValues));
-            netStats.put("rx", utils.rangeParsser(loadValues));
+            netStats.put("rxRate", Utils.rangeParsser(loadValues));
+            netStats.put("tx", Utils.rangeParsser(loadValues));
+            netStats.put("rx", Utils.rangeParsser(loadValues));
             netStats.put("rxDropped", "0");
             netStats.put("speed", "1000");
             netStats.put("sampleTime", "4318787.08");
@@ -406,7 +404,7 @@ public class VMService extends AbstractService {
 
         // ip validation if no exist set ip, for vms which already registered in the setup
         if (vm.getIp() == null || vm.getIp().equals("0.0.0.0") || vm.getIp().isEmpty() || vm.getIp().equals("?")) {
-            vm.setIp(utils.ipGenerator());
+            vm.setIp(Utils.ipGenerator());
         }
 
         //missing data
@@ -442,12 +440,12 @@ public class VMService extends AbstractService {
         vmStatMap.put("guestTimezone", getGuestTimeZone());
 
         //cpu
-        vmStatMap.put("cpuSys", utils.rangeParsser(appConfig.getCpuLoad()));
-        vmStatMap.put("cpuLoad", utils.rangeParsser(appConfig.getCpuLoad()));
-        vmStatMap.put("cpuUser", utils.rangeParsser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoad()));
 
         //memory
-        vmStatMap.put("memUsage", utils.rangeParsser(appConfig.getMemLoad()));
+        vmStatMap.put("memUsage", Utils.rangeParsser(appConfig.getMemLoad()));
 
         //network
         vmStatMap.put("netIfaces", getNetworkInterfaces(vm));
@@ -578,7 +576,7 @@ public class VMService extends AbstractService {
             vm.setName((String) vmParams.get("vmName"));
             vm.setCpuType((String) vmParams.get("cpuType"));
             vm.setHost(host);
-            vm.setIp(utils.ipGenerator());
+            vm.setIp(Utils.ipGenerator());
 
             Integer memSize = 0;
             Object boxedMemSize = vmParams.get("memSize");

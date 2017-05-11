@@ -35,8 +35,7 @@ public class HostService extends AbstractService {
 
     @Inject
     private AppConfig appConfig;
-    @Inject
-    private Utils utils;
+
     private static final int TOTAL_MEMORY_SIZE = 7976;
     private static final int NUMBER_OF_NUMA_NODES = 2;
 
@@ -474,7 +473,7 @@ public class HostService extends AbstractService {
             }
             infoMap.put("vmCount", nTotal);
 
-            String memUsedPercent = utils.rangeParsser(appConfig.getMemLoad());
+            String memUsedPercent = Utils.rangeParsser(appConfig.getMemLoad());
             infoMap.put("memUsed", memUsedPercent);
 
             double memUsedInMB = TOTAL_MEMORY_SIZE * (Double.valueOf(memUsedPercent) / 100);
@@ -484,11 +483,11 @@ public class HostService extends AbstractService {
             infoMap.put("storageDomains", getStorageDomainsStatsMap());
             infoMap.put("network", getNetworkStatMap(host.getMacAddress()));
             infoMap.put("txDropped", "0");
-            infoMap.put("cpuUser", utils.rangeParsser(appConfig.getCpuLoad()));
+            infoMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoad()));
             infoMap.put("ksmPages", Integer.valueOf(100));
             infoMap.put("elapsedTime", host.getElapsedTimeInSeconds() + "");
-            infoMap.put("cpuLoad", utils.rangeParsser(appConfig.getCpuLoad()));
-            infoMap.put("cpuSys", utils.rangeParsser(appConfig.getCpuLoad()));
+            infoMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoad()));
+            infoMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoad()));
             infoMap.put("diskStats", getDiskStatsMap());
             infoMap.put("memCommitted", Integer.valueOf(0));
             infoMap.put("ksmState", Boolean.FALSE); //boolean..0
@@ -513,7 +512,7 @@ public class HostService extends AbstractService {
             infoMap.put("statsAge", "0.43");
             infoMap.put("dateTime", host.getDateTimeGMT()); // 2013-02-10T19:09:11 GMT
             infoMap.put("anonHugePages", "662");
-            infoMap.put("cpuIdle", utils.getCpuIdle(infoMap.get("cpuUser").toString()));
+            infoMap.put("cpuIdle", Utils.getCpuIdle(infoMap.get("cpuUser").toString()));
 
             int nActive = 0;
             for (VM vm : getActiveHost().getRunningVMs().values()) {
@@ -527,7 +526,7 @@ public class HostService extends AbstractService {
             infoMap.put("numaNodeMemFree", getNumaNodeMemFreeMap(memFree, memUsedPercent));
 
             resultMap.put("info", infoMap);
-            utils.getLatency();
+            Utils.getLatency();
 
             return resultMap;
         } catch (Exception e) {
@@ -595,10 +594,10 @@ public class HostService extends AbstractService {
             netStats.put("macAddr", hostMacAdd); // null
             netStats.put("name", netName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", utils.rangeParsser(appConfig.getNetworkLoad()));
+            netStats.put("txRate", Utils.rangeParsser(appConfig.getNetworkLoad()));
             netStats.put("rxErrors", "0");
             netStats.put("rxRate", "0.0");
-            netStats.put("rxRate", utils.rangeParsser(appConfig.getNetworkLoad()));
+            netStats.put("rxRate", Utils.rangeParsser(appConfig.getNetworkLoad()));
             netStats.put("rxDropped", "14965");
 
             resultMap.put(netName, netStats);

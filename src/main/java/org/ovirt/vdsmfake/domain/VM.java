@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device.DeviceType;
 
@@ -33,8 +31,7 @@ import org.ovirt.vdsmfake.domain.Device.DeviceType;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class VM extends BaseObject {
-    @Inject
-    private Utils utils;
+
     public static final String NONE_STRING = "?";
     private Map<String, String> randomNumberStore;
     private Map<String, Long> lastRandomNumberUpdate;
@@ -145,7 +142,7 @@ public class VM extends BaseObject {
         vm.setMemSize(memSize);
         vm.setCpuType(cpuType);
         vm.setCustomMap(customMap);
-        vm.setIp(utils.ipGenerator());
+        vm.setIp(Utils.ipGenerator());
         vm.getDevices().addAll(getDevices());
 
         return vm;

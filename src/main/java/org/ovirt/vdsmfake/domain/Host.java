@@ -18,8 +18,6 @@ package org.ovirt.vdsmfake.domain;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Inject;
-
 import org.ovirt.vdsmfake.Utils;
 
 /**
@@ -31,8 +29,6 @@ public class Host extends BaseObject {
      *
      */
     private static final long serialVersionUID = -5570247376407615153L;
-    @Inject
-    private Utils utils;
 
     String spUUID;
     long timeCreated;
@@ -129,21 +125,21 @@ public class Host extends BaseObject {
     }
 
     public String getDateTimeGMT() {
-        return utils.getDateTimeGMT();
+        return Utils.getDateTimeGMT();
     }
 
     public void initializeHost() {
-        propsMap.put("UUID", utils.getUuid());
-        propsMap.put("UUID_EM1", utils.getUuid());
-        propsMap.put("UUID_EM2", utils.getUuid());
-        propsMap.put("UUID_GENERATION_ID", utils.getUuid());
+        propsMap.put("UUID", Utils.getUuid());
+        propsMap.put("UUID_EM1", Utils.getUuid());
+        propsMap.put("UUID_EM2", Utils.getUuid());
+        propsMap.put("UUID_GENERATION_ID", Utils.getUuid());
 
-        propsMap.put("IP", utils.ipGenerator());
-        propsMap.put("IP_GATEWAY", utils.ipGenerator());
+        propsMap.put("IP", Utils.ipGenerator());
+        propsMap.put("IP_GATEWAY", Utils.ipGenerator());
 
-        propsMap.put("MAC", utils.getMacAddress());
-        propsMap.put("MAC_EM1", utils.getMacAddress());
-        propsMap.put("MAC_EM2", utils.getMacAddress());
+        propsMap.put("MAC", Utils.getMacAddress());
+        propsMap.put("MAC_EM1", Utils.getMacAddress());
+        propsMap.put("MAC_EM2", Utils.getMacAddress());
     }
 
     public String getElapsedTimeInSeconds() {
