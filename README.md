@@ -4,7 +4,7 @@ Table of Contents
   * [Introduction](#introduction)
     * [Technology](#technology)
     * [Quick Start](#quick-start)
-      * [Prepare ovirt-engine](#prepare-ovirt-engine)
+      * [Prepare oVirt-engine](#prepare-ovirt-engine)
         * [Disable SSL (Not Default!)](#disable-ssl-not-default)
         * [Work with SSl (default installation)](#work-with-ssl-default-installation)
         * [Large setups tweaks:](#large-setups-tweaks)
@@ -20,14 +20,14 @@ Table of Contents
       * [Monitoring](#monitoring)
 
 # Introduction
-VDSM is a daemon component written in Python required by oVirt-Engine (Virtualization Manager), which runs on Linux hosts and manages and monitors the host's storage, memory and networks as well as virtual machine creation/control, statistics gathering, etc.
-'''VDSM Fake''' is a support application framework for oVirt Engine project. It is a Java web application, built using wildfly-swarm, to simulate selected tasks of real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with very limited set of hardware resources.
+VDSM is a daemon component written in Python and required by oVirt-Engine (Virtualization Manager). Running on Linux hosts, VDSM manages and monitors the hosts' storage, memory and networks. It also handles virtual machine creation/control, statistics gathering, and more.
+'''VDSM Fake''' is a support application framework for the oVirt Engine project. It is a Java web application, built using wildfly-swarm, and used to simulate selected tasks of the real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with a very limited set of hardware resources.
 The aim is to get marginal performance characteristics of oVirt Engine JEE application (JBoss) and its repository database (PostgreSQL), but also network throughput, etc.
 
 ## Technology
-The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of host IP address it is needed to specify fake host name.
+The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of a host IP address, a fake host name needs to be specified.
 Many configured entities must be persisted after their creation. Simple Java object serialization is used for this
-purpose. They are stored in `/var/log/fakevdsm/cache` by default. Set the system property `${cacheDir}` to customize
+purpose. By default, they are stored in `/var/log/fakevdsm/cache`. Set the system property `${cacheDir}` to customize
 the location.
 
 ## Quick Start
@@ -53,7 +53,7 @@ Restart the engine after the values were set.
 ```
 
 #### Work with SSl (default installation)
-- In general the following action will generate certs to vdsmfake.
+- In general, the following action will generate certs to vdsmfake.
 - Make sure you do this in a protected directory, as the key should be in vdsm.
 
 On vdsmfake machine:
@@ -91,12 +91,12 @@ subject="/C=US/O=$domain/CN=something.$domain"
 #### Large setups tweaks:
 - quartz pool size
   This setting can be changed in ovirt-engine.xml.in and the option name is org.quartz.threadPool.threadCount
-  After the change it is required to restart the engine
+  Restart the engine after making this change.
 
 - db connection pool size
-  This setting can be chanegd in ovirt-engine.conf and the option name is ENGINE_DB_MAX_CONNECTIONS
-  It requires additional changes in /var/lib/pgsql/data/postgresql.conf and the option name is max_connections
-  After above changes it is required to restart postgresql and the engine.
+  This setting can be changed in ovirt-engine.conf and the option name is ENGINE_DB_MAX_CONNECTIONS
+  It requires additional changes in /var/lib/pgsql/data/postgresql.conf and the option name is max_connections.
+  Restart postgresql and the engine after making the above changes.
 
 ## Run the project
 
@@ -121,7 +121,7 @@ java -jar target/vdsmfake-swarm.jar
 ### Container
 
 Official containers are created by jenkins.ovirt.org after each merge. Those containers will be pushed to docker.io
-registry soon. Again few optons to run from container:
+registry soon. Again, there are a few optons to run from container:
 
 1. Use oVirt CI container produced by [jenkins job][jenkins_job]
 ```bash
@@ -144,7 +144,7 @@ sudo -i
 for i in `seq 0 10`; do echo 127.0.0.1 test$i >> /etc/hosts; done
 ```
 
-Use `dnsmasq` for more dynamic approach to make every X.vdsm.simulator resolve to an IP:
+Use `dnsmasq` for a more dynamic approach to make every X.vdsm.simulator resolve to an IP:
 
 ```bash
 dnsmasq --address=/vdsm.simulator/127.0.0.1
@@ -201,8 +201,8 @@ Also:
 ### Monitoring
 
 To make it easy to see if performance test results for ovirt-engine are tainted
-by this application, JSON requests can be monitored using `-Dvdsmfake.commandExecutor=hystrix`
-First, to see if the response preparations from vdsmfake are reasonable fast,
+by this application, JSON requests can be monitored using `-Dvdsmfake.commandExecutor=hystrix`.
+First, to see if the response preparations from vdsmfake are reasonably fast,
 they are monitored. These metrics have the postfix **.Prepare**.
 Second, to see how fast the data is transfered and accepted by ovirt-engine,
 the send time is monitored. Metrics representing the send time have the postfix
@@ -210,14 +210,14 @@ the send time is monitored. Metrics representing the send time have the postfix
 
 Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream.
 
-Further all metrics are exposed in 'com.netflix.servo' in JMX. They only become
+Further, all metrics are exposed in 'com.netflix.servo' in JMX. They only become
 visible **after** the first hystrix command was executed.
 
 Finally exporting metrics to Graphite is possible too. By default it is disabled.
-Setting the sytem property `graphite.url` to the graphite destionation server
-enables the export mechanism. With the system property `graphite.interval` the
-export interval in seconds can be specified. By default the export will happen
-every 15 seconds. For example
+Setting the sytem property `graphite.url` to the graphite destination server
+enables the export mechanism. Use the system property `graphite.interval`to specify the export interval
+(seconds). By default, the export will happen
+every 15 seconds. For example:
 
 ```bash
 mvn clean wildfly-swarm:run -Dvdsmfake.commandExecutor=hystrix -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
@@ -230,7 +230,7 @@ An easy way to get Graphite and Grafana up and running is docker:
 
 ```bash
 docker run -d -p 8070:80 -p 2003:2003 -p 8125:8125/udp -p 8126:8126 \
-    --name grafana-dashboard choopooly/grafana-graphite
+    --name grafana-dashboard choopooly/grafana-graphite 
 ```
 
 Graphite will listen on `localhost:2003` and Grafana at `localhost:8070`. The
