@@ -7,3 +7,4 @@ target/
 vdsmfake.log
 objectStore
 automation/exported-artifacts
+*.tar.gz
