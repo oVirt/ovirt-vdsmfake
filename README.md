@@ -1,36 +1,11 @@
-Table of Contents
-=================
-
-    * [Introduction](#introduction)
-    * [Technology](#technology)
-    * [Quick Start](#quick-start)
-      * [Prepare ovirt-engine](#prepare-ovirt-engine)
-        * [Disable SSL (Not Default!)](#disable-ssl-not-default)
-        * [Work with SSl (default installation)](#work-with-ssl-default-installation)
-        * [Large setups tweaks:](#large-setups-tweaks)
-    * [Run the project](#run-the-project)
-      * [From source (mvn)](#from-source-mvn)
-      * [Standalone](#standalone)
-      * [Container](#container)
-      * [Create fake host names](#create-fake-host-names)
-      * [Add the fake hosts](#add-the-fake-hosts)
-    * [Supported methods](#supported-methods)
-    * [Changing the simulated host architecture](#changing-the-simulated-host-architecture)
-    * [Project](#project)
-      * [Monitoring](#monitoring)
-    * [Configuration](#configuration)
-      * [Vdsmfake Configuration](#vdsmfake-configuration)
-      * [Wildfly Swarm Configutaion](#wildfly-swarm-configuration)
-
-## Introduction
-VDSM is a daemon component written in Python required by oVirt-Engine (Virtualization Manager), which runs on Linux hosts and manages and monitors the host's storage, memory and networks as well as virtual machine creation/control, statistics gathering, etc.
-'''VDSM Fake''' is a support application framework for oVirt Engine project. It is a Java web application, built using wildfly-swarm, to simulate selected tasks of real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with very limited set of hardware resources.
+VDSM is a daemon component written in Python and required by oVirt-Engine (Virtualization Manager). Running on Linux hosts, VDSM manages and monitors the hosts' storage, memory and networks. It also handles virtual machine creation/control, statistics gathering, and more.
+'''VDSM Fake''' is a support application framework for the oVirt Engine project. It is a Java web application, built using wildfly-swarm, and used to simulate selected tasks of the real VDSM. But, tens or hundreds of simulated Linux hosts and virtual machines can be reached with a very limited set of hardware resources.
 The aim is to get marginal performance characteristics of oVirt Engine JEE application (JBoss) and its repository database (PostgreSQL), but also network throughput, etc.
 
 ## Technology
-The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of host IP address it is needed to specify fake host name.
+The basic idea is that the fake host addresses must resolve to a single IP address (127.0.0.1 is also possible for all-in-one performance testing server configuration). Standard HTTP port 54321 must be accessible from the Engine. You can use /etc/hosts file on the server with oVirt-Engine or company DNS server. Instead of a host IP address, a fake host name needs to be specified.
 Many configured entities must be persisted after their creation. Simple Java object serialization is used for this
-purpose. They are stored in `/var/log/fakevdsm/cache` by default. Set the system property `${cacheDir}` to customize
+purpose. By default, they are stored in `/var/log/fakevdsm/cache`. Set the system property `${cacheDir}` to customize
 the location.
 
 ## Quick Start
@@ -56,7 +31,7 @@ Restart the engine after the values were set.
 ```
 
 #### Work with SSl (default installation)
-- In general the following action will generate certs to vdsmfake.
+- In general, the following action will generate certs to vdsmfake.
 - Make sure you do this in a protected directory, as the key should be in vdsm.
 
 On vdsmfake machine:
@@ -94,12 +69,12 @@ subject="/C=US/O=$domain/CN=something.$domain"
 #### Large setups tweaks:
 - quartz pool size
   This setting can be changed in ovirt-engine.xml.in and the option name is org.quartz.threadPool.threadCount
-  After the change it is required to restart the engine
+  Restart the engine after making this change.
 
 - db connection pool size
-  This setting can be chanegd in ovirt-engine.conf and the option name is ENGINE_DB_MAX_CONNECTIONS
-  It requires additional changes in /var/lib/pgsql/data/postgresql.conf and the option name is max_connections
-  After above changes it is required to restart postgresql and the engine.
+  This setting can be changed in ovirt-engine.conf and the option name is ENGINE_DB_MAX_CONNECTIONS
+  It requires additional changes in /var/lib/pgsql/data/postgresql.conf and the option name is max_connections.
+  Restart postgresql and the engine after making the above changes.
 
 ## Run the project
 
@@ -124,7 +99,7 @@ java -jar target/vdsmfake-swarm.jar
 ### Container
 
 Official containers are created by jenkins.ovirt.org after each merge. Those containers will be pushed to docker.io
-registry soon. Again few optons to run from container:
+registry soon. Again, there are a few optons to run from container:
 
 1. Use oVirt CI container produced by [jenkins job][jenkins_job]
 ```bash
@@ -135,7 +110,7 @@ docker load -i vdsmfake-container-image.tar
 2. Build your own
 ```bash
 docker build -t vdsmfake github.com/ovirt/ovirt-vdsmfake
-docker run --rm -p8081:8081 -p54321:54321 vdsmfake
+docker run --rm -p54322:54322 -p54321:54321 vdsmfake
 ```
 
 [jenkins_job]: http://jenkins.ovirt.org/job/ovirt-vdsmfake_master_build-artifacts-on-demand-el7-x86_64/lastSuccessfulBuild/
@@ -147,7 +122,7 @@ sudo -i
 for i in `seq 0 10`; do echo 127.0.0.1 test$i >> /etc/hosts; done
 ```
 
-Use `dnsmasq` for more dynamic approach to make every X.vdsm.simulator resolve to an IP:
+Use `dnsmasq` for a more dynamic approach to make every X.vdsm.simulator resolve to an IP:
 
 ```bash
 dnsmasq --address=/vdsm.simulator/127.0.0.1
@@ -170,8 +145,8 @@ function add_host {
 for i in `seq 0 10`; do add_host admin@internal:mypwd test$i; done
 ```
 
-All Json requests/responses are optionally logged into the default path `$user.dir/vdsmfake.log`. Set the
-Refer to [Wildfly Swarm Configuration].
+All Json requests/responses are optionally logged into the default path `/var/log/vakevdsm/`. Set the
+system property ${logDir} to customize the location. Log4j logs into this directory too.
 
 ## Supported methods
 * create hosts
@@ -197,30 +172,30 @@ VDSM Fake is a Maven project.
 
 
 Also:
-* *logs* - refer to [Wildfly Swarm Configuraion specifics](#wildfly-swarm-configuration)
-* persistence - refer to [Vdsmfake Configuaraion](#vdsmfake-configuration)
+* *logs* - under the current directory `vdsmfake.log` - change by passing -DlogDir=/path/
+* persistence - simulated entities are kept under objectStore in binary format - change with `-DcacheDir=/path/``
 
 
 ### Monitoring
 
 To make it easy to see if performance test results for ovirt-engine are tainted
-by this application, JSON requests can be monitored using `-Dvdsmfake.commandExecutor=hystrix`
-First, to see if the response preparations from vdsmfake are reasonable fast,
+by this application, JSON requests can be monitored using `-Dvdsmfake.commandExecutor=hystrix`.
+First, to see if the response preparations from vdsmfake are reasonably fast,
 they are monitored. These metrics have the postfix **.Prepare**.
 Second, to see how fast the data is transfered and accepted by ovirt-engine,
 the send time is monitored. Metrics representing the send time have the postfix
 **.Send**.
 
-Hystrix Metrics can be accessed on http://localhost:8081/hystrix.stream.
+Hystrix Metrics can be accessed on http://localhost:54322/hystrix.stream.
 
-Further all metrics are exposed in 'com.netflix.servo' in JMX. They only become
+Further, all metrics are exposed in 'com.netflix.servo' in JMX. They only become
 visible **after** the first hystrix command was executed.
 
 Finally exporting metrics to Graphite is possible too. By default it is disabled.
-Setting the sytem property `graphite.url` to the graphite destionation server
-enables the export mechanism. With the system property `graphite.interval` the
-export interval in seconds can be specified. By default the export will happen
-every 15 seconds. For example
+Setting the sytem property `graphite.url` to the graphite destination server
+enables the export mechanism. Use the system property `graphite.interval`to specify the export interval
+(seconds). By default, the export will happen
+every 15 seconds. For example:
 
 ```bash
 mvn clean wildfly-swarm:run -Dvdsmfake.commandExecutor=hystrix -Dgraphite.url=localhost:2003 -Dgraphite.interval=20
@@ -266,7 +241,7 @@ Order of precedence:
 | networkLoad           | Tuple (list of 2 values) |                                       |
 | cpuLoad               | Tuple (list of 2 values) |                                       |
 | memLoad               | Tuple (list of 2 values) |                                       |
-| architectureType      | String                   | Simulate X85_64 or PPC                |
+| architectureType      | String                   | Simulate X86_64 or PPC                |
 | cacheDir              | String                   | Where to store the simulation objects |
 | jsonEvents            | boolean                  | Enable sending events through jsonrpc |
 | jsonThreadPoolSize    |                          |                                       |
@@ -288,8 +263,6 @@ Order of precedence:
 - definition in `src/main/resources/project-defaults.yml`
 
 [A reference to swarm configuration](https://reference.wildfly-swarm.io/configuration.html.)
-
-Example of important ones:
 
 | property                                   | Type                     | Description                           |
 |--------------------------------------------|--------------------------|---------------------------------------|
