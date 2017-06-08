@@ -209,6 +209,7 @@ public class HostService extends AbstractService {
         ovirtmgmtMap.put("bridged", Boolean.TRUE); // boolean..1
         ovirtmgmtMap.put("gateway", "10.34.63.254");
         ovirtmgmtMap.put("switch", "legacy");
+        ovirtmgmtMap.put("ipv4defaultroute", Boolean.TRUE);
 
         List portsList = lst();
         portsList.add("em1");
@@ -228,6 +229,7 @@ public class HostService extends AbstractService {
         ovirtmgmtMap.put("netmask", "255.255.252.0");
         ovirtmgmtMap.put("stp", "off");
         ovirtmgmtMap.put("gateway", host.getIpAddress("GATEWAY")); // 10.34.63.254
+        ovirtmgmtMap.put("ipv4defaultroute", Boolean.TRUE);
 
         Map cfgMap = map();
         cfgMap.put("DEVICE", appConfig.getNetworkBridgeName());
