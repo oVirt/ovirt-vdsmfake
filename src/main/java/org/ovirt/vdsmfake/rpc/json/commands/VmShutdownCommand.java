@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-@Verb("VM.shutdow")
+@Verb("VM.shutdown")
 public class VmShutdownCommand extends JsonCommand {
 
     @Override
