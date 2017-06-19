@@ -475,7 +475,7 @@ public class HostService extends AbstractService {
             }
             infoMap.put("vmCount", nTotal);
 
-            String memUsedPercent = Utils.rangeParsser(appConfig.getMemLoad());
+            String memUsedPercent = Utils.rangeParser(appConfig.getMemLoad());
             infoMap.put("memUsed", memUsedPercent);
 
             double memUsedInMB = TOTAL_MEMORY_SIZE * (Double.valueOf(memUsedPercent) / 100);
@@ -485,11 +485,11 @@ public class HostService extends AbstractService {
             infoMap.put("storageDomains", getStorageDomainsStatsMap());
             infoMap.put("network", getNetworkStatMap(host.getMacAddress()));
             infoMap.put("txDropped", "0");
-            infoMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoad()));
+            infoMap.put("cpuUser", Utils.rangeParser(appConfig.getCpuLoad()));
             infoMap.put("ksmPages", Integer.valueOf(100));
             infoMap.put("elapsedTime", host.getElapsedTimeInSeconds() + "");
-            infoMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoad()));
-            infoMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoad()));
+            infoMap.put("cpuLoad", Utils.rangeParser(appConfig.getCpuLoad()));
+            infoMap.put("cpuSys", Utils.rangeParser(appConfig.getCpuLoad()));
             infoMap.put("diskStats", getDiskStatsMap());
             infoMap.put("memCommitted", Integer.valueOf(0));
             infoMap.put("ksmState", Boolean.FALSE); //boolean..0
@@ -596,10 +596,10 @@ public class HostService extends AbstractService {
             netStats.put("macAddr", hostMacAdd); // null
             netStats.put("name", netName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", Utils.rangeParsser(appConfig.getNetworkLoad()));
+            netStats.put("txRate", Utils.rangeParser(appConfig.getNetworkLoad()));
             netStats.put("rxErrors", "0");
             netStats.put("rxRate", "0.0");
-            netStats.put("rxRate", Utils.rangeParsser(appConfig.getNetworkLoad()));
+            netStats.put("rxRate", Utils.rangeParser(appConfig.getNetworkLoad()));
             netStats.put("rxDropped", "14965");
 
             resultMap.put(netName, netStats);

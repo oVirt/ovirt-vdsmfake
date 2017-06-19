@@ -231,11 +231,11 @@ public class VMService extends AbstractService {
             netStats.put("macAddr", device.getMacAddr());
             netStats.put("name", dName);
             netStats.put("txDropped", "0");
-            netStats.put("txRate", Utils.rangeParsser(loadValues));
+            netStats.put("txRate", Utils.rangeParser(loadValues));
             netStats.put("rxErrors", "0");
-            netStats.put("rxRate", Utils.rangeParsser(loadValues));
-            netStats.put("tx", Utils.rangeParsser(loadValues));
-            netStats.put("rx", Utils.rangeParsser(loadValues));
+            netStats.put("rxRate", Utils.rangeParser(loadValues));
+            netStats.put("tx", Utils.rangeParser(loadValues));
+            netStats.put("rx", Utils.rangeParser(loadValues));
             netStats.put("rxDropped", "0");
             netStats.put("speed", "1000");
             netStats.put("sampleTime", "4318787.08");
@@ -440,12 +440,12 @@ public class VMService extends AbstractService {
         vmStatMap.put("guestTimezone", getGuestTimeZone());
 
         //cpu
-        vmStatMap.put("cpuSys", Utils.rangeParsser(appConfig.getCpuLoad()));
-        vmStatMap.put("cpuLoad", Utils.rangeParsser(appConfig.getCpuLoad()));
-        vmStatMap.put("cpuUser", Utils.rangeParsser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuSys", Utils.rangeParser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuLoad", Utils.rangeParser(appConfig.getCpuLoad()));
+        vmStatMap.put("cpuUser", Utils.rangeParser(appConfig.getCpuLoad()));
 
         //memory
-        vmStatMap.put("memUsage", Utils.rangeParsser(appConfig.getMemLoad()));
+        vmStatMap.put("memUsage", Utils.rangeParser(appConfig.getMemLoad()));
 
         //network
         vmStatMap.put("netIfaces", getNetworkInterfaces(vm));

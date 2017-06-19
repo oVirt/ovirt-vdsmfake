@@ -77,7 +77,7 @@ public class Utils {
         return b.toString();
     }
 
-    public static String rangeParsser(List<String> values){
+    public static String rangeParser(List<String> values){
         return String.valueOf(
                 RND.nextInt(Integer.parseInt(values.get(1)) - Integer.parseInt(values.get(0)))
                         + Integer.parseInt(values.get(0)));
