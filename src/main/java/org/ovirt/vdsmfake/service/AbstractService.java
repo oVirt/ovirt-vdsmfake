@@ -25,9 +25,7 @@ import javax.inject.Inject;
 
 import org.ovirt.vdsmfake.ContextHolder;
 import org.ovirt.vdsmfake.Utils;
-import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
-import org.ovirt.vdsmfake.domain.StorageDomain;
 import org.ovirt.vdsmfake.domain.Task;
 import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.ovirt.vdsmfake.task.TaskProcessor;
@@ -89,34 +87,8 @@ public abstract class AbstractService{
         vdsmManager.updateHost(host);
     }
 
-    public DataCenter getDataCenterById(String id) {
-        // bind a copy of data center to the host
-        final DataCenter dataCenter = vdsmManager.getDataCenterById(id);
-        return dataCenter;
-    }
-
-    public void updateDataCenter(DataCenter dataCenter) {
-        vdsmManager.updateDataCenter(dataCenter);
-    }
-
     public Host getHostByName(String name) {
         return vdsmManager.getHostByName(name);
-    }
-
-    public StorageDomain getStorageDomainById(String id) {
-        return vdsmManager.getStorageDomainById(id);
-    }
-
-    public void removeStorageDomain(StorageDomain storageDomain) {
-        vdsmManager.removeStorageDomain(storageDomain);
-    }
-
-    public void updateStorageDomain(StorageDomain storageDomain) {
-        vdsmManager.updateStorageDomain(storageDomain);
-    }
-
-    public void setMasterDomain(String spUuid, String masterSdUuid) {
-        vdsmManager.setMasterDomain(spUuid, masterSdUuid);
     }
 
     public RuntimeException error(Throwable t) {

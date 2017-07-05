@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 @Verb("StoragePool.connectStorageServer")
 public class StorageServerConnectCommand extends JsonCommand {
@@ -16,7 +14,9 @@ public class StorageServerConnectCommand extends JsonCommand {
     }
 
     @Override
-    protected Map activateApi(JsonNode params) throws JsonParseException, JsonMappingException, IOException {
+    protected Map activateApi(JsonNode params) throws IOException {
+
+
         return api.connectStorageServer(params.get("domainType").asInt(),
                 params.get("storagepoolID").asText(),
                 toList(params.get("connectionParams")));

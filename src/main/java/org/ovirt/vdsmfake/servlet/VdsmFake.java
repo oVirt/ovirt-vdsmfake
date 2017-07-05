@@ -22,6 +22,8 @@ public class VdsmFake extends HttpServlet {
         output.append("===== Statistics ======").append("\n");
         output.append("running hosts: ").append(vdsmManager.getHostCount()).append("\n");
         output.append("running vms: ").append(vdsmManager.getRunningVmsCount()).append("\n");
+        output.append("===== Objects ======").append("\n");
+        vdsmManager.getAllhosts().forEach(host -> output.append(host).append("\n"));
         response.setContentType("text/plain");
         response.getWriter().write(output.toString());
         return;

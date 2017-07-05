@@ -30,8 +30,22 @@ public class Host extends BaseObject {
      */
     private static final long serialVersionUID = -5570247376407615153L;
 
-    String spUUID;
     long timeCreated;
+    private Map<String, StorageDomain> storageDomains = new ConcurrentHashMap<>();
+    private DataCenter dataCenter = new DataCenter();
+    private Map storageConnections = new ConcurrentHashMap();
+
+    public Map<String, StorageDomain> getStorageDomains() {
+        return storageDomains;
+    }
+
+    public DataCenter getDataCenter() {
+        return dataCenter;
+    }
+
+    public Map<String, String> getStorageConnections() {
+        return storageConnections;
+    }
 
     public enum SpmStatus {
         ACQUIRED("SPM"),
@@ -69,11 +83,11 @@ public class Host extends BaseObject {
     }
 
     public String getSpUUID() {
-        return spUUID;
+        return dataCenter.getId();
     }
 
     public void setSpUUID(String spUUID) {
-        this.spUUID = spUUID;
+        dataCenter.id = spUUID;
     }
 
     public int getSpmId() {
@@ -146,4 +160,21 @@ public class Host extends BaseObject {
         return "" + ((long) ((System.currentTimeMillis() - timeCreated) / 1000.0));
     }
 
+    @Override public String toString() {
+        return "Host{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", lastUpdate=" + lastUpdate +
+                ", timeCreated=" + timeCreated +
+                ", storageDomains=" + storageDomains.values() +
+                ", storageConnections=" + storageConnections.values() +
+                ", dataCenter=" + dataCenter +
+                ", spmId=" + spmId +
+                ", spmStatus=" + spmStatus +
+                ", spmLver=" + spmLver +
+                ", runningVMsMap=" + runningVMsMap +
+                ", propsMap=" + propsMap +
+                ", runningTasks=" + runningTasks +
+                '}';
+    }
 }

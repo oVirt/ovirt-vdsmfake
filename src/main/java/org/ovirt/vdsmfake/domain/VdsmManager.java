@@ -16,6 +16,7 @@
 package org.ovirt.vdsmfake.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -23,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.vdsmfake.PersistUtils;
-import org.ovirt.vdsmfake.domain.StorageDomain.DomainRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,6 @@ public class VdsmManager implements Serializable {
 
     final ConcurrentMap<String, DataCenter> dataCenterMap = new ConcurrentHashMap<String, DataCenter>();
     final ConcurrentMap<String, Host> hostMap = new ConcurrentHashMap<String, Host>(0);
-    final ConcurrentMap<String, StorageDomain> storageDomainMap = new ConcurrentHashMap<String, StorageDomain>();
     final ConcurrentMap<String, Host> spmMap = new ConcurrentHashMap<String, Host>();
 
     public void setSpmMap(String spId, Host host) {
@@ -88,7 +87,7 @@ public class VdsmManager implements Serializable {
             // save to the cache
             storeObject(host);
         } else {
-            log.info("Host restored from file, name: {}", serverName);
+            log.info("Host restored from cache, name: {}", serverName);
         }
 
         hostMap.put(serverName, host);
@@ -105,111 +104,6 @@ public class VdsmManager implements Serializable {
         storeObject(host);
     }
 
-    public DataCenter getDataCenterById(String id) {
-        DataCenter dataCenter = null;
-
-        if (dataCenterMap.containsKey(id)) {
-            return dataCenterMap.get(id);
-        }
-
-        // read cache from stored file
-        dataCenter = (DataCenter) loadObject(DataCenter.class, id);
-
-        if (dataCenter == null) {
-            dataCenter = reInitializeDataCenter(id);
-        } else {
-            dataCenterMap.put(id, dataCenter);
-        }
-
-        return dataCenter;
-    }
-
-    private DataCenter reInitializeDataCenter(String dcId) throws RuntimeException {
-        log.warn("about to reinitialize dc");
-        DataCenter dataCenter = new DataCenter();
-        dataCenter.setId(dcId);
-        updateDataCenter(dataCenter);
-        return dataCenter;
-    }
-
-    public void updateDataCenter(DataCenter dataCenter) {
-        // save to the cache
-        try {
-            storeObject(dataCenter);
-        } catch (Exception e) {
-            log.error("failed to store object {}", e.getStackTrace());
-        }
-
-        dataCenterMap.put(dataCenter.getId(), dataCenter);
-
-        log.info("Data center {} restored", dataCenter.getId());
-    }
-
-    public StorageDomain getStorageDomainById(String id) {
-        StorageDomain storageDomain = null;
-
-        if (storageDomainMap.containsKey(id)) {
-            return storageDomainMap.get(id);
-        }
-
-        // read cache from stored file
-        storageDomain = (StorageDomain) loadObject(StorageDomain.class, id);
-
-        if (storageDomain == null) {
-            storageDomain = recoverStorageDomain(id);
-        } else {
-            storageDomainMap.put(id, storageDomain);
-        }
-
-        return storageDomain;
-    }
-
-    private StorageDomain recoverStorageDomain(String sdUUID) {
-        log.warn("about to recover SD {}", sdUUID);
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setId(sdUUID);
-        updateStorageDomain(storageDomain);
-        return storageDomain;
-    }
-
-    public void removeStorageDomain(StorageDomain storageDomain) {
-        storageDomainMap.remove(storageDomain.getId());
-
-        log.info("Removing storage domain: {}", storageDomain.getId());
-
-        // remove from the cache
-        removeObject(storageDomain);
-    }
-
-    public void updateStorageDomain(StorageDomain storageDomain) {
-        log.info("Updating storage domain: {}", storageDomain.getId());
-
-        storageDomainMap.put(storageDomain.getId(), storageDomain);
-
-        // save to the cache
-        storeObject(storageDomain);
-    }
-
-    public void setMasterDomain(String spUuid, String masterSdUuid) {
-        log.info("Setting master domain, sp: {}, master sd: {}: ", spUuid, masterSdUuid);
-
-        if (masterSdUuid == null) {
-            return;
-        }
-
-        final DataCenter dataCenter = getDataCenterById(spUuid);
-
-        for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
-            if (masterSdUuid.equals(storageDomain.getId())) {
-                storageDomain.setDomainRole(DomainRole.MASTER);
-            } else {
-                storageDomain.setDomainRole(DomainRole.REGULAR);
-            }
-        }
-
-        updateDataCenter(dataCenter);
-    }
-
     public int getRunningVmsCount() {
         return hostMap.values().stream()
                 .map(host -> host.getRunningVMs().size())
@@ -218,5 +112,9 @@ public class VdsmManager implements Serializable {
 
     public int getHostCount() {
         return hostMap.size();
+    }
+
+    public Collection<Host> getAllhosts() {
+        return hostMap.values();
     }
 }

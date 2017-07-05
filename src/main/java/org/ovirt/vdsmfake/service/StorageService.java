@@ -25,7 +25,6 @@ import javax.inject.Singleton;
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
-import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
 import org.ovirt.vdsmfake.domain.Task;
 import org.ovirt.vdsmfake.domain.VdsmManager;
 import org.ovirt.vdsmfake.domain.Volume;
@@ -53,18 +52,14 @@ public class StorageService extends AbstractService {
      */
     public Map connectStoragePool(
             String spUUID, Integer hostID, String scsiKey, String msdUUID, Integer masterVersion) {
-        final DataCenter dataCenter = getDataCenterById(spUUID);
 
         // save to model
         final Host host = getActiveHost();
         host.setSpUUID(spUUID);
         updateHost(host);
 
-        dataCenter.setMasterStorageDomainId(msdUUID);
-        dataCenter.setMasterVersion(masterVersion);
-
-        final StorageDomain storageDomain = getStorageDomainById(msdUUID);
-        dataCenter.getStorageDomainMap().put(storageDomain.getId(), storageDomain);
+        host.getDataCenter().setMasterStorageDomainId(msdUUID);
+        host.getDataCenter().setMasterVersion(masterVersion);
 
         // store to database
         setMasterDomain(spUUID, msdUUID);
@@ -75,16 +70,29 @@ public class StorageService extends AbstractService {
         return getOKStatus();
     }
 
+    private void setMasterDomain(String spUuid, String masterSdUuid) {
+
+        log.info("Setting master domain, sp: {}, master sd: {}: ", spUuid, masterSdUuid);
+
+        if (masterSdUuid == null) {
+            return;
+        }
+
+        for (StorageDomain storageDomain : getActiveHost().getStorageDomains().values()) {
+            if (masterSdUuid.equals(storageDomain.getId())) {
+                storageDomain.setDomainRole(StorageDomain.DomainRole.MASTER);
+            } else {
+                storageDomain.setDomainRole(StorageDomain.DomainRole.REGULAR);
+            }
+        }
+
+    }
+
     public Map connectStorageServer(Integer domType, String spUUID, List<Map> storageDomains) {
         try {
-            final DataCenter dataCenter = getDataCenterById(spUUID);
             final Host host = getActiveHost();
-
-            host.setSpUUID(spUUID);
             // save to model
             updateHost(host);
-            dataCenter.setStorageType(StorageType.getByCode(domType));
-            updateDataCenter(dataCenter);
 
             Map resultMap = getOKStatus();
 
@@ -96,19 +104,12 @@ public class StorageService extends AbstractService {
                 final Map storageDomainMap = storageDomains.get(i);
 
                 final String id = (String) storageDomainMap.get("id");
-//                String port = (String) storageDomainMap.get("port");
                 final String connection = (String) storageDomainMap.get("connection");
-//                String portal = (String) storageDomainMap.get("portal");
-//                String iqn = (String) storageDomainMap.get("iqn");
-//                String password = (String) storageDomainMap.get("password");
-//                String user = (String) storageDomainMap.get("user");
 
-                log.info("Adding storage domain, spUUID: {} id: {}, connection: {}",
+                log.info("Adding storage connection, spUUID: {} id: {}, connection: {}",
                         new Object[] { spUUID, id, connection });
 
-                final StorageDomain storageDomain = getStorageDomainById(id);
-                storageDomain.setConnection(connection);
-                dataCenter.getStorageDomainMap().put(id, storageDomain);
+                host.getStorageConnections().put(id, connection);
 
                 // response
                 final Map storageStatusMap = map();
@@ -127,11 +128,7 @@ public class StorageService extends AbstractService {
 
     public Map validateStorageServerConnection(Integer domType, String spUUID, List<Map> storageDomains) {
         try {
-            final DataCenter dataCenter = getDataCenterById(spUUID);
-
-            // reply with data from the request
             final Map resultMap = getOKStatus();
-
             final List statusList = new ArrayList();
             resultMap.put("statusList", statusList);
 
@@ -140,28 +137,19 @@ public class StorageService extends AbstractService {
                 final Map storageDomainMap = storageDomains.get(i);
 
                 final String id = (String) storageDomainMap.get("id");
-//                String port = (String) storageDomainMap.get("port");
                 final String connection = (String) storageDomainMap.get("connection");
-//                String portal = (String) storageDomainMap.get("portal");
-//                String iqn = (String) storageDomainMap.get("iqn");
-//                String password = (String) storageDomainMap.get("password");
-//                String user = (String) storageDomainMap.get("user");
 
-                final StorageDomain storageDomain = getStorageDomainById(id);
-                storageDomain.setConnection(connection);
-                dataCenter.getStorageDomainMap().put(id, storageDomain);
-
-                // response
-                final Map storageStatusMap = map();
+                boolean valid = getActiveHost().getStorageDomains().get(id).getConnection().equals(connection);
+                if (!valid) {
+                    return getStatusMap("error", 1);
+                }
+                Map storageStatusMap = map();
                 storageStatusMap.put("status", Integer.valueOf(0));
                 storageStatusMap.put("id", id);
                 statusList.add(storageStatusMap);
             }
-
             log.info("Storage server {} validated.", spUUID);
-
             return resultMap;
-
         } catch (Exception e) {
             throw error(e);
         }
@@ -171,27 +159,20 @@ public class StorageService extends AbstractService {
             int masterVersion, String lockPolicy, int lockRenewalIntervalSec, int leaseTimeSec, int ioOpTimeoutSec,
             int leaseRetries) {
         try {
-            final DataCenter dataCenter = getDataCenterById(spUUID);
 
-            // save to model
-            final Host host = getActiveHost();
-            host.setSpUUID(spUUID);
-            updateHost(host);
-
+            Host activeHost = getActiveHost();
+            final DataCenter dataCenter = activeHost.getDataCenter();
             dataCenter.setId(spUUID);
             dataCenter.setName(poolName);
             dataCenter.setMasterStorageDomainId(masterDom);
             dataCenter.setMasterVersion(masterVersion);
-
-            final StorageDomain storageDomain = getStorageDomainById(masterDom);
-            dataCenter.getStorageDomainMap().put(storageDomain.getId(), storageDomain);
 
             // store to database
             setMasterDomain(spUUID, masterDom);
 
             log.info("Storage pool {} created, master domain: {}, total domains: {}",
                     new Object[] { spUUID, dataCenter.getMasterStorageDomainId(),
-                            dataCenter.getStorageDomainMap().size() });
+                            activeHost.getStorageDomains().size() });
 
             // send ok
             return getOKStatus();
@@ -202,20 +183,24 @@ public class StorageService extends AbstractService {
 
     public Map createStorageDomain(
             Integer storageType,
-            String sdUUID,
+            String sdId,
             String domainName,
             String typeSpecificArg,
             Integer domClass,
             String storageFormatType) {
-        log.info("Storage domain sdUUID: {}, name: {} created.", sdUUID, domainName);
+        log.info("Storage domain sdUUID: {}, name: {} created.", sdId, domainName);
 
-        StorageDomain storageDomain = getStorageDomainById(sdUUID);
-        storageDomain.setName(domainName);
-        storageDomain.setConnection(typeSpecificArg);
-        storageDomain.setDomainClass(StorageDomain.DomainClass.getByCode(domClass));
-        storageDomain.setStorageType(StorageDomain.StorageType.getByCode(storageType));
-        // store
-        updateStorageDomain(storageDomain);
+        getActiveHost().getStorageDomains().compute(
+                sdId,
+                (id, entity) -> {
+                    StorageDomain sd = entity == null ? new StorageDomain() : entity;
+                    sd.setId(id.toString());
+                    sd.setName(domainName);
+                    sd.setConnection(typeSpecificArg);
+                    sd.setDomainClass(StorageDomain.DomainClass.getByCode(domClass));
+                    sd.setStorageType(StorageDomain.StorageType.getByCode(storageType));
+                    return sd;
+                });
 
         // send ok
         return getOKStatus();
@@ -227,17 +212,14 @@ public class StorageService extends AbstractService {
         List statusList = new ArrayList();
         resultMap.put("statuslist", statusList);
 
+        Map<String, String> storageConections = getActiveHost().getStorageConnections();
+
         // extract
         for(int i=0;i < storageDomains.size();i++) {
             Map storageDomainMap = storageDomains.get(i);
 
             String id = (String) storageDomainMap.get("id");
-//            String port = (String) storageDomainMap.get("port");
-//            String connection = (String) storageDomainMap.get("connection");
-//            String portal = (String) storageDomainMap.get("portal");
-//            String iqn = (String) storageDomainMap.get("iqn");
-//            String password = (String) storageDomainMap.get("password");
-//            String user = (String) storageDomainMap.get("user");
+            storageConections.remove(id);
 
 
             // response
@@ -252,8 +234,8 @@ public class StorageService extends AbstractService {
 
     public Map getStoragePoolInfo(String spUUID) {
         try {
-            final DataCenter dataCenter = getDataCenterById(spUUID);
             final Host host = getActiveHost();
+            final DataCenter dataCenter = host.getDataCenter();
 
             Map resultMap = map();
 
@@ -268,19 +250,18 @@ public class StorageService extends AbstractService {
 
             int i=0;
             StringBuilder b = new StringBuilder();
-            for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
+            for (StorageDomain storageDomain : host.getStorageDomains().values()) {
 
                 //force ACTIVE Status for storage domain.
                 if (!storageDomain.getDomainStatus().equals(StorageDomain.DomainStatus.ACTIVE)){
                     storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
-                    updateStorageDomain(storageDomain);
                 }
                 // TODO: name of storage domain not sent, API talk with id no naming relations, might be problematic.
                 // storageDomain.setName("sd_fake")
 
                 b.append(storageDomain.getId()).append(":").append(storageDomain.getDomainStatus().getName());
 
-                if (i != dataCenter.getStorageDomainMap().values().size() - 1) {
+                if (i != host.getStorageDomains().values().size() - 1) {
                     b.append(",");
                 }
 
@@ -304,7 +285,7 @@ public class StorageService extends AbstractService {
             infoMap.put("lver", host.getSpmLver()); //  Integer.valueOf(2)
 
             Map dominfo = map();
-            for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
+            for (StorageDomain storageDomain : host.getStorageDomains().values()) {
                 Map dominfoChild = map();
                 dominfo.put(storageDomain.getId(), dominfoChild); // 67070f56-027f-4ece-958d-e226639b622b
 
@@ -341,14 +322,13 @@ public class StorageService extends AbstractService {
 
     private void activateClearance(StorageDomain storageDomain){
         storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
-        updateStorageDomain(storageDomain);
     }
 
     public Map activateStorageDomain(String sdUUID, String spUUID) {
         try {
             log.info("Activating storage domain, spUUID: {} sdUUID: {}", new Object[] { spUUID, sdUUID });
 
-            final StorageDomain storageDomain = getDataCenterById(spUUID).getStorageDomainMap().get(sdUUID);
+            final StorageDomain storageDomain = getActiveHost().getStorageDomains().get(sdUUID);
             if (storageDomain != null) {
                 activateClearance(storageDomain);
                 log.info("storage were activated {} {}", storageDomain.getName(), sdUUID);
@@ -368,10 +348,8 @@ public class StorageService extends AbstractService {
         try {
             log.info("Deactivating storage domain, spUUID: {} sdUUID: {}", new Object[] { spUUID, sdUUID });
 
-            final DataCenter dataCenter = getDataCenterById(spUUID);
-            final StorageDomain storageDomain = dataCenter.getStorageDomainMap().get(sdUUID);
+            final StorageDomain storageDomain = getActiveHost().getStorageDomains().get(sdUUID);
             storageDomain.setDomainStatus(StorageDomain.DomainStatus.ATTACHED);
-            updateStorageDomain(storageDomain);
 
             return getOKStatus();
         } catch (Exception e) {
@@ -383,12 +361,9 @@ public class StorageService extends AbstractService {
         try {
             log.info("Attaching storage domain, spUUID: {} sdUUID: {}", new Object[] { spUUID, sdUUID });
 
-            final DataCenter dataCenter = getDataCenterById(spUUID);
-            final StorageDomain storageDomain = getStorageDomainById(sdUUID);
+            final StorageDomain storageDomain = getActiveHost().getStorageDomains().get(sdUUID);
             storageDomain.setDomainStatus(StorageDomain.DomainStatus.ATTACHED);
-            dataCenter.getStorageDomainMap().put(sdUUID, storageDomain);
-            storageDomain.setDataCenter(dataCenter);
-            updateDataCenter(dataCenter);
+            storageDomain.setDataCenter(getActiveHost().getDataCenter());
 
             return getOKStatus();
         } catch (Exception e) {
@@ -400,12 +375,11 @@ public class StorageService extends AbstractService {
         try {
             log.info("Detaching storage domain, spUUID: {} sdUUID: {}", new Object[] { spUUID, sdUUID });
 
-            final DataCenter dataCenter = getDataCenterById(spUUID);
-            final StorageDomain storageDomain = dataCenter.getStorageDomainMap().get(sdUUID);
+            Host activeHost = getActiveHost();
+            final StorageDomain storageDomain = activeHost.getStorageDomains().get(sdUUID);
             storageDomain.setDomainStatus(StorageDomain.DomainStatus.UNATTACHED);
-            dataCenter.getStorageDomainMap().remove(storageDomain.getId());
+            getActiveHost().getStorageDomains().remove(storageDomain.getId());
             storageDomain.setDataCenter(null);
-            updateDataCenter(dataCenter);
 
             return getOKStatus();
         } catch (Exception e) {
@@ -417,12 +391,9 @@ public class StorageService extends AbstractService {
         try {
             log.info("Refreshing storage pool, spUUID: {} msdUUID: {}", new Object[] { spUUID, msdUUID });
 
-            final DataCenter dataCenter = getDataCenterById(spUUID);
+            final DataCenter dataCenter = getActiveHost().getDataCenter();
             dataCenter.setMasterStorageDomainId(msdUUID);
             dataCenter.setMasterVersion(masterVersion);
-
-            final StorageDomain storageDomain = getStorageDomainById(msdUUID);
-            dataCenter.getStorageDomainMap().put(storageDomain.getId(), storageDomain);
 
             // storage into db
             setMasterDomain(spUUID, msdUUID);
@@ -520,8 +491,7 @@ public class StorageService extends AbstractService {
             String srcImgUUID,
             String srcVolUUID) {
         try {
-            DataCenter dataCenter = getDataCenterById(spUUID);
-            StorageDomain storageDomain = dataCenter.getStorageDomainMap().get(sdUUID);
+            StorageDomain storageDomain = getActiveHost().getStorageDomains().get(sdUUID);
 
             final Volume volume = new Volume();
             volume.setId(volUUID);
@@ -537,7 +507,6 @@ public class StorageService extends AbstractService {
             log.info("Adding volume: {} for sp: {}, sd: {}", new Object[] { volUUID, spUUID, sdUUID });
 
             storageDomain.getVolumes().put(volUUID, volume);
-            updateDataCenter(dataCenter);
 
             final Map resultMap = getOKStatus();
             final Task task = new Task(getUuid());
@@ -556,8 +525,7 @@ public class StorageService extends AbstractService {
 
     public Map getVolumeInfo(String sdUUID, String spUUID, String imgGUID, String volUUID) {
         try {
-            DataCenter dataCenter = getDataCenterById(spUUID);
-            StorageDomain storageDomain = dataCenter.getStorageDomainMap().get(sdUUID);
+            StorageDomain storageDomain = getActiveHost().getStorageDomains().get(sdUUID);
 
             Volume volume = storageDomain.getVolumes().get(volUUID);
 
@@ -596,7 +564,7 @@ public class StorageService extends AbstractService {
         try {
             final Host host = getActiveHost();
 
-            StorageDomain storageDomain = getStorageDomainById(sdUUID);
+            StorageDomain storageDomain = host.getStorageDomains().get(sdUUID);
             DataCenter dataCenter = storageDomain.getDataCenter();
 
             Map resultMap = getOKStatus();
@@ -635,14 +603,12 @@ public class StorageService extends AbstractService {
         try {
             // spUUID, domainClass, storageType, remotePath
 
-            DataCenter dataCenter = getDataCenterById(spUUID);
-
             Map resultMap = getOKStatus();
 
             List domlist = lst();
 
             // apply filter
-            for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
+            for (StorageDomain storageDomain : getActiveHost().getStorageDomains().values()) {
                 if (spUUID != null && !storageDomain.getId().equals(spUUID)) {
                     continue;
                 }

@@ -25,7 +25,6 @@ import javax.inject.Singleton;
 
 import org.ovirt.vdsmfake.AppConfig;
 import org.ovirt.vdsmfake.Utils;
-import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
 import org.ovirt.vdsmfake.domain.VM;
@@ -564,9 +563,7 @@ public class HostService extends AbstractService {
         Map resultMap = map();
 
         if (host.getSpUUID() != null) {
-            final DataCenter dataCenter = getDataCenterById(host.getSpUUID());
-
-            for (StorageDomain storageDomain : dataCenter.getStorageDomainMap().values()) {
+            for (StorageDomain storageDomain : host.getStorageDomains().values()) {
                 // for all domains
                 Map domainMap = map();
                 domainMap.put("delay", "0.0141088962555");
@@ -684,5 +681,4 @@ public class HostService extends AbstractService {
 
         return resultMap;
     }
-
 }

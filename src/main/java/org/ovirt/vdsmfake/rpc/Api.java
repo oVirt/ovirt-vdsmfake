@@ -255,7 +255,7 @@ public class Api extends AbstractService {
     }
 
     public Map disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey) {
-        return getOKStatusNotImplemented();
+        return getOKStatus();
     }
 
     public Map createStoragePool(int poolType, String spUUID, String poolName, String msdUUID,
