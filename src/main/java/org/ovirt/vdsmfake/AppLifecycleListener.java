@@ -38,8 +38,6 @@ public class AppLifecycleListener implements ServletContextListener {
     private AppConfig appConfig;
     @Inject
     private Instance<JsonRpcServer> jsonRpcServerInstance;
-    @Inject
-    private Instance<CommandExecutor> commandExecutors;
 
     public static class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
         public static final DefaultLiteral INSTANCE = new DefaultLiteral();

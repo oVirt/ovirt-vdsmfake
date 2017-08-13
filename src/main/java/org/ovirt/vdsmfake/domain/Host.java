@@ -31,17 +31,8 @@ public class Host extends BaseObject {
     private static final long serialVersionUID = -5570247376407615153L;
 
     long timeCreated;
-    private Map<String, StorageDomain> storageDomains = new ConcurrentHashMap<>();
-    private DataCenter dataCenter = new DataCenter();
+    String storagePoolId = "";
     private Map storageConnections = new ConcurrentHashMap();
-
-    public Map<String, StorageDomain> getStorageDomains() {
-        return storageDomains;
-    }
-
-    public DataCenter getDataCenter() {
-        return dataCenter;
-    }
 
     public Map<String, String> getStorageConnections() {
         return storageConnections;
@@ -83,11 +74,11 @@ public class Host extends BaseObject {
     }
 
     public String getSpUUID() {
-        return dataCenter.getId();
+        return storagePoolId;
     }
 
     public void setSpUUID(String spUUID) {
-        dataCenter.id = spUUID;
+        storagePoolId = spUUID;
     }
 
     public int getSpmId() {
@@ -166,9 +157,8 @@ public class Host extends BaseObject {
                 ", name='" + name + '\'' +
                 ", lastUpdate=" + lastUpdate +
                 ", timeCreated=" + timeCreated +
-                ", storageDomains=" + storageDomains.values() +
                 ", storageConnections=" + storageConnections.values() +
-                ", dataCenter=" + dataCenter +
+                ", storagePoolId=" + storagePoolId +
                 ", spmId=" + spmId +
                 ", spmStatus=" + spmStatus +
                 ", spmLver=" + spmLver +

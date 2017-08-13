@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -39,7 +38,7 @@ public class VdsmManager implements Serializable {
     @Inject
     private PersistUtils persistUtils;
 
-    final ConcurrentMap<String, DataCenter> dataCenterMap = new ConcurrentHashMap<String, DataCenter>();
+    final ConcurrentMap<String, DataCenter> storagePools = new ConcurrentHashMap<>();
     final ConcurrentMap<String, Host> hostMap = new ConcurrentHashMap<String, Host>(0);
     final ConcurrentMap<String, Host> spmMap = new ConcurrentHashMap<String, Host>();
 
@@ -116,5 +115,17 @@ public class VdsmManager implements Serializable {
 
     public Collection<Host> getAllhosts() {
         return hostMap.values();
+    }
+
+    public DataCenter getStoragePoolById(String spId) {
+        DataCenter cached = (DataCenter) persistUtils.load(DataCenter.class, spId);
+        DataCenter pool = storagePools.computeIfAbsent(spId, id -> cached == null ? new DataCenter() : cached);
+        persistUtils.store(pool);
+        return pool;
+    }
+
+    public Collection<DataCenter> getAllStoragePools() {
+        return storagePools.values();
+
     }
 }

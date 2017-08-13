@@ -15,13 +15,13 @@
 */
 package org.ovirt.vdsmfake.domain;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.ovirt.vdsmfake.domain.StorageDomain.StorageType;
 
 /**
  * Data center with attached storage domains
- *
- *
- *
  */
 public class DataCenter extends BaseObject {
     /**
@@ -33,6 +33,8 @@ public class DataCenter extends BaseObject {
     Integer masterVersion = 0;
     String poolStatus = "connected";
     StorageType storageType = StorageType.NFS;
+
+    private Map<String, StorageDomain> storageDomains = new ConcurrentHashMap<>();
 
     public String getMasterStorageDomainId() {
         return masterStorageDomainId == null ? id : masterStorageDomainId;
@@ -66,4 +68,18 @@ public class DataCenter extends BaseObject {
         this.storageType = storageType;
     }
 
+    public Map<String, StorageDomain> getStorageDomains() {
+        return storageDomains;
+    }
+
+    @Override
+    public String toString() {
+        return "StoragePool {" +
+                "masterStorageDomainId='" + masterStorageDomainId + '\'' +
+                ", masterVersion=" + masterVersion +
+                ", poolStatus='" + poolStatus + '\'' +
+                ", storageType=" + storageType +
+                ", storageDomains=" + storageDomains.values() +
+                "} " + super.toString();
+    }
 }
