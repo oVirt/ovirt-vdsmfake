@@ -35,17 +35,8 @@ import org.ovirt.vdsmfake.task.TaskType;
 @Singleton
 public class StorageService extends AbstractService {
 
-    private static StorageService instance = new StorageService();
-
     @Inject
     private VdsmManager vdsmManager;
-
-    public static StorageService getInstance() {
-        return instance;
-    }
-
-    public StorageService() {
-    }
 
     /**
      * Connect data center to the host.
