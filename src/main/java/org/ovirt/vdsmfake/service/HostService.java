@@ -16,6 +16,7 @@
 package org.ovirt.vdsmfake.service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -561,16 +562,16 @@ public class HostService extends AbstractService {
       return numaNodeMemFreeMap;
     }
 
-    Map getStorageDomainsStatsMap() {
+    public Map<String, Map<String, Object> > getStorageDomainsStatsMap() {
         final Host host = getActiveHost();
         DataCenter pool = vdsmManager.getStoragePoolById(getActiveHost().getSpUUID());
 
-        Map resultMap = map();
+        Map<String, Map<String, Object>> resultMap = new HashMap<>();
 
         if (host.getSpUUID() != null) {
             for (StorageDomain storageDomain : pool.getStorageDomains().values()) {
                 // for all domains
-                Map domainMap = map();
+                Map<String, Object> domainMap = map();
                 domainMap.put("delay", "0.0141088962555");
                 domainMap.put("lastCheck", "8.8");
                 domainMap.put("code", Integer.valueOf(0));
