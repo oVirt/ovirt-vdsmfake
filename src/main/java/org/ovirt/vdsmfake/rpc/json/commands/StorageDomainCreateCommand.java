@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.ovirt.vdsmfake.domain.StorageDomain;
 
 @Verb("StorageDomain.create")
@@ -17,7 +15,7 @@ public class StorageDomainCreateCommand extends JsonCommand {
     }
 
     @Override
-    protected Map activateApi(JsonNode params) throws JsonParseException, JsonMappingException, IOException {
+    protected Map activateApi(JsonNode params) throws IOException {
         return api.createStorageDomain(StorageDomain.StorageType.NFS.ordinal(),
                 params.get("storagedomainID").asText(),
                 params.get("name").asText(),
