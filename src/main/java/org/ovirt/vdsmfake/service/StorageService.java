@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.vdsmfake.PersistUtils;
 import org.ovirt.vdsmfake.domain.DataCenter;
 import org.ovirt.vdsmfake.domain.Host;
 import org.ovirt.vdsmfake.domain.StorageDomain;
@@ -37,6 +38,8 @@ public class StorageService extends AbstractService {
 
     @Inject
     private VdsmManager vdsmManager;
+    @Inject
+    private PersistUtils persistUtils;
 
     /**
      * Connect data center to the host.
@@ -199,6 +202,8 @@ public class StorageService extends AbstractService {
                     sd.setStorageType(StorageDomain.StorageType.getByCode(storageType));
                     return sd;
                 });
+
+        persistUtils.store(pool);
 
         // send ok
         return getOKStatus();
@@ -366,7 +371,7 @@ public class StorageService extends AbstractService {
             DataCenter pool = vdsmManager.getStoragePoolById(getActiveHost().getSpUUID());
 
             final StorageDomain storageDomain = pool.getStorageDomains().get(sdUUID);
-            storageDomain.setDomainStatus(StorageDomain.DomainStatus.ATTACHED);
+            storageDomain.setDomainStatus(StorageDomain.DomainStatus.ACTIVE);
 
             // FIXME The need to reference a pool from sd is questionable. Revisit.
             storageDomain.setDataCenter(pool);

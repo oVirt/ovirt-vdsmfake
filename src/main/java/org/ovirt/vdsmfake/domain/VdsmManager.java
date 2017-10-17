@@ -119,7 +119,7 @@ public class VdsmManager implements Serializable {
 
     public DataCenter getStoragePoolById(String spId) {
         DataCenter cached = (DataCenter) persistUtils.load(DataCenter.class, spId);
-        DataCenter pool = storagePools.computeIfAbsent(spId, id -> cached == null ? new DataCenter() : cached);
+        DataCenter pool = storagePools.computeIfAbsent(spId, id -> cached == null ? new DataCenter(id) : cached);
         persistUtils.store(pool);
         return pool;
     }

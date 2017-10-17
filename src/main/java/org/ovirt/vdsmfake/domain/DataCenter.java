@@ -36,6 +36,10 @@ public class DataCenter extends BaseObject {
 
     private Map<String, StorageDomain> storageDomains = new ConcurrentHashMap<>();
 
+    public DataCenter(String id) {
+        this.id = id;
+    }
+
     public String getMasterStorageDomainId() {
         return masterStorageDomainId == null ? id : masterStorageDomainId;
     }
