@@ -20,14 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.ovirt.vdsmfake.Utils;
 
-/**
- *
- *
- */
 public class Host extends BaseObject {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -5570247376407615153L;
 
     long timeCreated;
@@ -44,6 +38,7 @@ public class Host extends BaseObject {
         FREE("Free");
 
         String name;
+
         private SpmStatus(String name) {
             this.name = name;
         }
@@ -151,7 +146,8 @@ public class Host extends BaseObject {
         return "" + ((long) ((System.currentTimeMillis() - timeCreated) / 1000.0));
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Host{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +

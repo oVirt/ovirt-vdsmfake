@@ -25,11 +25,6 @@ import java.util.Set;
 import org.ovirt.vdsmfake.Utils;
 import org.ovirt.vdsmfake.domain.Device.DeviceType;
 
-/**
- *
- *
- */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class VM extends BaseObject {
 
     public static final String NONE_STRING = "?";
@@ -37,12 +32,8 @@ public class VM extends BaseObject {
     private Map<String, Long> lastRandomNumberUpdate;
     private String ip = NONE_STRING;
 
-
     long timeCreated;
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 931258755382405882L;
 
     Host host;
@@ -346,5 +337,4 @@ public class VM extends BaseObject {
     public void setForDelete(boolean forDelete) {
         this.forDelete = forDelete;
     }
-
 }

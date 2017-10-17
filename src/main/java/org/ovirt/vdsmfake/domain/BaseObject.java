@@ -17,14 +17,8 @@ package org.ovirt.vdsmfake.domain;
 
 import java.io.Serializable;
 
-/**
- *
- *
- */
 public class BaseObject implements Serializable {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 1L;
 
     String id;
@@ -40,7 +34,7 @@ public class BaseObject implements Serializable {
     }
 
     public String getName() {
-        if( name == null ) {
+        if (name == null) {
             return VM.NONE_STRING;
         }
         return name;
@@ -87,5 +81,4 @@ public class BaseObject implements Serializable {
         }
         return true;
     }
-
 }

@@ -7,14 +7,6 @@
 	<listener>
 		<listener-class>org.ovirt.vdsmfake.AppLifecycleListener</listener-class>
 	</listener>
-	<servlet>
-		<servlet-name>Main</servlet-name>
-		<servlet-class>org.ovirt.vdsmfake.servlet.VdsmFake</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Main</servlet-name>
-		<url-pattern>/*</url-pattern>
-	</servlet-mapping>
  <servlet>
 		<servlet-name>HystrixMetricsStreamServlet</servlet-name>
 		<servlet-class>com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet</servlet-class>
