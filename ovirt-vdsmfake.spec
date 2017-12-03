@@ -1,11 +1,11 @@
 Name:       ovirt-vdsmfake
-Version:    %{?_version}%{!?_version:1.0}
-Release:    %{?_release}%{!?_release:0.2}%{?dist}
+Version:    %{?_version}
+Release:    %{?_release}%{?dist}
 Summary:    A vdsm simulator, simulating multi vdsm nodes with VMs, discs etc.
 
 License:    ASL 2.0
 URL:        http://www.ovirt.org
-Source0:    %{name}-%{version}.tar.gz
+Source0:    %{name}-%{version}-%{_release}.tar.gz
 
 %description
 A vdsm simulator, simulating multi vdsm nodes with VMs, discs etc.

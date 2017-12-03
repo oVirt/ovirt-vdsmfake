@@ -1,7 +1,7 @@
 #!/bin/sh -xe
 
-VERSION=latest
-RELEASE=$(git describe --always)
+VERSION=$(git describe --tags --always | cut -d "-" -f1)
+RELEASE=$(git describe --tags --always | cut -d "-" -f2- | sed 's/-/_/')
 ARTIFACT_DIR=exported-artifacts
 
 trap popd 0
@@ -15,7 +15,7 @@ curl -sSL http://apache.spd.co.il/maven/maven-3/$mvn_version/binaries/apache-mav
 export PATH=${PWD}/apache-maven-$mvn_version/bin/:$PATH
 
 # bulid rpm
-./build-rpm.sh --define "_rpmdir ${ARTIFACT_DIR}" --define "_release ${RELEASE}"
+./build-rpm.sh --define "_rpmdir ${ARTIFACT_DIR}" --define "_version ${VERSION}" --define "_release ${RELEASE}"
 
 
 # build docker

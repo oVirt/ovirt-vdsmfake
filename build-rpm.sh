@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 NAME=ovirt-vdsmfake
-VERSION=${VERSION-1.0}
+VERSION=$(git describe --tags --always | cut -d "-" -f1)
+RELEASE=$(git describe --tags --always | cut -d "-" -f2- | sed 's/-/_/')
 
-git ls-files | tar --files-from /proc/self/fd/0 -czf "${NAME}-${VERSION}.tar.gz"
-rpmbuild -tb ${NAME}-${VERSION}.tar.gz --define "debug_package %{nil}" "$@"
+git ls-files | tar --files-from /proc/self/fd/0 -czf "${NAME}-${VERSION}-${RELEASE}.tar.gz"
+rpmbuild -tb ${NAME}-${VERSION}-${RELEASE}.tar.gz --define "debug_package %{nil}" "$@"
