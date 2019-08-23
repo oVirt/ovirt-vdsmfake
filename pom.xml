@@ -11,7 +11,7 @@
     <jsonListenPort>54321</jsonListenPort>
     <webPort>8081</webPort>
     <jsonSecured>false</jsonSecured>
-    <version.checkstyle>6.8</version.checkstyle>
+    <version.checkstyle>8.18</version.checkstyle>
     <version.wildfly.swarm>2017.3.3</version.wildfly.swarm>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -207,24 +207,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
-        <executions>
-          <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <configuration>
-              <consoleOutput>true</consoleOutput>
-              <includeTestSourceDirectory>true</includeTestSourceDirectory>
-              <configLocation>src/main/resources/checkstyle.xml</configLocation>
-              <suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
-              <encoding>UTF-8</encoding>
-              <failOnViolation>true</failOnViolation>
-            </configuration>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>3.0.0</version>
         <dependencies>
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
@@ -232,6 +215,22 @@
             <version>${version.checkstyle}</version>
           </dependency>
         </dependencies>
+        <configuration>
+          <consoleOutput>true</consoleOutput>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <configLocation>src/main/resources/checkstyle.xml</configLocation>
+          <suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
+          <propertyExpansion>runNlsCheck=false</propertyExpansion>
+        </configuration>
+        <executions>
+          <execution>
+            <id>checkstyle</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

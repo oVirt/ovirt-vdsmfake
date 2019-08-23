@@ -35,7 +35,7 @@ public class HystrixCommandExecutor implements CommandExecutor {
 
     @Override
     public Consumer<JsonRpcResponse> aroundConsume(Consumer<JsonRpcResponse> responseConsumer, String method) {
-        return (response) -> {
+        return response -> {
             HystrixCommand.Setter setter = setter(method + ".Send");
 
             final HystrixCommand<Object> sendCommand = new HystrixCommand<Object>(setter) {

@@ -20,14 +20,14 @@ public interface IntegrationTest {
     }
 
     static Function<JavaArchive, JavaArchive> withEmptyBeansXml() {
-        return (archive) -> archive
+        return archive -> archive
                 .addAsManifestResource(
                         EmptyAsset.INSTANCE,
                         ArchivePaths.create("beans.xml"));
     }
 
     static Function<JavaArchive, JavaArchive> withConfigArtifacts() {
-        return (archive)-> archive
+        return archive-> archive
                 .addClass(AppConfig.class)
                 .addClass(TypesafeAppConfigProvider.class)
                 .addPackages(true, ConfigFactory.class.getPackage())
@@ -35,7 +35,7 @@ public interface IntegrationTest {
     }
 
     static Function<JavaArchive, JavaArchive> withCommands() {
-        return (archive) -> archive
+        return archive -> archive
                 .addPackages(true, "org.ovirt.vdsm")
                 .addPackages(true, "org.ovirt.vdsmfake")
                 .addPackages(true, JsonNode.class.getPackage())

@@ -159,7 +159,7 @@ public class JsonRpcServer {
                 }
 
                 final JsonRpcRequest finalRequest = request;
-                commandExecutor.execute(finalRequest, (response) -> send(response, finalRequest.getMethod()));
+                commandExecutor.execute(finalRequest, response -> send(response, finalRequest.getMethod()));
             } catch (Throwable e) {
                 log.error("Failure in processing request", e);
                 Map<String, Object> error = new HashMap<>();
