@@ -11,7 +11,7 @@
     <jsonListenPort>54321</jsonListenPort>
     <webPort>8081</webPort>
     <jsonSecured>false</jsonSecured>
-    <version.checkstyle>8.18</version.checkstyle>
+    <version.checkstyle>8.29</version.checkstyle>
     <version.wildfly.swarm>2017.3.3</version.wildfly.swarm>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
